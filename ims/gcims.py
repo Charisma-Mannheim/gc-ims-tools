@@ -528,7 +528,8 @@ class GCIMS_Spectrum:
         self.values = self.values - fl
         self.values[self.values < 0] = 0
         return self
-
+    
+    # TODO: Write compare spectra plot method
     def plot(self, datashader=True, range_color=(40,250),
              width=600, height=700):
         """
