@@ -1,0 +1,51 @@
+Install Anaconda Individual Edition first:
+https://www.anaconda.com/products/individual
+
+
+xarray:
+$ conda install -c conda-forge xarray dask netCDF4 bottleneck
+
+nodejs for jupyterlab:
+$ conda install jupyterlab nodejs
+
+dask extensions:
+$ conda install dask-ml
+$ conda install -c conda-forge dask-labextension
+$ jupyter labextension install dask-labextension
+$ jupyter serverextension enable dask_labextension
+
+graphviz for dask task graphs:
+https://graphviz.org/download/
+$ pip install graphviz
+
+h5py:
+$ conda install h5py
+
+plotly:
+$ conda install -c plotly plotly
+$ conda install -c plotly python-kaleido
+$ conda install "notebook>=5.3" "ipywidgets>=7.2"
+$ conda install jupyterlab "ipywidgets=7.5"
+
+datashader:
+$ conda install datashader
+
+xgboost:
+$ pip install xgboost
+
+tpot:
+$ conda install -c conda-forge tpot
+
+natsort
+$ pip install natsort
+
+
+optional:
+
+pytorch:
+version depends on OS and CUDA
+install stable version with conda
+https://pytorch.org/get-started/locally/
+
+skorch:
+$ conda install -c conda-forge skorch
