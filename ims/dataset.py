@@ -147,7 +147,7 @@ class GCIMS_DataSet:
         data = [
             delayed(GCIMS_Spectrum.read_mea)(i, subfolders) for i in paths
         ]
-        return cls(data, name, files, samples, groups)
+        return cls(data, name, files, samples, groups, path)
 
     @classmethod
     def read_zip(cls, path, subfolders=True):
