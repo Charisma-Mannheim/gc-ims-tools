@@ -4,7 +4,7 @@ import xarray as xr
 
 import os
 import json
-import csv
+import re
 import h5py
 from datetime import datetime
 from zipfile import ZipFile
@@ -114,37 +114,40 @@ class GCIMS_Spectrum:
         '''
         Reads and formats just the meta attributes from GAS mea file.
         '''
-        with open(path, mode='rb') as f:
+        with open(path, "rb") as f:
             data = f.read()
             meta_attr = []
             for i in data:
                 if i == 0:
                     break
                 meta_attr.append(chr(i))
-                
-            meta_attr = ''.join(meta_attr)
-            meta_attr = meta_attr.split('\n')
-            meta_attr.pop(-1)
-            names = []
-            nums = []
-            units = []
-            for i in meta_attr:
-                name, value = i.split('=')
-                name = name.strip()
-                value = value.strip()
-                if '[' in value:
-                    num, unit = value.split(' ')
-                else:
-                    num = value
-                    unit = ''
-                nums.append(num)
-                units.append(unit)
-                names.append(name)
 
-            keys = [*zip(names, units)]
-            keys = [' '.join(i).strip() for i in keys]
-            attr = [i.strip('"') if '"' in i else int(i) for i in nums]
-            meta_attr = dict(zip(keys, attr))
+        meta_attr = "".join(meta_attr)
+        meta_attr = meta_attr.split('\n')[:-1]
+
+        key_re = re.compile("^.*?(?==)")
+        value_re = re.compile("(?<==)(.*?)(?=\[|$)")
+        unit_re = re.compile("\[(.*?)\]")
+
+        keys = []
+        values = []
+        for i in meta_attr:
+            value = value_re.search(i).group(0).strip()
+            if '"' in value:
+                value = value.strip('"')
+            else:
+                value = int(value)
+            values.append(value)
+            key_name = key_re.search(i).group(0).strip()
+            unit = unit_re.search(i)
+            if unit is None:
+                unit = ""
+            else:
+                unit = unit.group(0).strip()
+            key = " ".join((key_name, unit)).strip()
+            keys.append(key)
+
+        meta_attr = dict(zip(keys, values))
         return meta_attr
 
     @staticmethod
