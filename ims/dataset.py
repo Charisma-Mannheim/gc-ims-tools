@@ -97,14 +97,15 @@ class GCIMS_DataSet:
             paths = glob(f'{path}/*/*/*')
             name = os.path.split(path)[1]
             for filedir in paths:
-                head, file_name = os.path.split(filedir)
+                filedir = os.path.normpath(filedir)
+                file_name = os.path.split(filedir)
                 files.append(file_name)
-                head, sample_name = os.path.split(head)
+                sample_name = path.split(os.sep)[-2]
                 samples.append(sample_name)
-                group = os.path.split(head)[1]
+                group = path.split(os.sep)[-3]
                 groups.append(group)
         else:
-            paths = glob(f'{path}/*')
+            paths = [os.path.normpath(i) for i in glob(f'{path}/*')]
             name = os.path.split(path)[1]
             files = [os.path.split(i)[1] for i in paths]
             samples = []

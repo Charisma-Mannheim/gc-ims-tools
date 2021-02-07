@@ -125,6 +125,8 @@ class GCIMS_Spectrum:
         meta_attr = "".join(meta_attr)
         meta_attr = meta_attr.split('\n')[:-1]
 
+        # regex matching can be improved to ignore leading and trailing whitespace
+        # insted of calling str.strip so often
         key_re = re.compile("^.*?(?==)")
         value_re = re.compile("(?<==)(.*?)(?=\[|$)")
         unit_re = re.compile("\[(.*?)\]")
@@ -192,47 +194,39 @@ class GCIMS_Spectrum:
         -------
         GCIMS_DataSet
         """
+        meta_attr = GCIMS_Spectrum._read_meta_attr_mea(path)
+        ret_time, drift_time = GCIMS_Spectrum._calc_ret_and_drift_coords(meta_attr)
+
+        # get sample and group names from folder names
+        path = os.path.normpath(path)
+        name = os.path.split(path)[1]
+        if subfolders:
+            sample = path.split(os.sep)[-2]
+            group = path.split(os.sep)[-3]
+        else:
+            sample = ''
+            group = ''
+        
         with open(path, mode='rb') as f:
             data = f.read()
-
-            # read unitl first null byte for meta attributes
-            meta_attr = []
-            for i in data:
-                if i == 0:
+            #find first null byte
+            byte_len_meta = 0
+            for i, j in enumerate(data):
+                byte_len_meta = i
+                if j == 0:
                     break
-                meta_attr.append(chr(i))
-
-            # keep track of bytelength to start reading at this point later
-            byte_len_meta = len(meta_attr)
-            
-            meta_attr = GCIMS_Spectrum._read_meta_attr_mea(path)
 
             # read the remaining data
             # values are stored as signed short int in two bytes
             # Chunks count is the size of the retention time
             # Chunks sample count is the size of the drift time
-            values = []
-            for i in islice(data, byte_len_meta + 1, None):
-                values.append(i)
-
+            values = data[byte_len_meta+1:]
             values = bytearray(values)
             values = array('h', values)
             values = np.array(values)
-
             values = values.reshape((meta_attr['Chunks count'],
                                      meta_attr['Chunk sample count']))
 
-        ret_time, drift_time = GCIMS_Spectrum._calc_ret_and_drift_coords(meta_attr)
-
-        # get sample and group names from folder names
-        name = os.path.split(path)[1]
-        if subfolders:
-            sample = os.path.split(os.path.split(path)[0])[1]
-            group = os.path.split(os.path.split(os.path.split(path)[0])[0])[1]
-        else:
-            sample = ''
-            group = ''
-    
         return cls(name, values, sample, group,
                    ret_time, drift_time, meta_attr, time)
 
@@ -276,13 +270,15 @@ class GCIMS_Spectrum:
 
         ret_time, drift_time = GCIMS_Spectrum._calc_ret_and_drift_coords(meta_attr)
 
+        path = os.path.normpath(path)
         name = os.path.split(path)[1]
         if subfolders:
-            sample = os.path.split(os.path.split(path)[0])[1]
-            group = os.path.split(os.path.split(os.path.split(path)[0])[0])[1]
+            sample = path.split(os.sep)[-2]
+            group = path.split(os.sep)[-3]
         else:
             sample = ''
             group = ''
+
         return cls(name, values, sample, group,
                    ret_time, drift_time, meta_attr, time)
 
