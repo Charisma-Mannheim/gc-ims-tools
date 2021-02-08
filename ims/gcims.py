@@ -444,7 +444,6 @@ class Spectrum:
         plt.colorbar()
         plt.title(self.name, fontsize=16)
 
-
         # FIXME: Axes values do not work when riprel dt axis
         # because of round
         xlocs, _ = plt.xticks()
