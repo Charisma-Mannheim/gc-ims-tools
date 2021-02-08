@@ -3,5 +3,5 @@ __pycache__
 ims.egg-info
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
-*/__pychache__
+*/__pychache__/*
 
