@@ -55,6 +55,7 @@ class Spectrum:
         self.drift_time_label = 'Drift Time [ms]'
         self.meta_attr = meta_attr
         self.time = time
+        
 
     def __repr__(self):
         return f"GC-IMS Spectrum: {self.name}"
@@ -176,6 +177,7 @@ class Spectrum:
         # get sample and group names from folder names
         path = os.path.normpath(path)
         name = os.path.split(path)[1]
+        name = name.split('.')[0]
         if subfolders:
             sample = path.split(os.sep)[-2]
             group = path.split(os.sep)[-3]
@@ -442,18 +444,25 @@ class Spectrum:
         plt.colorbar()
         plt.title(self.name, fontsize=16)
 
+
+        # FIXME: Axes values do not work when riprel dt axis
+        # because of round
         xlocs, _ = plt.xticks()
         ylocs, _ = plt.yticks()
 
         dt_ticks = [
-            round(self) for self in np.linspace(self.drift_time[0],
-                                                self.drift_time[-1],
-                                                len(xlocs)-2)
+            round(self) for self in np.linspace(
+                self.drift_time[0],
+                self.drift_time[-1],
+                len(xlocs)-2
+                )
             ]
         rt_ticks = [
-            round(self) for self in np.linspace(self.ret_time[0],
-                                                self.ret_time[-1],
-                                                len(ylocs)-2)
+            round(self) for self in np.linspace(
+                self.ret_time[0],
+                self.ret_time[-1],
+                len(ylocs)-2
+                )
             ]
 
         plt.xticks(xlocs[1:-1], dt_ticks)

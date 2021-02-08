@@ -1,11 +1,8 @@
-from ims_module.ims import Spectrum
-
+from ims import Spectrum
 import numpy as np
 import pandas as pd
-import datetime
 import dask
 from dask import delayed
-
 import os
 from glob import glob
 import h5py

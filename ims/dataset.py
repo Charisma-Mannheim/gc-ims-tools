@@ -1,4 +1,4 @@
-from ims_module.ims import Spectrum
+from ims import Spectrum
 import numpy as np
 import dask
 from dask import delayed
