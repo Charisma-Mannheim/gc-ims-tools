@@ -1,25 +1,11 @@
-import numpy as np
-import pandas as pd
-import xarray as xr
-
 import os
-import json
 import re
 import h5py
 from datetime import datetime
-from zipfile import ZipFile
-from itertools import islice
 from array import array
-
-import plotly.express as px
-import datashader as ds
-import imageio
-
-from scipy.interpolate import interp1d
-from scipy.signal import savgol_filter
-from scipy.integrate import simps
-from skimage.morphology import white_tophat, disk, local_maxima
-from skimage.feature import peak_local_max
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator
 
 
 class GCIMS_Spectrum:
@@ -84,8 +70,8 @@ class GCIMS_Spectrum:
 
     
     @staticmethod
-    def set_time(x, time):
-        y = x
+    def set_time(self, time):
+        y = self
         y.time = time
         return y
 
@@ -98,16 +84,6 @@ class GCIMS_Spectrum:
         """
         return datetime.strptime(meta_attr['Timestamp'], '%Y-%m-%dT%H:%M:%S')
 
-    @staticmethod
-    def _read_meta_attr_zip(path):
-        """
-        Reads only the json file with meta attributes
-        from zip archive
-        """
-        with ZipFile(path) as myzip:
-            with myzip.open('meta_attributes.json', 'r') as myjson:
-                meta_attr = json.load(myjson)
-        return meta_attr
 
     @staticmethod
     def _read_meta_attr_mea(path):
@@ -230,57 +206,6 @@ class GCIMS_Spectrum:
         return cls(name, values, sample, group,
                    ret_time, drift_time, meta_attr, time)
 
-    @classmethod
-    def read_zip(cls, path, subfolders=False, time=None):
-        """
-        Reads zip archive from GAS mea to zip tool.
-
-        If subfolders=True expects the following folder structure
-        for each group and sample:
-
-        Data
-        |--> Group A
-            |--> Sample A
-                |--> file a
-                |--> file b
-
-        Labels are auto-generated from directory names.
-
-        Parameters
-        ----------
-        path : str
-            Directory to the file.
-
-        subfolders : bool, optional
-            Uses subdirectory names as labels,
-            by default False
-
-        Returns
-        -------
-        GCIMS_DataSet
-        """
-        with ZipFile(path) as myzip:
-            with myzip.open('csv_data.csv', 'r') as mycsv:
-                values = pd.read_csv(mycsv, header=None)
-            with myzip.open('meta_attributes.json', 'r') as myjson:
-                meta_attr = json.load(myjson)
-
-        values = np.array(values)
-        values = np.delete(values, -1, axis=1)
-
-        ret_time, drift_time = GCIMS_Spectrum._calc_ret_and_drift_coords(meta_attr)
-
-        path = os.path.normpath(path)
-        name = os.path.split(path)[1]
-        if subfolders:
-            sample = path.split(os.sep)[-2]
-            group = path.split(os.sep)[-3]
-        else:
-            sample = ''
-            group = ''
-
-        return cls(name, values, sample, group,
-                   ret_time, drift_time, meta_attr, time)
 
     @classmethod
     def read_hdf5(cls, path, time=None):
@@ -314,22 +239,6 @@ class GCIMS_Spectrum:
             ret_time, drift_time, meta_attr, time
             )
 
-    def to_xarray(self):
-        """
-        Constructs an xarray DataArray.
-
-        Returns
-        -------
-        xarray.DataArray
-            Coordinates are ret_time and drift_time.
-        """
-        return xr.DataArray(
-            data=self.values,
-            coords=(self.ret_time, self.drift_time),
-            dims=('ret_time', 'drift_time'),
-            name=self.name,
-            attrs=self.meta_attr
-        )
 
     def to_hdf5(self, path=os.getcwd()):
         """
@@ -493,153 +402,91 @@ class GCIMS_Spectrum:
     def wavelet_compression(self):
         pass
 
-    def tophat(self, size=15):
-        """
-        Applies white tophat filter on values.
-        Baseline correction.
-
-        (Slower with larger size.)
-
-        Parameters
-        ----------
-        size : int, optional
-            Size of structuring element, by default 15
-
-        Returns
-        -------
-        GCIMS_Spectrum
-            With tophat applied.
-        """      
-        self.values = white_tophat(self.values, disk(size))
-        return self
-
-    def sub_first_row(self):
-        """
-        Subtracts first row from every row in spectrum.
-        Baseline correction.
-
-        Returns
-        -------
-        GCIMS_Spectrum
-            With corrected baseline.
-        """
-        fl = self.values[0, :]
-        self.values = self.values - fl
-        self.values[self.values < 0] = 0
-        return self
-    
     # TODO: Write compare spectra plot method
-    def plot(self, datashader=True, range_color=(40,250),
-             width=600, height=700):
+    def plot(self, vmin=30, vmax=300, width=9, height=10):
         """
-        Plots GCIMS_Spectrum as plotly image.
-        Optionally plots datashader representation of data
-        instead of actual values, to speed up the function.
+        plot
+
+        Plots Spectrum using pyplot.imshow.
+        Use %matplotlib widget in IPython or %matplotlib notebook
+        in jupyter notebooks to get an interactive plot.
+        
+        Disable the autoshow function in IPython with a semicolon
+        otherwise plots may show up twice.
 
         Parameters
         ----------
-        datashader : bool, optional
-            If True plots datashader representation,
-            by default True
-
-        range_color : tuple, optional
-            (low, high) to map the colorscale,
-            by default (40,250)
-
+        vmin : int, optional
+            min of color range, by default 30
+        vmax : int, optional
+            max of color range, by default 300
         width : int, optional
-            plot width in pixels,
-            by default 600
-
+            width in inches, by default 9
         height : int, optional
-            plot height in pixels,
-            by default 700
+            height in inches, by default 10
 
         Returns
         -------
-        plotly express Figure
-            Interactive plot.
-        """
-        img = xr.DataArray(
-            data=self.values,
-            coords=[self.ret_time, self.drift_time],
-            dims=['Retention Time [s]', self.drift_time_label]
-        )
-        
-        if self.time is None:
-            title = self.name
-        else:
-            title = f'{self.name}   /   {self.time} h'
-        
-        if datashader:
-            cvs = ds.Canvas()
-            agg = cvs.raster(img)
-            agg.name = 'Value'
-        else:
-            agg = img
-            agg.name = 'Value'
+        matplotlib.figure.Figure
+        """        
+        fig, ax = plt.subplots(figsize=(width, height))
 
-        fig = px.imshow(
-            img=agg,
-            origin='lower',
-            width=width,
-            height=height,
-            aspect='auto',
-            color_continuous_scale='RdBu_r',
-            range_color=range_color
-        )
-        fig.update_layout(
-            title=title,
-            font=dict(size=16),
-            margin=dict(l=50, r=20, t=100, b=20),
-            hoverlabel=dict(
-                bgcolor='white',
-                font_size=16
+        plt.imshow(
+            self.values,
+            origin="lower",
+            aspect="auto",
+            cmap="RdBu_r",
+            vmin=vmin,
+            vmax=vmax
             )
-        )
+
+        plt.colorbar()
+        plt.title(self.name, fontsize=16)
+
+        xlocs, _ = plt.xticks()
+        ylocs, _ = plt.yticks()
+
+        dt_ticks = [
+            round(self) for self in np.linspace(self.drift_time[0],
+                                                self.drift_time[-1],
+                                                len(xlocs)-2)
+            ]
+        rt_ticks = [
+            round(self) for self in np.linspace(self.ret_time[0],
+                                                self.ret_time[-1],
+                                                len(ylocs)-2)
+            ]
+
+        plt.xticks(xlocs[1:-1], dt_ticks)
+        plt.yticks(ylocs[1:-1], rt_ticks)
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
+        plt.xlabel(self.drift_time_label, fontsize=12)
+        plt.ylabel("Retention Time [s]", fontsize=12)
+        
+        plt.show()
         return fig
 
-    def export_plot(self, path=os.getcwd(), file_format='jpeg', **kwargs):
-        """
-        Exports static plot to disk.
 
-        Kaleido is required:
-        $ conda install -c plotly python-kaleido
+    def export_plot(self, path=os.getcwd(), file_format='jpg', **kwargs):
+        """
+        Exports plot to disk.
 
         Parameters
         ----------
         path : str, optional
             Directory to save the image,
-            by default os.getcwd()
+            by default current working directory
 
         file_format : str, optional
-            See plotly kaleido documentation for supported formats
-            https://plotly.com/python/static-image-export/,
-            by default 'jpeg'
+            by default 'jpg'
         """
         fig = self.plot(**kwargs)
-        fig.write_image(f'{path}/{self.name}.{file_format}')
+        fig.savefig(f'{path}/{self.name}.{file_format}')
 
-    def export_image(self, path=os.getcwd(), file_format='jpeg'):
-        """
-        Exports spectrum as grayscale image for classification in Orange 3.
-        (Not a plot!)
 
-        Parameters
-        ----------
-        path : str, optional
-            Directory to save the image,
-            by default os.getcwd()
-
-        file_format : str, optional
-            See imageio docs for supported formats:
-            https://imageio.readthedocs.io/en/stable/formats.html,
-            by default 'jpeg'
-        """
-        imageio.imwrite(uri=f'{path}/{self.name}.{file_format}',
-                        im=self.values)
 
     # TODO: Add automated peak finding and integrating features
-
     # def find_peaks(self):
     #     return peak_local_max(self.values, min_distance=5, threshold_abs=100)
 
