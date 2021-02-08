@@ -10,7 +10,8 @@ from sklearn.preprocessing import LabelEncoder
 
 
 # TODO: generalize for classification as well as regression tasks
-
+# Possibly merge with timeseries
+# Simplify and do not use delayed inside the class anymore
 
 class Dataset:
 
@@ -94,7 +95,7 @@ class Dataset:
             files = []
             samples = []
             groups = []
-            paths = glob(f'{path}/*/*/*')
+            paths = glob(f'{path}/*/*/*.mea')
             name = os.path.split(path)[1]
             for filedir in paths:
                 filedir = os.path.normpath(filedir)
@@ -147,43 +148,6 @@ class Dataset:
         )
         data = [
             delayed(Spectrum.read_mea)(i, subfolders) for i in paths
-        ]
-        return cls(data, name, files, samples, groups, path)
-
-    @classmethod
-    def read_zip(cls, path, subfolders=True):
-        """
-        Reads all zip archives from GAS mea to zip tool in directory.
-
-        If subfolders=True expects the following folder structure
-        for each group and sample:
-
-        Data
-        |--> Group A
-            |--> Sample A
-                |--> file a
-                |--> file b
-
-        Labels are auto-generated from directory names.
-
-        Parameters
-        ----------
-        path : str
-            Directory with the data.
-
-        subfolders : bool, optional
-            Uses subdirectory names as labels,
-            by default True
-
-        Returns
-        -------
-        Dataset
-        """
-        paths, name, files, samples, groups = Dataset._measurements(
-            path, subfolders
-        )
-        data = [
-            delayed(Spectrum.read_zip)(i, subfolders) for i in paths
         ]
         return cls(data, name, files, samples, groups, path)
 
@@ -549,46 +513,8 @@ class Dataset:
         self.preprocessing.append(f'cut_rt({start, stop})')
         return self
 
-    def tophat(self, size=15):
-        """
-        Applies white tophat filter on data.
-        Baseline correction.
 
-        (Slower with larger size.)
-
-        Parameters
-        ----------
-        size : int, optional
-            Size of structuring element, by default 15
-
-        Returns
-        -------
-        Dataset
-            With tophat applied.
-        """
-        self.data = [
-            delayed(Spectrum.tophat)(i, size) for i in self.data
-        ]
-        self.preprocessing.append('tophat')
-        return self
-
-    def sub_first_row(self):
-        """
-        Subtracts first row from every row in spectrum.
-        Baseline correction.
-
-        Returns
-        -------
-        Dataset
-            With corrected baseline.
-        """
-        self.data = [
-            delayed(Spectrum.sub_first_row)(i) for i in self.data
-        ]
-        self.preprocessing.append('sub_first_line')
-        return self
-
-    def export_plots(self, folder_name, file_format='jpeg', **kwargs):
+    def export_plots(self, folder_name, file_format='jpg', **kwargs):
         """
         Exports a static plot for each spectrum to disk.
         Replicates group folders.
@@ -621,40 +547,6 @@ class Dataset:
                 fig = delayed(Spectrum.export_plot)(
                     self.data[j], path=f'{folder_name}/{group}',
                     file_format=file_format, **kwargs
-                )
-                exports.append(fig)
-        dask.compute(exports)
-
-    def export_images(self, folder_name, file_format='jpeg'):
-        """
-        Exports spectrum as grayscale image for classification in Orange 3.
-        (Not a plot!)
-
-        Parameters
-        ----------
-        folder_name : str, optional
-            New directory to save the images
-
-        file_format : str, optional
-            See imageio docs for supported formats:
-            https://imageio.readthedocs.io/en/stable/formats.html,
-            by default 'jpeg'
-        """
-        group_names = np.unique(self.groups)
-        sample_names = np.unique(self.samples)
-        sample_indices = self.sample_indices
-        os.mkdir(folder_name)
-        for group in group_names:
-            os.mkdir(f'{folder_name}/{group}')
-
-        exports = []
-        for i in sample_names:
-            indices = sample_indices[i]
-            for j in indices:
-                group = self.groups[j]
-                fig = delayed(Spectrum.export_image)(
-                    self.data[j], path=f'{folder_name}/{group}',
-                    file_format=file_format
                 )
                 exports.append(fig)
         dask.compute(exports)
