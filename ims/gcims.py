@@ -86,7 +86,7 @@ class GCIMS_Spectrum:
 
 
     @staticmethod
-    def _read_meta_attr_mea(path):
+    def read_meta_attr(path):
         '''
         Reads and formats just the meta attributes from GAS mea file.
         '''
@@ -170,7 +170,7 @@ class GCIMS_Spectrum:
         -------
         GCIMS_DataSet
         """
-        meta_attr = GCIMS_Spectrum._read_meta_attr_mea(path)
+        meta_attr = GCIMS_Spectrum.read_meta_attr(path)
         ret_time, drift_time = GCIMS_Spectrum._calc_ret_and_drift_coords(meta_attr)
 
         # get sample and group names from folder names

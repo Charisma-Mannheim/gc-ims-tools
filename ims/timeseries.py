@@ -86,7 +86,7 @@ TimeSeries:
         paths = glob(f'{path}/*')
         name = os.path.split(path)[1]
         meta_attr = [
-            GCIMS_Spectrum._read_meta_attr_mea(i) for i in paths
+            GCIMS_Spectrum.read_meta_attr(i) for i in paths
         ]
         timeline = [
             GCIMS_Spectrum._get_datetime(i) for i in meta_attr
