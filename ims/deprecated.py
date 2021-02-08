@@ -1,4 +1,4 @@
-from ims_module.ims import GCIMS_Spectrum
+from ims_module.ims import Spectrum
 
 import numpy as np
 import pandas as pd
@@ -19,7 +19,7 @@ from skimage.feature import peak_local_max
 
 
 
-class GCIMS_Spectrum_Old(GCIMS_Spectrum):
+class Spectrum_Old(Spectrum):
     
     def __init__(self, name, values, sample, group,
                  ret_time, drift_time, meta_attr, time):
@@ -66,7 +66,7 @@ class GCIMS_Spectrum_Old(GCIMS_Spectrum):
 
         Returns
         -------
-        GCIMS_DataSet
+        Dataset
         """
         with ZipFile(path) as myzip:
             with myzip.open('csv_data.csv', 'r') as mycsv:
@@ -77,7 +77,7 @@ class GCIMS_Spectrum_Old(GCIMS_Spectrum):
         values = np.array(values)
         values = np.delete(values, -1, axis=1)
 
-        ret_time, drift_time = GCIMS_Spectrum._calc_ret_and_drift_coords(meta_attr)
+        ret_time, drift_time = Spectrum._calc_ret_and_drift_coords(meta_attr)
 
         path = os.path.normpath(path)
         name = os.path.split(path)[1]
@@ -123,7 +123,7 @@ class GCIMS_Spectrum_Old(GCIMS_Spectrum):
 
         Returns
         -------
-        GCIMS_Spectrum
+        Spectrum
             With tophat applied.
         """      
         self.values = white_tophat(self.values, disk(size))
@@ -136,7 +136,7 @@ class GCIMS_Spectrum_Old(GCIMS_Spectrum):
 
         Returns
         -------
-        GCIMS_Spectrum
+        Spectrum
             With corrected baseline.
         """
         fl = self.values[0, :]
@@ -147,7 +147,7 @@ class GCIMS_Spectrum_Old(GCIMS_Spectrum):
     def plotly_plot(self, datashader=True, range_color=(40,250),
              width=600, height=700):
         """
-        Plots GCIMS_Spectrum as plotly image.
+        Plots Spectrum as plotly image.
         Optionally plots datashader representation of data
         instead of actual values, to speed up the function.
 

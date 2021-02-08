@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 
 
-class GCIMS_Spectrum:
+class Spectrum:
 
     def __init__(self, name, values, sample, group,
                  ret_time, drift_time, meta_attr, time):
@@ -65,7 +65,7 @@ class GCIMS_Spectrum:
         mean_ret_time = (self.ret_time + other.ret_time) / 2
         mean_drift_time = (self.drift_time + other.drift_time) / 2
 
-        return GCIMS_Spectrum(name, mean_values, self.sample, self.group,
+        return Spectrum(name, mean_values, self.sample, self.group,
                               mean_ret_time, mean_drift_time, self.meta_attr)
 
     
@@ -168,10 +168,10 @@ class GCIMS_Spectrum:
 
         Returns
         -------
-        GCIMS_DataSet
+        Dataset
         """
-        meta_attr = GCIMS_Spectrum.read_meta_attr(path)
-        ret_time, drift_time = GCIMS_Spectrum._calc_ret_and_drift_coords(meta_attr)
+        meta_attr = Spectrum.read_meta_attr(path)
+        ret_time, drift_time = Spectrum._calc_ret_and_drift_coords(meta_attr)
 
         # get sample and group names from folder names
         path = os.path.normpath(path)
@@ -221,7 +221,7 @@ class GCIMS_Spectrum:
 
         Returns
         -------
-        GCIMS_Spectrum
+        Spectrum
         """     
         with h5py.File(path, 'r') as f:
             values = np.array(f['values'])
@@ -272,7 +272,7 @@ class GCIMS_Spectrum:
         """
         Calculates means from all spectra in list.
         Mainly needed for the mean implementation in
-        GCIMS_DataSet class.
+        Dataset class.
 
         Parameters
         ----------
@@ -281,7 +281,7 @@ class GCIMS_Spectrum:
 
         Returns
         -------
-        GCIMS_Spectrum
+        Spectrum
             With mean values.
         """
         name = spectra_list[0].sample
@@ -306,7 +306,7 @@ class GCIMS_Spectrum:
 
         Returns
         -------
-        GCIMS_Spectrum
+        Spectrum
             RIP relative drift time coordinate
             otherwise unchanged.
         """
@@ -323,7 +323,7 @@ class GCIMS_Spectrum:
 
         Returns
         -------
-        GCIMS_Spectrum
+        Spectrum
             With scaled values.
         """
         m = np.max(self.values)
@@ -365,7 +365,7 @@ class GCIMS_Spectrum:
 
         Returns
         -------
-        GCIMS_Spectrum
+        Spectrum
             With cut drift time
         """
         idx_start = np.abs(self.drift_time - start).argmin()
@@ -389,7 +389,7 @@ class GCIMS_Spectrum:
 
         Returns
         -------
-        GCIMS_Spectrum
+        Spectrum
             With cut retention time
         """
         idx_start = np.abs(self.ret_time - start).argmin()
@@ -402,7 +402,6 @@ class GCIMS_Spectrum:
     def wavelet_compression(self):
         pass
 
-    # TODO: Write compare spectra plot method
     def plot(self, vmin=30, vmax=300, width=9, height=10):
         """
         plot
@@ -466,6 +465,11 @@ class GCIMS_Spectrum:
         
         plt.show()
         return fig
+
+
+    # TODO: Write compare spectra plot method
+    def compare(self, other):
+        pass
 
 
     def export_plot(self, path=os.getcwd(), file_format='jpg', **kwargs):

@@ -1,9 +1,9 @@
 import setuptools
 
 setuptools.setup(
-    name='ims_module',
+    name='ims',
     version='0.0.1',
     author='Joscha Christmann',
-    packages=['ims', 'spectroscopy', 'ml'],
+    packages=['ims'],
     license='LICENSE.txt'
 )

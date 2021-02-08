@@ -1,4 +1,4 @@
-from ims_module.ims import GCIMS_Spectrum
+from ims_module.ims import Spectrum
 
 import numpy as np
 import pandas as pd
@@ -56,13 +56,13 @@ TimeSeries:
         paths = glob(f'{path}/*')
         name = os.path.split(path)[1]
         data = [
-            delayed(GCIMS_Spectrum.read_zip)(i) for i in paths
+            delayed(Spectrum.read_zip)(i) for i in paths
         ]
         meta_attr = [
-            GCIMS_Spectrum._read_meta_attr_zip(i) for i in paths
+            Spectrum._read_meta_attr_zip(i) for i in paths
         ]
         datetime = [
-            GCIMS_Spectrum._get_datetime(i) for i in meta_attr
+            Spectrum._get_datetime(i) for i in meta_attr
         ]
         data = pd.Series(data, datetime)
         return cls(name, data)
@@ -86,22 +86,22 @@ TimeSeries:
         paths = glob(f'{path}/*')
         name = os.path.split(path)[1]
         meta_attr = [
-            GCIMS_Spectrum.read_meta_attr(i) for i in paths
+            Spectrum.read_meta_attr(i) for i in paths
         ]
         timeline = [
-            GCIMS_Spectrum._get_datetime(i) for i in meta_attr
+            Spectrum._get_datetime(i) for i in meta_attr
         ]
 
         start = timeline[0]
         hours = [i - start for i in timeline]
 
         data = [
-            delayed(GCIMS_Spectrum.read_mea)(i, time=j) for i, j in zip(paths, hours)
+            delayed(Spectrum.read_mea)(i, time=j) for i, j in zip(paths, hours)
         ]
     
         
         # data = [
-        #     GCIMS_Spectrum.set_time(i, j) for i, j in zip(data, timeline)
+        #     Spectrum.set_time(i, j) for i, j in zip(data, timeline)
         # ]
 
         # new_data = []
@@ -115,7 +115,7 @@ TimeSeries:
     @classmethod
     def read_hdf5(cls, path):
         """
-        Reads hdf5 files produced by GCIMS_Spectrum.to_hdf5 method.
+        Reads hdf5 files produced by Spectrum.to_hdf5 method.
         Alternative contstructor.
 
         Parameters
@@ -130,7 +130,7 @@ TimeSeries:
         paths = glob(f'{path}/*')
         name = os.path.split(path)[1]
         data = [
-            delayed(GCIMS_Spectrum.read_hdf5)(i) for i in paths
+            delayed(Spectrum.read_hdf5)(i) for i in paths
         ]
 
         meta_attr = []
@@ -142,7 +142,7 @@ TimeSeries:
                 meta_attr.append(meta)
 
         datetime = [
-            GCIMS_Spectrum._get_datetime(i) for i in meta_attr
+            Spectrum._get_datetime(i) for i in meta_attr
         ]
         data = pd.Series(data, datetime)
         return cls(name, data)
@@ -210,7 +210,7 @@ TimeSeries:
         """
         os.mkdir(folder_name)
         exports = [
-            delayed(GCIMS_Spectrum.to_hdf5)(i, path=folder_name)
+            delayed(Spectrum.to_hdf5)(i, path=folder_name)
             for i in self.data
         ]
         dask.compute(exports)
@@ -218,7 +218,7 @@ TimeSeries:
     # def agg(self, key, func):
     #     data = list(self[key])
     #     if method == 'mean':
-    #         mean = delayed(GCIMS_Spectrum.mean)(data)
+    #         mean = delayed(Spectrum.mean)(data)
     #         self[key].data = mean
     #     return self
 
@@ -238,7 +238,7 @@ TimeSeries:
             With cut spectra.
         """
         self.data.values = [
-            delayed(GCIMS_Spectrum.cut_dt)(i, cut_range) for i in self.data.values
+            delayed(Spectrum.cut_dt)(i, cut_range) for i in self.data.values
         ]
     
     def cut_rt(self, cut_range):
@@ -257,7 +257,7 @@ TimeSeries:
             With cut spectra.
         """  
         self.data.values = [
-            delayed(GCIMS_Spectrum.cut_rt)(i, cut_range) for i in self.data.values
+            delayed(Spectrum.cut_rt)(i, cut_range) for i in self.data.values
         ]
     
     def align(self):
@@ -282,7 +282,7 @@ TimeSeries:
         """     
         os.mkdir(folder_name)
         exports = [
-            delayed(GCIMS_Spectrum.export_plot)(
+            delayed(Spectrum.export_plot)(
                 i, folder_name, file_format, **kwargs) for i in self.data.values
         ]
         dask.compute(exports)
@@ -304,7 +304,7 @@ TimeSeries:
         """
         os.mkdir(folder_name)
         exports = [
-            delayed(GCIMS_Spectrum.export_image, **kwargs)(
+            delayed(Spectrum.export_image, **kwargs)(
                 i, folder_name, file_format) for i in self.data.values
         ]
         dask.compute(exports)
