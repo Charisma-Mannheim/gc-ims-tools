@@ -54,9 +54,9 @@ class Spectrum:
         self.drift_time = drift_time
         self.drift_time_label = 'Drift Time [ms]'
         self.meta_attr = meta_attr
-        self.time = time
+        self.time = datetime.strptime(self.meta_attr['Timestamp'],
+                                      '%Y-%m-%dT%H:%M:%S')
         
-
     def __repr__(self):
         return f"GC-IMS Spectrum: {self.name}"
 
@@ -68,23 +68,6 @@ class Spectrum:
 
         return Spectrum(name, mean_values, self.sample, self.group,
                               mean_ret_time, mean_drift_time, self.meta_attr)
-
-    
-    @staticmethod
-    def set_time(self, time):
-        y = self
-        y.time = time
-        return y
-
-    @staticmethod
-    def _get_datetime(meta_attr):
-        """
-        Returns Timestamp meta attributes entry as
-        datetime.datetime object. Needed to generate
-        the time coordinate in TimeSeries class.
-        """
-        return datetime.strptime(meta_attr['Timestamp'], '%Y-%m-%dT%H:%M:%S')
-
 
     @staticmethod
     def read_meta_attr(path):
@@ -188,9 +171,9 @@ class Spectrum:
         with open(path, mode='rb') as f:
             data = f.read()
             #find first null byte
-            byte_len_meta = 0
+            start = 0
             for i, j in enumerate(data):
-                byte_len_meta = i
+                start = i
                 if j == 0:
                     break
 
@@ -198,7 +181,7 @@ class Spectrum:
             # values are stored as signed short int in two bytes
             # Chunks count is the size of the retention time
             # Chunks sample count is the size of the drift time
-            values = data[byte_len_meta+1:]
+            values = data[start + 1:]
             values = bytearray(values)
             values = array('h', values)
             values = np.array(values)
@@ -232,7 +215,7 @@ class Spectrum:
             group = str(f.attrs['group'])
             name = str(f.attrs['name'])
             sample = str(f.attrs['sample'])
-            time = str(f.attrs['time'])
+            time = datetime.strptime(str(f.attrs['time']), '%Y-%m-%dT%H:%M:%S')
             meta_keys = list(f['values'].attrs.keys())
             meta_values = list(f['values'].attrs.values())
             meta_attr = dict(zip(meta_keys, meta_values))
@@ -264,7 +247,7 @@ class Spectrum:
             f.attrs['group'] = self.group
             f.attrs['sample'] = self.sample
             f.attrs['name'] = self.name
-            f.attrs['time'] = self.time
+            f.attrs['time'] = datetime.strftime(self.time, '%Y-%m-%dT%H:%M:%S')
 
             for i in self.meta_attr:
                 values.attrs[i] = self.meta_attr[i]
@@ -406,7 +389,8 @@ class Spectrum:
 
     def plot(self, vmin=30, vmax=300, width=9, height=10):
         """
-        plot
+        ims.Spectrum.plot
+        -----------------
 
         Plots Spectrum using pyplot.imshow.
         Use %matplotlib widget in IPython or %matplotlib notebook
@@ -419,10 +403,13 @@ class Spectrum:
         ----------
         vmin : int, optional
             min of color range, by default 30
+
         vmax : int, optional
             max of color range, by default 300
+
         width : int, optional
             width in inches, by default 9
+
         height : int, optional
             height in inches, by default 10
 
@@ -449,20 +436,8 @@ class Spectrum:
         xlocs, _ = plt.xticks()
         ylocs, _ = plt.yticks()
 
-        dt_ticks = [
-            round(self) for self in np.linspace(
-                self.drift_time[0],
-                self.drift_time[-1],
-                len(xlocs)-2
-                )
-            ]
-        rt_ticks = [
-            round(self) for self in np.linspace(
-                self.ret_time[0],
-                self.ret_time[-1],
-                len(ylocs)-2
-                )
-            ]
+        rt_ticks = [round(self.ret_time[int(i)]) for i in ylocs[1:-1]]
+        dt_ticks = [round(self.drift_time[int(i)], 1) for i in xlocs[1:-1]]
 
         plt.xticks(xlocs[1:-1], dt_ticks)
         plt.yticks(ylocs[1:-1], rt_ticks)
@@ -480,8 +455,12 @@ class Spectrum:
         pass
 
 
-    def export_plot(self, path=os.getcwd(), file_format='jpg', **kwargs):
+    def export_plot(self, path=os.getcwd(), dpi=300,
+                    file_format='jpg', **kwargs):
         """
+        ims.Spectrum.export_plot
+        ------------------------
+
         Exports plot to disk.
 
         Parameters
@@ -493,9 +472,8 @@ class Spectrum:
         file_format : str, optional
             by default 'jpg'
         """
-        fig = self.plot(**kwargs)
-        fig.savefig(f'{path}/{self.name}.{file_format}')
-
+        fig = self.plot(**kwargs);
+        fig.savefig(f'{path}/{self.name}.{file_format}', dpi=dpi, quality=95)
 
 
     # TODO: Add automated peak finding and integrating features
