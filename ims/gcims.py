@@ -52,7 +52,7 @@ class Spectrum:
         self.group = group
         self.ret_time = ret_time
         self.drift_time = drift_time
-        self.drift_time_label = 'Drift Time [ms]'
+        self._drift_time_label = 'Drift Time [ms]'
         self.meta_attr = meta_attr
         self.time = datetime.strptime(self.meta_attr['Timestamp'],
                                       '%Y-%m-%dT%H:%M:%S')
@@ -60,14 +60,30 @@ class Spectrum:
     def __repr__(self):
         return f"GC-IMS Spectrum: {self.name}"
 
-    def __add__(self, other):
-        name = self.sample
-        mean_values = (self.values + other.values) / 2
-        mean_ret_time = (self.ret_time + other.ret_time) / 2
-        mean_drift_time = (self.drift_time + other.drift_time) / 2
+    # def __add__(self, other):
+    #     name = self.sample
+    #     mean_values = (self.values + other.values) / 2
+    #     mean_ret_time = (self.ret_time + other.ret_time) / 2
+    #     mean_drift_time = (self.drift_time + other.drift_time) / 2
 
-        return Spectrum(name, mean_values, self.sample, self.group,
-                              mean_ret_time, mean_drift_time, self.meta_attr)
+    #     return Spectrum(name, mean_values, self.sample, self.group,
+    #                           mean_ret_time, mean_drift_time, self.meta_attr)
+    
+    
+    def __add__(self, other):
+        values = self.values + other.values
+        ret_time = self.ret_time + other.ret_time
+        drift_time = self.drift_time + other.drift_time
+        return Spectrum(self.name, values, self.sample, self.group,
+                        ret_time, drift_time, self.meta_attr, self.time)
+        
+    
+    def __radd__(self, other):
+        if other == 0:
+            return self
+        else:
+            raise NotImplementedError()
+    
 
     @staticmethod
     def read_meta_attr(path):
@@ -299,7 +315,7 @@ class Spectrum:
         rip_ms = self.drift_time[rip_index]
         dt_riprel = self.drift_time / rip_ms
         self.drift_time = dt_riprel
-        self.drift_time_label = 'Drift Time RIP relative'
+        self._drift_time_label = 'Drift Time RIP relative'
         return self
 
     def rip_scaling(self):
@@ -443,7 +459,7 @@ class Spectrum:
         plt.yticks(ylocs[1:-1], rt_ticks)
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
-        plt.xlabel(self.drift_time_label, fontsize=12)
+        plt.xlabel(self._drift_time_label, fontsize=12)
         plt.ylabel("Retention Time [s]", fontsize=12)
         
         plt.show()
@@ -472,8 +488,9 @@ class Spectrum:
         file_format : str, optional
             by default 'jpg'
         """
-        fig = self.plot(**kwargs);
-        fig.savefig(f'{path}/{self.name}.{file_format}', dpi=dpi, quality=95)
+        fig = self.plot(**kwargs)
+        fig.savefig(f'{path}/{self.name}.{file_format}', dpi=dpi, quality=95,
+                    bbox_inches="tight", pad_inches=0.5)
 
 
     # TODO: Add automated peak finding and integrating features
