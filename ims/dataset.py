@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 
 class Dataset:
 
-    def __init__(self, data, name, files, samples, labels, _path):
+    def __init__(self, data, name, files, samples, labels):
         """
         DataSet class to coordinate many Spectrum instances
         as dask delayed objects with label and sample names available
@@ -36,8 +36,8 @@ class Dataset:
         labels : list
             Lists label names, one entry per spectrum.
         """
-        self.name = name
         self.data = data
+        self.name = name
         self.files = files
         self.samples = samples
         self.labels = labels
@@ -87,15 +87,14 @@ class Dataset:
             files = []
             samples = []
             labels = []
-            paths = glob(f'{path}/*/*/*.')
+            paths = [os.path.normpath(i) for i in glob(f'{path}/*/*/*')]
             name = os.path.split(path)[1]
             for filedir in paths:
-                filedir = os.path.normpath(filedir)
-                file_name = os.path.split(filedir)
+                file_name = os.path.split(filedir)[1]
                 files.append(file_name)
-                sample_name = path.split(os.sep)[-2]
+                sample_name = filedir.split(os.sep)[-2]
                 samples.append(sample_name)
-                label = path.split(os.sep)[-3]
+                label = filedir.split(os.sep)[-3]
                 labels.append(label)
         else:
             paths = [os.path.normpath(i) for i in glob(f'{path}/*')]
@@ -215,6 +214,7 @@ class Dataset:
         os.mkdir(folder_name)
         [Spectrum.to_hdf5(i, path=folder_name) for i in self.data]
 
+    # TODO: add out of bounds checking
     def select(self, label=None, sample=None):
         """
         Selects all spectra of specified label or sample.
@@ -242,6 +242,7 @@ class Dataset:
             for i, j in enumerate(self.labels):
                 if j == label:
                     indices.append(i)
+
         if sample is not None:
             name = sample
             indices = []
@@ -327,7 +328,7 @@ class Dataset:
 
         means = []
         for i in grouped_data:
-            means.append(Spectrum.mean(i))
+            means.append(sum(i) / len(i))
 
         self.data = means
         self.samples = list(u_samples)
@@ -335,8 +336,8 @@ class Dataset:
         self.preprocessing.append('mean')
         return self
 
-    # TODO: rewrite method so it is no longer a massive bottleneck
-    def riprel(self):
+    # TODO: improve performance
+    def interp_riprel(self):
         """
         Interpolates all spectra to common RIP relative
         drift time coordinate.
@@ -368,7 +369,8 @@ class Dataset:
             i.values = f(new_dt)
             i.drift_time = new_dt
             i._drift_time_label = 'Drift Time RIP relative'
-
+        
+        self.preprocessing.append("interp_riprel")
         return self
 
     def rip_scaling(self):

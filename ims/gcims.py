@@ -1,7 +1,6 @@
 import os
 import re
 import h5py
-from datetime import datetime
 from array import array
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,7 +11,7 @@ class Spectrum:
 
     def __init__(self, name, values, ret_time, drift_time, meta_attr):
         """
-        Represents on GCIMS-Spectrum including the data matrix, 
+        Represents on GCIMS-Spectrum including the data matrix,
         retention and drift time coordinates and meta attributes.
 
         Contains all methods that can be applied per spectrum.
@@ -46,20 +45,30 @@ class Spectrum:
     def __repr__(self):
         return f"GC-IMS Spectrum: {self.name}"
     
+    # add, radd and truediv are implemented to calculate means easily
     def __add__(self, other):
         values = self.values + other.values
         ret_time = self.ret_time + other.ret_time
         drift_time = self.drift_time + other.drift_time
-        return Spectrum(self.name, values, self.sample, self.group,
-                        ret_time, drift_time, self.meta_attr, self.time)
-        
+        return Spectrum(self.name, values, ret_time, drift_time,
+                        self.meta_attr)
+
     def __radd__(self, other):
         if other == 0:
             return self
         else:
             raise NotImplementedError()
-    
 
+    def __truediv__(self, other):
+        if isinstance(other, int):
+            values = self.values / other
+            ret_time = self.ret_time / other
+            drift_time = self.drift_time / other
+            return Spectrum(self.name, values, ret_time,
+                            drift_time, self.meta_attr)
+        else:
+            raise NotImplementedError()
+    
     @staticmethod
     def read_meta_attr(path):
         '''
@@ -229,38 +238,6 @@ class Spectrum:
             for i in self.meta_attr:
                 values.attrs[i] = self.meta_attr[i]
 
-    # @classmethod
-    # def mean(cls, spectra_list):
-    #     """
-    #     Calculates means from all spectra in list.
-    #     Mainly needed for the mean implementation in
-    #     Dataset class.
-
-    #     Parameters
-    #     ----------
-    #     spectra_list : list
-    #         List with all spectra to use.
-
-    #     Returns
-    #     -------
-    #     Spectrum
-    #         With mean values.
-    #     """
-    #     name = spectra_list[0].sample
-    #     sample = spectra_list[0].sample
-    #     group = spectra_list[0].group
-    #     meta_attr = spectra_list[0].meta_attr
-
-    #     length = len(spectra_list)
-    #     values = np.array(sum([i.values for i in spectra_list])) / length
-    #     ret_time = np.array(sum([i.ret_time for i in spectra_list])) / length
-    #     drift_time = np.array(sum([i.drift_time for i in spectra_list]))\
-    #         / length
-        
-    #     time = None
-
-    #     return cls(name, values, sample, group, ret_time,
-    #                drift_time, meta_attr, time)
 
     def riprel(self):
         """
@@ -423,6 +400,7 @@ class Spectrum:
 
         plt.xlabel(self._drift_time_label, fontsize=12)
         plt.ylabel("Retention Time [s]", fontsize=12)
+        plt.show()
         return fig
 
 
