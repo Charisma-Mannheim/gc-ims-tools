@@ -1,7 +1,6 @@
 import os
 import re
 import h5py
-from datetime import datetime
 from array import array
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,11 +9,10 @@ from matplotlib.ticker import AutoMinorLocator
 
 class Spectrum:
 
-    def __init__(self, name, values, sample, group,
-                 ret_time, drift_time, meta_attr, time):
+    def __init__(self, name, values, ret_time, drift_time, meta_attr):
         """
-        Represents on GCIMS-Spectrum including retention
-        and drift time coordinates, meta attributes and labels.
+        Represents on GCIMS-Spectrum including the data matrix,
+        retention and drift time coordinates and meta attributes.
 
         Contains all methods that can be applied per spectrum.
 
@@ -27,13 +25,7 @@ class Spectrum:
 
         values : np.array
             Data array stored as numpy array.
-
-        sample : str
-            Sample label.
-
-        group : str
-            Group label
-
+            
         ret_time : np.array
             Retention time as numpy array.
 
@@ -42,49 +34,41 @@ class Spectrum:
 
         meta_attr : dict
             Meta attributes from GAS software.
-            
-        time: str
-            Used by TimeSeries class. Elapsed time.
         """
         self.name = name
         self.values = values
-        self.sample = sample
-        self.group = group
         self.ret_time = ret_time
         self.drift_time = drift_time
-        self._drift_time_label = 'Drift Time [ms]'
         self.meta_attr = meta_attr
-        self.time = datetime.strptime(self.meta_attr['Timestamp'],
-                                      '%Y-%m-%dT%H:%M:%S')
+        self._drift_time_label = 'Drift Time [ms]'
         
     def __repr__(self):
         return f"GC-IMS Spectrum: {self.name}"
-
-    # def __add__(self, other):
-    #     name = self.sample
-    #     mean_values = (self.values + other.values) / 2
-    #     mean_ret_time = (self.ret_time + other.ret_time) / 2
-    #     mean_drift_time = (self.drift_time + other.drift_time) / 2
-
-    #     return Spectrum(name, mean_values, self.sample, self.group,
-    #                           mean_ret_time, mean_drift_time, self.meta_attr)
     
-    
+    # add, radd and truediv are implemented to calculate means easily
     def __add__(self, other):
         values = self.values + other.values
         ret_time = self.ret_time + other.ret_time
         drift_time = self.drift_time + other.drift_time
-        return Spectrum(self.name, values, self.sample, self.group,
-                        ret_time, drift_time, self.meta_attr, self.time)
-        
-    
+        return Spectrum(self.name, values, ret_time, drift_time,
+                        self.meta_attr)
+
     def __radd__(self, other):
         if other == 0:
             return self
         else:
             raise NotImplementedError()
-    
 
+    def __truediv__(self, other):
+        if isinstance(other, int):
+            values = self.values / other
+            ret_time = self.ret_time / other
+            drift_time = self.drift_time / other
+            return Spectrum(self.name, values, ret_time,
+                            drift_time, self.meta_attr)
+        else:
+            raise NotImplementedError()
+    
     @staticmethod
     def read_meta_attr(path):
         '''
@@ -129,7 +113,7 @@ class Spectrum:
         return meta_attr
 
     @staticmethod
-    def _calc_ret_and_drift_coords(meta_attr):
+    def calc_coordinates(meta_attr):
         '''
         Calculates retention and drift time coordinates from meta attributes.
         '''
@@ -171,18 +155,12 @@ class Spectrum:
         Dataset
         """
         meta_attr = Spectrum.read_meta_attr(path)
-        ret_time, drift_time = Spectrum._calc_ret_and_drift_coords(meta_attr)
+        ret_time, drift_time = Spectrum.calc_coordinates(meta_attr)
 
         # get sample and group names from folder names
         path = os.path.normpath(path)
         name = os.path.split(path)[1]
         name = name.split('.')[0]
-        if subfolders:
-            sample = path.split(os.sep)[-2]
-            group = path.split(os.sep)[-3]
-        else:
-            sample = ''
-            group = ''
         
         with open(path, mode='rb') as f:
             data = f.read()
@@ -200,12 +178,12 @@ class Spectrum:
             values = data[start + 1:]
             values = bytearray(values)
             values = array('h', values)
-            values = np.array(values)
-            values = values.reshape((meta_attr['Chunks count'],
-                                     meta_attr['Chunk sample count']))
+            values = np.array(values).reshape(
+                meta_attr['Chunks count'],
+                meta_attr['Chunk sample count']
+                )
 
-        return cls(name, values, sample, group,
-                   ret_time, drift_time, meta_attr, time)
+        return cls(name, values, ret_time, drift_time, meta_attr)
 
 
     @classmethod
@@ -228,17 +206,12 @@ class Spectrum:
             values = np.array(f['values'])
             ret_time = np.array(f['ret_time'])
             drift_time = np.array(f['drift_time'])
-            group = str(f.attrs['group'])
             name = str(f.attrs['name'])
-            sample = str(f.attrs['sample'])
-            time = datetime.strptime(str(f.attrs['time']), '%Y-%m-%dT%H:%M:%S')
             meta_keys = list(f['values'].attrs.keys())
             meta_values = list(f['values'].attrs.values())
             meta_attr = dict(zip(meta_keys, meta_values))
-        return cls(
-            name, values, sample, group,
-            ret_time, drift_time, meta_attr, time
-            )
+
+        return cls(name, values, ret_time, drift_time, meta_attr)
 
 
     def to_hdf5(self, path=os.getcwd()):
@@ -260,46 +233,11 @@ class Spectrum:
             ret_time = f.create_dataset('ret_time', data=self.ret_time)
             drift_time = f.create_dataset('drift_time', data=self.drift_time)
 
-            f.attrs['group'] = self.group
-            f.attrs['sample'] = self.sample
             f.attrs['name'] = self.name
-            f.attrs['time'] = datetime.strftime(self.time, '%Y-%m-%dT%H:%M:%S')
 
             for i in self.meta_attr:
                 values.attrs[i] = self.meta_attr[i]
 
-    @classmethod
-    def mean(cls, spectra_list):
-        """
-        Calculates means from all spectra in list.
-        Mainly needed for the mean implementation in
-        Dataset class.
-
-        Parameters
-        ----------
-        spectra_list : list
-            List with all spectra to use.
-
-        Returns
-        -------
-        Spectrum
-            With mean values.
-        """
-        name = spectra_list[0].sample
-        sample = spectra_list[0].sample
-        group = spectra_list[0].group
-        meta_attr = spectra_list[0].meta_attr
-
-        length = len(spectra_list)
-        values = np.array(sum([i.values for i in spectra_list])) / length
-        ret_time = np.array(sum([i.ret_time for i in spectra_list])) / length
-        drift_time = np.array(sum([i.drift_time for i in spectra_list]))\
-            / length
-        
-        time = None
-
-        return cls(name, values, sample, group, ret_time,
-                   drift_time, meta_attr, time)
 
     def riprel(self):
         """
@@ -447,8 +385,7 @@ class Spectrum:
         plt.colorbar()
         plt.title(self.name, fontsize=16)
 
-        # FIXME: Axes values do not work when riprel dt axis
-        # because of round
+        # TODO: axis labels desplay weird numbers
         xlocs, _ = plt.xticks()
         ylocs, _ = plt.yticks()
 
@@ -457,11 +394,12 @@ class Spectrum:
 
         plt.xticks(xlocs[1:-1], dt_ticks)
         plt.yticks(ylocs[1:-1], rt_ticks)
+
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
+
         plt.xlabel(self._drift_time_label, fontsize=12)
         plt.ylabel("Retention Time [s]", fontsize=12)
-        
         plt.show()
         return fig
 
