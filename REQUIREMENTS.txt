@@ -3,5 +3,4 @@ pandas
 scipy
 matplotlib
 h5py
-dask
 sklearn
