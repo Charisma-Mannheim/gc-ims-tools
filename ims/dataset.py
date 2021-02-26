@@ -485,7 +485,7 @@ class Dataset:
         Parameters
         ----------
         flatten : bool, optional
-            Flattens 3D datasets to 2D,by default True
+            Flattens 3D datasets to 2D, by default True
 
         Returns
         -------

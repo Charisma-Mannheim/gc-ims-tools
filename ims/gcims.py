@@ -371,8 +371,15 @@ class Spectrum:
         -------
         matplotlib.figure.Figure
         """        
+        # plt.rcParams.update({
+        #     "text.usetex": True,
+        #     "font.family": "serif",
+        #     "font.serif": ["Computer Modern Roman"],
+        #     "font.size": 12
+        # })
+        
         fig, ax = plt.subplots(figsize=(width, height))
-
+        
         plt.imshow(
             self.values,
             origin="lower",
@@ -400,7 +407,7 @@ class Spectrum:
 
         plt.xlabel(self._drift_time_label, fontsize=12)
         plt.ylabel("Retention Time [s]", fontsize=12)
-        plt.show()
+        # plt.show()
         return fig
 
 
