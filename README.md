@@ -55,17 +55,6 @@ sample = ims.Spectrum.read_mea("data/sample_file.mea")
 dataset = ims.Dataset.read_mea("data/folder_with_mea_files")
 ```
 
-Use preprocessing methods like cutting drift and retention time
-by chaining them together and plot the result.
-
-```python
-sample = ims.Spectrum.read_mea(path).cut_dt(5, 15).cut_rt(70, 500)
-sample.plot()
-```
-
-<img src="sample.png"/>
-
-
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
