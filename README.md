@@ -63,7 +63,7 @@ sample = ims.Spectrum.read_mea(path).cut_dt(5, 15).cut_rt(70, 500)
 sample.plot()
 ```
 
-<img src="sample.svg"/>
+<img src="sample.png"/>
 
 
 ## License
