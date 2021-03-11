@@ -2,18 +2,19 @@
 
 ## Installation
 
-Optionally create a new conda python enviroment with:
+Optionally create a new conda python environment with:
 
 `conda create --name ims python`
 
 `conda activate ims`
 
-To install the package locally clone the repository and navigate to the directory
-you cloned it to. Install requirements with:
+To install the package clone the repository and navigate to the directory
+you cloned it to.
+Install requirements with:
 
 `pip install -r ims/requirements.txt`
 
-Install the package with:
+Install the package locally with:
 
 `pip install -e ims`
 
@@ -32,4 +33,4 @@ ims.Spectrum
 ims.Dataset
 ```
 
-When the import could not be resolved, check if you are using the right enviroment.
+When the import fails, check if you are using the right environment.
