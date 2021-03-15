@@ -165,11 +165,7 @@ class Spectrum:
         with open(path, mode='rb') as f:
             data = f.read()
             #find first null byte
-            start = 0
-            for i, j in enumerate(data):
-                start = i
-                if j == 0:
-                    break
+            start = data.index(0)
 
             # read the remaining data
             # values are stored as signed short int in two bytes
