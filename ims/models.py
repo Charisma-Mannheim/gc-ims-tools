@@ -29,7 +29,7 @@ class BaseModel:
             self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
                 self.X, self.y, test_size=self.test_size
             )
-            
+
     def _calc_weights(self):
         '''
         Calculate weights for scaling dependent on the method.
@@ -110,8 +110,30 @@ class PCA_Model(BaseModel):
 
         return fig
 
-    def loadings_plot(self, PC=1, vmin=-0.05, vmax=0.05, width=9, height=10):
-        
+    def loadings_plot(self, PC=1, color_range=0.1, width=9, height=10):
+        """
+        Plots loadings of a principle component with the original retention
+        and drift time coordinates.
+
+        Parameters
+        ----------
+        PC : int, optional
+            principal component, by default 1
+
+        color_range : int, optional
+            color_scale ranges from - color_range to + color_range
+            centered at 0
+
+        width : int, optional
+            plot width in inches, by default 9
+
+        height : int, optional
+            plot height in inches, by default 10
+
+        Returns
+        -------
+        matplotlib.pyplot.figure
+        """        
         # use retention and drift time axis from the first spectrum
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
@@ -125,8 +147,8 @@ class PCA_Model(BaseModel):
             origin="lower",
             aspect="auto",
             cmap="RdBu_r",
-            vmin=vmin,
-            vmax=vmax
+            vmin=(-color_range),
+            vmax=color_range
             )
 
         plt.colorbar()
@@ -144,8 +166,8 @@ class PCA_Model(BaseModel):
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         
         plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
-        plt.ylabel("Retention Time [s", fontsize=12)
-
+        plt.ylabel("Retention Time [s]", fontsize=12)
+        plt.title(f"PCA Loadings of PC {PC}", fontsize=16)
         return fig
 
     def expl_var_ratio_plot(self):
