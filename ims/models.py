@@ -77,7 +77,7 @@ class PCA_Model(BaseModel):
 {self.scaling_method} scaling
 '''
 
-    def scatter_plot(self, PC_x=1, PC_y=2):
+    def scatter_plot(self, PC_x=1, PC_y=2, width=7, height=6, style="seaborn"):
         """
         scatter_plot
         Scatter plot of two principal components.
@@ -90,7 +90,11 @@ class PCA_Model(BaseModel):
         Returns
         -------
         matplotlib.pyplot.figure
-        """        
+        """
+        expl_var = []
+        for i in range(1, self.pca.n_components_ + 1):
+            expl_var.append(round(self.pca.explained_variance_ratio_[i-1] * 100, 1))
+        
         pc_df = pd.DataFrame(
             data=self.pc,
             columns=[f"PC {x}" for x in range(1, self.pca.n_components_ + 1)]
@@ -98,15 +102,20 @@ class PCA_Model(BaseModel):
         pc_df['Sample'] = self.dataset.samples
         pc_df['Label'] = self.dataset.labels
 
-        with plt.style.context("seaborn"):
-            fig = sns.scatterplot(
+        with plt.style.context(style):
+            fig, ax = plt.subplots(figsize=(width, height))
+            sns.scatterplot(
+                ax=ax,
                 x=f"PC {PC_x}",
                 y=f"PC {PC_y}",
                 data=pc_df,
                 hue="Label",
-                markers="Label"
-                )
+                style="Label"
+            )
+
             plt.legend(frameon=True, fancybox=True, facecolor="white")
+            plt.xlabel(f"PC {PC_x} ({expl_var[PC_x-1]} % of variance)")
+            plt.ylabel(f"PC {PC_y} ({expl_var[PC_y-1]} % of variance)")
 
         return fig
 
@@ -170,7 +179,7 @@ class PCA_Model(BaseModel):
         plt.title(f"PCA Loadings of PC {PC}", fontsize=16)
         return fig
 
-    def expl_var_ratio_plot(self):
+    def expl_var_ratio_plot(self, width=7, height=6, style="seaborn"):
         """
         expl_var_ratio_plot
         Plots the explained variance ratio per principal component
@@ -183,15 +192,15 @@ class PCA_Model(BaseModel):
         x = [*range(1, self.pca.n_components_ + 1)]
         y = self.pca.explained_variance_ratio_
 
-        with plt.style.context("seaborn"):
-            fig, ax = plt.subplots()
+        with plt.style.context(style):
+            fig, ax = plt.subplots(figsize=(width, height))
             
             for axis in [ax.xaxis, ax.yaxis]:
                 axis.set_major_locator(MaxNLocator(integer=True))
             
             plt.xticks(x)
-            plt.xlabel("Principal Component")
-            plt.ylabel("Explainded variance ratio [%]")
+            plt.xlabel("Principal Component", fontsize=12)
+            plt.ylabel("Explainded variance ratio [%]", fontsize=12)
             
             ax.plot(x, np.cumsum(y) * 100, label="cumulative")
             ax.plot(x, y * 100, label="per PC")
