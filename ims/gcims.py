@@ -164,15 +164,16 @@ class Spectrum:
         
         with open(path, mode='rb') as f:
             data = f.read()
-            #find first null byte
-            start = data.index(0)
+            
+            # meta attributes are separated by a null byte
+            # add 1 to exclude it
+            start = data.index(0) + 1
 
             # read the remaining data
             # values are stored as signed short int in two bytes
             # Chunks count is the size of the retention time
             # Chunks sample count is the size of the drift time
-            values = data[start + 1:]
-            values = bytearray(values)
+            values = data[start:]
             values = array('h', values)
             values = np.array(values).reshape(
                 meta_attr['Chunks count'],
@@ -183,7 +184,7 @@ class Spectrum:
 
 
     @classmethod
-    def read_hdf5(cls, path, time=None):
+    def read_hdf5(cls, path):
         """
         Reads hdf5 files exported by the to_hdf5 method.
         Labels are attached to the file, so a folder strucutre is
@@ -280,7 +281,7 @@ class Spectrum:
         GCIMS-Spectrum
             Resampled values array
             
-        """        
+        """
         self.values = (self.values[0::n, :] + self.values[1::n, :]) / n
         self.ret_time = self.ret_time[::n]
         return self
@@ -367,12 +368,6 @@ class Spectrum:
         -------
         matplotlib.figure.Figure
         """        
-        # plt.rcParams.update({
-        #     "text.usetex": True,
-        #     "font.family": "serif",
-        #     "font.serif": ["Computer Modern Roman"],
-        #     "font.size": 12
-        # })
         
         fig, ax = plt.subplots(figsize=(width, height))
         
@@ -403,7 +398,6 @@ class Spectrum:
 
         plt.xlabel(self._drift_time_label, fontsize=12)
         plt.ylabel("Retention Time [s]", fontsize=12)
-        # plt.show()
         return fig
 
 

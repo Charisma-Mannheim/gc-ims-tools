@@ -137,7 +137,7 @@ class Dataset:
         paths, name, files, samples, labels = Dataset._measurements(
             path, subfolders
         )
-        data = [Spectrum.read_mea(i, subfolders) for i in paths]
+        data = [Spectrum.read_mea(i) for i in paths]
         return cls(data, name, files, samples, labels)
 
     @classmethod
@@ -339,8 +339,7 @@ class Dataset:
     # TODO: improve performance
     def interp_riprel(self):
         """
-        Interpolates all spectra to common RIP relative
-        drift time coordinate.
+        Interpolates all spectra to common RIP relative drift time coordinate.
         Alignment along drift time coordinate.
 
         Returns
@@ -449,7 +448,7 @@ class Dataset:
         self.preprocessing.append(f'cut_rt({start, stop})')
         return self
 
-    def export_plots(self, folder_name, file_format='jpg', **kwargs):
+    def export_plots(self, folder_name=None, file_format='jpg', **kwargs):
         """
         Exports a static plot for each spectrum to disk.
         Replicates label folders.
@@ -462,6 +461,8 @@ class Dataset:
         file_format : str, optional
             by default 'jpeg'
         """
+        if folder_name is None:
+            folder_name = self.name.join("_plots")
         group_names = np.unique(self.labels)
         sample_names = np.unique(self.samples)
         sample_indices = self.sample_indices
