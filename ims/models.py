@@ -1,7 +1,8 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator, AutoMinorLocator
+import seaborn as sns
 import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -71,22 +72,120 @@ class PCA_Model(BaseModel):
             self.loadings = self.pca.components_
 
     def __repr__(self):
-        return f'''
-PCA:
+        return f'''PCA:
 {self.dataset.name},
 {self.scaling_method} scaling
 '''
 
-    def scatter_plot(self):
-        pass
-    
-    def loadings_plot(self):
-        pass
+    def scatter_plot(self, PCs=(1, 2)):
+        """
+        scatter_plot
+        Scatter plot of two principal components.
+
+        Parameters
+        ----------
+        PCs : tuple, optional
+            The principal components to plot, by default (1, 2)
+
+        Returns
+        -------
+        matplotlib.pyplot.figure
+
+        Raises
+        ------
+        ValueError
+            If length of PCs is not 2
+        """        
+        if len(PCs) == 2:
+            raise ValueError("Can only plot two principal components")
+        
+        pc_df = pd.DataFrame(
+            data=self.pc,
+            columns=[f"PC {x}" for x in range(1, self.pca.n_components_ + 1)]
+        )
+        pc_df['Sample'] = self.dataset.samples
+        pc_df['Label'] = self.dataset.labels
+
+        with plt.style.context("seaborn"):
+            fig = sns.scatterplot(
+                x=f"PC {PCs[0]}",
+                y=f"PC {PCs[1]}",
+                data=pc_df,
+                hue="Label",
+                markers="Label"
+                )
+            plt.legend(frameon=True, fancybox=True, facecolor="white")
+
+        return fig
+
+    def loadings_plot(self, PC=1, vmin=-0.05, vmax=0.05):
+        
+        # use retention and drift time axis from the first spectrum
+        ret_time = self.dataset[0].ret_time
+        drift_time = self.dataset[0].drift_time
+
+        loading_pc = self.loadings[0, PC-1].reshape(len(ret_time), len(drift_time))
+
+        fig, ax = plt.subplots()
+
+        plt.imshow(
+            loading_pc,
+            origin="lower",
+            aspect="auto",
+            cmap="RdBu_r",
+            vmin=vmin,
+            vmax=vmax
+            )
+
+        plt.colorbar()
+
+        xlocs, _ = plt.xticks()
+        ylocs, _ = plt.yticks()
+
+        rt_ticks = [round(ret_time[int(i)]) for i in ylocs[1:-1]]
+        dt_ticks = [round(drift_time[int(i)], 1) for i in xlocs[1:-1]]
+
+        plt.xticks(xlocs[1:-1], dt_ticks)
+        plt.yticks(ylocs[1:-1], rt_ticks)
+
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
+
+        return fig
+
+
+
 
     def expl_var_ratio_plot(self):
-        pass
-    
-    
+        """
+        expl_var_ratio_plot
+        Plots the explained variance ratio per principal component
+        and cumulatively.
+
+        Returns
+        -------
+        matplotlib.pyplot.figure
+        """        
+        x = [*range(1, self.pca.n_components_ + 1)]
+        y = self.pca.explained_variance_ratio_
+
+        with plt.style.context("seaborn"):
+            fig, ax = plt.subplots()
+            
+            for axis in [ax.xaxis, ax.yaxis]:
+                axis.set_major_locator(MaxNLocator(integer=True))
+            
+            plt.xticks(x)
+            plt.xlabel("Principal Component")
+            plt.ylabel("Explainded variance ratio [%]")
+            
+            ax.plot(x, np.cumsum(y) * 100, label="cumulative")
+            ax.plot(x, y * 100, label="per PC")
+            
+            plt.legend(frameon=True, fancybox=True, facecolor="white")
+
+        return fig
+
 class CrossVal(BaseModel):
 
     def __init__(self, dataset, model,
