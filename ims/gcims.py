@@ -6,6 +6,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 
+import json
+from zipfile import ZipFile
+import pandas as pd
 
 class Spectrum:
 
@@ -68,6 +71,28 @@ class Spectrum:
                             drift_time, self.meta_attr)
         else:
             raise NotImplementedError()
+    
+    @classmethod
+    def read_zip(cls, path):
+        """
+        Reads zip files from GAS mea to csv converter.
+        """
+        with ZipFile(path) as myzip:
+            with myzip.open('csv_data.csv', 'r') as mycsv:
+                values = pd.read_csv(mycsv, header=None)
+            with myzip.open('meta_attributes.json', 'r') as myjson:
+                meta_attr = json.load(myjson)
+
+        values = np.array(values)
+        values = np.delete(values, -1, axis=1)
+
+        ret_time, drift_time = Spectrum.calc_coordinates(meta_attr)
+
+        path = os.path.normpath(path)
+        name = os.path.split(path)[1]
+
+        return cls(name, values, ret_time, drift_time, meta_attr)
+    
     
     @staticmethod
     def read_meta_attr(path):
