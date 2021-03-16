@@ -77,7 +77,7 @@ class PCA_Model(BaseModel):
 {self.scaling_method} scaling
 '''
 
-    def scatter_plot(self, PCs=(1, 2)):
+    def scatter_plot(self, PC_x=1, PC_y=2):
         """
         scatter_plot
         Scatter plot of two principal components.
@@ -90,15 +90,7 @@ class PCA_Model(BaseModel):
         Returns
         -------
         matplotlib.pyplot.figure
-
-        Raises
-        ------
-        ValueError
-            If length of PCs is not 2
         """        
-        if len(PCs) == 2:
-            raise ValueError("Can only plot two principal components")
-        
         pc_df = pd.DataFrame(
             data=self.pc,
             columns=[f"PC {x}" for x in range(1, self.pca.n_components_ + 1)]
@@ -108,8 +100,8 @@ class PCA_Model(BaseModel):
 
         with plt.style.context("seaborn"):
             fig = sns.scatterplot(
-                x=f"PC {PCs[0]}",
-                y=f"PC {PCs[1]}",
+                x=f"PC {PC_x}",
+                y=f"PC {PC_y}",
                 data=pc_df,
                 hue="Label",
                 markers="Label"
@@ -118,15 +110,15 @@ class PCA_Model(BaseModel):
 
         return fig
 
-    def loadings_plot(self, PC=1, vmin=-0.05, vmax=0.05):
+    def loadings_plot(self, PC=1, vmin=-0.05, vmax=0.05, width=9, height=10):
         
         # use retention and drift time axis from the first spectrum
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
 
-        loading_pc = self.loadings[0, PC-1].reshape(len(ret_time), len(drift_time))
+        loading_pc = self.loadings[PC-1, :].reshape(len(ret_time), len(drift_time))
 
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(width, height))
 
         plt.imshow(
             loading_pc,
@@ -150,11 +142,11 @@ class PCA_Model(BaseModel):
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
+        
+        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
+        plt.ylabel("Retention Time [s", fontsize=12)
 
         return fig
-
-
-
 
     def expl_var_ratio_plot(self):
         """
@@ -185,6 +177,7 @@ class PCA_Model(BaseModel):
             plt.legend(frameon=True, fancybox=True, facecolor="white")
 
         return fig
+
 
 class CrossVal(BaseModel):
 

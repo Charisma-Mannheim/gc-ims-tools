@@ -73,7 +73,7 @@ class Spectrum:
             raise NotImplementedError()
     
     @classmethod
-    def read_zip(cls, path):
+    def read_zip(cls, path, subfolders=False):
         """
         Reads zip files from GAS mea to csv converter.
         """
