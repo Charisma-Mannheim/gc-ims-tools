@@ -148,7 +148,7 @@ class Dataset:
         paths, name, files, samples, labels = Dataset._measurements(
             path, subfolders
         )
-        data = [Spectrum.read_zip(i, subfolders) for i in paths]
+        data = [Spectrum.read_zip(i) for i in paths]
         return cls(data, name, files, samples, labels)
 
     @classmethod
@@ -278,38 +278,6 @@ class Dataset:
             samples=samples,
             labels=labels,
         )
-
-    # TODO: Write groupby method that returns multiple DataSet instances
-    # def groupby(self):
-    #     indices = self.sample_indices
-    #     u_samples = np.unique(self.samples)
-
-    #     g_labels = []
-    #     g_samples = []
-    #     g_files = []
-    #     g_data = []
-    #     for i in u_samples:
-    #         idx = indices[i]
-    #         labels = []
-    #         samples = []
-    #         files = []
-    #         data = []
-    #         for j in idx:
-    #             labels.append(self.labels[j])
-    #             samples.append(self.samples[j])
-    #             files.append(self.files[j])
-    #             data.append(self.data[j])
-
-    #         g_labels.append(labels)
-    #         g_samples.append(samples)
-    #         g_files.append(files)
-    #         g_data.append(data)
-
-    #     self.labels = g_labels
-    #     self.samples = g_samples
-    #     self.files = g_files
-    #     self.data = g_data
-    #     return self
 
     def mean(self):
         """
