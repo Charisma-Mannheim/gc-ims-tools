@@ -279,6 +279,35 @@ class Dataset:
             labels=labels,
         )
 
+    def groupby(self, key="label"):
+        """
+        Groups dataset by label or sample.
+
+        Parameters
+        ----------
+        key : str, optional
+            "label" or "sample" are valid keys, by default "label"
+
+        Returns
+        -------
+        list
+            List of one ims.Dataset instance per group.
+        """
+        if key != "label" and key != "sample":
+            raise ValueError('Only "label" or "sample" are valid keys!')
+            
+        result = []
+        if key == "label":
+            for group in np.unique(self.labels):
+                result.append(self.select(label=group))
+            return result
+
+        if key == "sample":
+            for sample in np.unique(self.samples):
+                result.append(self.select(sample=sample))
+            return result
+
+
     def mean(self):
         """
         Calculates means for each sample,
