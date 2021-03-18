@@ -5,6 +5,7 @@ from array import array
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
+from datetime import datetime
 
 import json
 from zipfile import ZipFile
@@ -135,6 +136,8 @@ class Spectrum:
             keys.append(key)
 
         meta_attr = dict(zip(keys, values))
+        meta_attr["Timestamp"] = datetime.strptime(meta_attr["Timestamp"],
+                                                   "%Y-%m-%dT%H:%M:%S")
         return meta_attr
 
     @staticmethod
@@ -186,7 +189,7 @@ class Spectrum:
         path = os.path.normpath(path)
         name = os.path.split(path)[1]
         name = name.split('.')[0]
-        
+
         with open(path, mode='rb') as f:
             data = f.read()
             
@@ -391,7 +394,7 @@ class Spectrum:
 
         Returns
         -------
-        matplotlib.figure.Figure
+        matplotlib.pyplot.Figure
         """        
         
         fig, ax = plt.subplots(figsize=(width, height))
@@ -405,7 +408,7 @@ class Spectrum:
             vmax=vmax
             )
 
-        plt.colorbar()
+        plt.colorbar().set_label("Intensities [arbitrary units]")
         plt.title(self.name, fontsize=16)
 
         # TODO: axis labels desplay weird numbers
