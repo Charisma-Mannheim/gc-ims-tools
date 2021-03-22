@@ -317,6 +317,41 @@ class Spectrum:
         self.ret_time = self.ret_time[::n]
         return self
     
+    def rebin(self, n):
+        """
+        Downsamples spectrum by binning the array.
+        If the dims are not devisible by the binning factor
+        shortens the dim by the remainder at the long end. 
+
+        Parameters
+        ----------
+        n : int
+            Binning factor.
+
+        Returns
+        -------
+        Spectrum
+            Downsampled
+        """
+        a, b = self.values.shape
+        rest0 = a % n
+        rest1 = b % n
+        
+        if rest0 != 0:
+            self.values = self.values[:a-rest0, :]
+        if rest1 != 0:
+            self.values = self.values[:, :b-rest1]
+            
+        new_dims = (a // n, b // n)
+        
+        shape = (new_dims[0], a // new_dims[0],
+                 new_dims[1], b // new_dims[1])
+        
+        self.values = self.values.reshape(shape).mean(axis=(-1, 1))
+        self.ret_time = self.ret_time[::n]
+        self.drift_time = self.drift_time[::n]
+        return self
+    
     def cut_dt(self, start, stop):
         """
         Cuts data along drift time coordinate.

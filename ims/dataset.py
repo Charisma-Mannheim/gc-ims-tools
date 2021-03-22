@@ -411,6 +411,26 @@ class Dataset:
         self.data = [Spectrum.resample(i, n) for i in self.data]
         self.preprocessing.append(f'resample({n})')
         return self
+    
+    def rebin(self, n):
+        """
+        Downsamples each spectrum by binning the array.
+        If the dims are not devisible by the binning factor
+        shortens the dim by the remainder at the long end. 
+
+        Parameters
+        ----------
+        n : int
+            Binning factor.
+
+        Returns
+        -------
+        Dataset
+            Downsampled spectra
+        """
+        self.data = [Spectrum.rebin(i, n) for i in self.data]
+        self.preprocessing.append(f'rebin({n})')
+        return self
 
     def cut_dt(self, start, stop):
         """
