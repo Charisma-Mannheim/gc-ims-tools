@@ -72,6 +72,10 @@ class Spectrum:
                             drift_time, self.meta_attr)
         else:
             raise NotImplementedError()
+        
+    @property
+    def shape(self):
+        return self.values.shape
     
     @classmethod
     def read_zip(cls, path):
@@ -308,7 +312,6 @@ class Spectrum:
         -------
         GCIMS-Spectrum
             Resampled values array
-            
         """
         self.values = (self.values[0::n, :] + self.values[1::n, :]) / n
         self.ret_time = self.ret_time[::n]
@@ -411,7 +414,7 @@ class Spectrum:
         plt.colorbar().set_label("Intensities [arbitrary units]")
         plt.title(self.name, fontsize=16)
 
-        # TODO: axis labels desplay weird numbers
+        # TODO: axis labels display weird numbers
         xlocs, _ = plt.xticks()
         ylocs, _ = plt.yticks()
 
