@@ -255,9 +255,9 @@ class Spectrum:
         """
 
         with h5py.File(f'{path}/{self.name}.hdf5', 'w-') as f:
-            values = f.create_dataset('values', data=self.values)
-            ret_time = f.create_dataset('ret_time', data=self.ret_time)
-            drift_time = f.create_dataset('drift_time', data=self.drift_time)
+            f.create_dataset('values', data=self.values)
+            f.create_dataset('ret_time', data=self.ret_time)
+            f.create_dataset('drift_time', data=self.drift_time)
 
             f.attrs['name'] = self.name
             f.attrs['time'] = datetime.strftime(self.time, "%Y-%m-%dT%H:%M:%S")
