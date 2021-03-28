@@ -5,7 +5,7 @@ from array import array
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
-from datetime import datetime
+from datetime import date, datetime
 
 import json
 from zipfile import ZipFile
@@ -13,7 +13,7 @@ import pandas as pd
 
 class Spectrum:
 
-    def __init__(self, name, values, ret_time, drift_time, meta_attr):
+    def __init__(self, name, values, ret_time, drift_time, time):
         """
         Represents on GCIMS-Spectrum including the data matrix,
         retention and drift time coordinates and meta attributes.
@@ -43,7 +43,7 @@ class Spectrum:
         self.values = values
         self.ret_time = ret_time
         self.drift_time = drift_time
-        self.meta_attr = meta_attr
+        self.time = time
         self._drift_time_label = 'Drift Time [ms]'
         
     def __repr__(self):
@@ -72,11 +72,11 @@ class Spectrum:
                             drift_time, self.meta_attr)
         else:
             raise NotImplementedError()
-        
+
     @property
     def shape(self):
         return self.values.shape
-    
+
     @classmethod
     def read_zip(cls, path):
         """
@@ -95,10 +95,11 @@ class Spectrum:
 
         path = os.path.normpath(path)
         name = os.path.split(path)[1]
+        time = datetime.strptime(meta_attr["Timestamp"],
+                                      "%Y-%m-%dT%H:%M:%S")
 
-        return cls(name, values, ret_time, drift_time, meta_attr)
-    
-    
+        return cls(name, values, ret_time, drift_time, time)
+
     @staticmethod
     def read_meta_attr(path):
         '''
@@ -188,6 +189,7 @@ class Spectrum:
         """
         meta_attr = Spectrum.read_meta_attr(path)
         ret_time, drift_time = Spectrum.calc_coordinates(meta_attr)
+        time = meta_attr["Timestamp"]
 
         # get sample and group names from folder names
         path = os.path.normpath(path)
@@ -212,8 +214,7 @@ class Spectrum:
                 meta_attr['Chunk sample count']
                 )
 
-        return cls(name, values, ret_time, drift_time, meta_attr)
-
+        return cls(name, values, ret_time, drift_time, time)
 
     @classmethod
     def read_hdf5(cls, path):
@@ -236,12 +237,8 @@ class Spectrum:
             ret_time = np.array(f['ret_time'])
             drift_time = np.array(f['drift_time'])
             name = str(f.attrs['name'])
-            meta_keys = list(f['values'].attrs.keys())
-            meta_values = list(f['values'].attrs.values())
-            meta_attr = dict(zip(meta_keys, meta_values))
-
-        return cls(name, values, ret_time, drift_time, meta_attr)
-
+            time = datetime.strptime(f.attrs['time'], "%Y-%m-%dT%H:%M:%S")
+        return cls(name, values, ret_time, drift_time, time)
 
     def to_hdf5(self, path=os.getcwd()):
         """
@@ -263,10 +260,7 @@ class Spectrum:
             drift_time = f.create_dataset('drift_time', data=self.drift_time)
 
             f.attrs['name'] = self.name
-
-            for i in self.meta_attr:
-                values.attrs[i] = self.meta_attr[i]
-
+            f.attrs['time'] = datetime.strftime(self.time, "%Y-%m-%dT%H:%M:%S")
 
     def riprel(self):
         """
@@ -297,7 +291,7 @@ class Spectrum:
         m = np.max(self.values)
         self.values = self.values / m
         return self
-    
+
     def resample(self, n):
         """
         Resamples spectrum by calculating means of every n rows.
@@ -316,7 +310,7 @@ class Spectrum:
         self.values = (self.values[0::n, :] + self.values[1::n, :]) / n
         self.ret_time = self.ret_time[::n]
         return self
-    
+
     def rebin(self, n):
         """
         Downsamples spectrum by binning the array.
@@ -351,7 +345,7 @@ class Spectrum:
         self.ret_time = self.ret_time[::n]
         self.drift_time = self.drift_time[::n]
         return self
-    
+
     def cut_dt(self, start, stop):
         """
         Cuts data along drift time coordinate.
@@ -400,7 +394,6 @@ class Spectrum:
         self.values = self.values[idx_start:idx_stop, :]
         return self
 
-    # TODO: add features for data reduction
     def wavelet_compression(self):
         pass
 
@@ -434,9 +427,9 @@ class Spectrum:
         -------
         matplotlib.pyplot.Figure
         """        
-        
+
         fig, ax = plt.subplots(figsize=(width, height))
-        
+
         plt.imshow(
             self.values,
             origin="lower",
@@ -466,11 +459,9 @@ class Spectrum:
         plt.ylabel("Retention Time [s]", fontsize=12)
         return fig
 
-
     # TODO: Write compare spectra plot method
     def compare(self, other):
         pass
-
 
     def export_plot(self, path=os.getcwd(), dpi=300,
                     file_format='jpg', **kwargs):
@@ -492,7 +483,6 @@ class Spectrum:
         fig = self.plot(**kwargs)
         fig.savefig(f'{path}/{self.name}.{file_format}', dpi=dpi, quality=95,
                     bbox_inches="tight", pad_inches=0.5)
-
 
     # TODO: Add automated peak finding and integrating features
     # def find_peaks(self):
