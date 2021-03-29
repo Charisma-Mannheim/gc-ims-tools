@@ -36,8 +36,8 @@ class Spectrum:
         drift_time : np.array
             Drift time as numpy array
 
-        meta_attr : dict
-            Meta attributes from GAS software.
+        time : datetime object
+            Timestamp when the Spectrum was recorded.
         """
         self.name = name
         self.values = values
@@ -55,7 +55,7 @@ class Spectrum:
         ret_time = self.ret_time + other.ret_time
         drift_time = self.drift_time + other.drift_time
         return Spectrum(self.name, values, ret_time, drift_time,
-                        self.meta_attr)
+                        self.time)
 
     def __radd__(self, other):
         if other == 0:
@@ -69,7 +69,7 @@ class Spectrum:
             ret_time = self.ret_time / other
             drift_time = self.drift_time / other
             return Spectrum(self.name, values, ret_time,
-                            drift_time, self.meta_attr)
+                            drift_time, self.time)
         else:
             raise NotImplementedError()
 
