@@ -218,9 +218,6 @@ class Dataset:
         Makes a target directory with a data folder
         and a npy file with label labels.
 
-        Use the load_npy function from ml submodule to read
-        the data.
-
         Parameters
         ----------
         folder_name : str
@@ -349,6 +346,9 @@ class Dataset:
         means = []
         for i in grouped_data:
             means.append(sum(i) / len(i))
+            
+        for i, j in zip(means, u_samples):
+            i.name = j
 
         self.data = means
         self.samples = list(u_samples)
@@ -487,6 +487,7 @@ class Dataset:
         self.preprocessing.append(f'cut_rt({start, stop})')
         return self
 
+    # find a way to disable ipython autoplot features for this method
     def export_plots(self, folder_name=None, file_format='jpg', **kwargs):
         """
         Exports a static plot for each spectrum to disk.
