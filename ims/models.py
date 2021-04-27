@@ -7,8 +7,11 @@ import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+from sklearn.cross_decomposition import PLSRegression
 from sklearn.model_selection import cross_val_score, cross_val_predict
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import (
+    confusion_matrix, classification_report, mean_squared_error, r2_score
+    )
 
 
 class BaseModel:
@@ -44,7 +47,7 @@ class BaseModel:
             raise ValueError(f'{self.scaling_method} is not a supported method')
         weights = np.nan_to_num(weights, posinf=0, neginf=0)
         return weights
-    
+
 
 class PCA_Model(BaseModel):
     
@@ -271,7 +274,6 @@ Scaling: {self.scaling_method},
 {self.model}, {self.kfold} fold
 '''
 
-
     def plot_confusion_matrix(self):
         """
         Plots confusion matrix.
@@ -285,11 +287,50 @@ Scaling: {self.scaling_method},
                              index=np.unique(self.y),
                              columns=np.unique(self.y))
 
-        sns.set(rc={'figure.figsize':(8, 6)})
-        sns.set_style('ticks')
-        sns.set_context('talk')
+        sns.set(rc={'figure.figsize':(7, 6)})
         ax = sns.heatmap(cm_df, cbar=False, annot=True, cmap='Reds')
         ax.set(xlabel='Predicted', ylabel='Actual')
         ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
         return ax
     
+
+class PLSR(BaseModel):
+    
+    def __init__(self, dataset, scaling_method=None, max_comp=20, 
+                 kfold=10, plot_components=True, **kwargs):
+        
+        super().__init__(dataset, scaling_method)
+        self.kfold = kfold
+        self.max_comp = max_comp
+        self.plot_components = plot_components
+
+        self._best_comp = self.optimise_pls()
+        self._pls = PLSRegression(n_components=self._best_comp, **kwargs)
+        self._pls.fit(self.X, self.y)
+        self.prediction = cross_val_predict(self._pls, self.X, self.y, cv=kfold)
+        self.r2_score = r2_score(self.y, self.prediction)
+        self.mse = mean_squared_error(self.y, self.prediction)
+
+    def optimise_pls(self):
+        mse = []
+        component = np.arange(1, self.max_comp)
+        
+        for i in component:
+            pls = PLSRegression(n_components=i)
+            y_cv = cross_val_predict(pls, self.X, self.y, cv=self.kfold)
+            mse.append(mean_squared_error(self.y, y_cv))
+            
+        mse_min = np.argmin(mse)
+        
+        if self.plot_components:
+            with plt.style.context("seaborn"):
+                plt.plot(component, mse)
+                plt.scatter(component, mse)
+                plt.plot(component[mse_min], mse[mse_min], color="red",
+                         marker="o", markersize=15)
+                plt.xlabel("Number of PLS Components")
+                plt.ylabel("MSE")
+                plt.show()
+
+        return component[mse_min]
+
