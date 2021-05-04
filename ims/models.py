@@ -338,8 +338,8 @@ class PLSR(BaseModel):
             with plt.style.context("seaborn"):
                 plt.plot(component, mse)
                 plt.scatter(component, mse)
-                plt.plot(component[mse_min], mse[mse_min], color="red",
-                         marker="o", markersize=15)
+                plt.plot(component[mse_min], mse[mse_min], color="tab:orange",
+                         marker="*", markersize=20)
                 plt.xlabel("Number of PLS Components")
                 plt.ylabel("MSE")
                 plt.title("PLS")
@@ -352,9 +352,11 @@ class PLSR(BaseModel):
         with plt.style.context("seaborn"):
             fig = plt.figure()
             plt.scatter(self.prediction, self.y)
-            plt.plot(self.y, self.y, c="green", linewidth=1)
-            plt.plot(np.polyval(z, self.y), self.y, c="blue", linewidth=1)
+            plt.plot(self.y, self.y, label="Ideal", c="tab:green", linewidth=1)
+            plt.plot(np.polyval(z, self.y), self.y, label="Regression",
+                     c="tab:orange", linewidth=1)
             plt.xlabel("Predicted")
             plt.ylabel("Actual")
             plt.title("Crossvalidation")
+            plt.legend(frameon=True, fancybox=True, facecolor="white")
         return fig
