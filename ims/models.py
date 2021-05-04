@@ -307,9 +307,14 @@ class PLSR(BaseModel):
         self._best_comp = self.optimise_pls()
         self._pls = PLSRegression(n_components=self._best_comp, **kwargs)
         self._pls.fit(self.X, self.y)
-        self.prediction = cross_val_predict(self._pls, self.X, self.y, cv=kfold)
+        
+        self.prediction = self._pls.predict(self.X)
         self.r2_score = r2_score(self.y, self.prediction)
         self.mse = mean_squared_error(self.y, self.prediction)
+        
+        self.prediction_cv = cross_val_predict(self._pls, self.X, self.y, cv=kfold)
+        self.r2_score_cv = r2_score(self.y, self.prediction_cv)
+        self.mse_cv = mean_squared_error(self.y, self.prediction_cv)
 
     def optimise_pls(self):
         mse = []
@@ -330,7 +335,21 @@ class PLSR(BaseModel):
                          marker="o", markersize=15)
                 plt.xlabel("Number of PLS Components")
                 plt.ylabel("MSE")
+                plt.title("PLS")
                 plt.show()
 
         return component[mse_min]
+
+    def plot(self):
+        z = np.polyfit(self.y, self.prediction, 1)
+        with plt.style.context("seaborn"):
+            fig = plt.figure()
+            plt.scatter(self.prediction, self.y)
+            plt.plot(self.y, self.y, c="green", linewidth=1)
+            plt.plot(np.polyval(z, self.y), self.y, c="blue", linewidth=1)
+            plt.xlabel("Predicted")
+            plt.ylabel("Actual")
+            plt.title("Crossvalidation")
+        return fig
+
 
