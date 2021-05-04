@@ -309,12 +309,19 @@ class PLSR(BaseModel):
         self._pls.fit(self.X, self.y)
         
         self.prediction = self._pls.predict(self.X)
-        self.r2_score = r2_score(self.y, self.prediction)
-        self.mse = mean_squared_error(self.y, self.prediction)
+        self.r2_score = round(r2_score(self.y, self.prediction), 3)
+        self.mse = round(mean_squared_error(self.y, self.prediction), 3)
         
         self.prediction_cv = cross_val_predict(self._pls, self.X, self.y, cv=kfold)
-        self.r2_score_cv = r2_score(self.y, self.prediction_cv)
-        self.mse_cv = mean_squared_error(self.y, self.prediction_cv)
+        self.r2_score_cv = round(r2_score(self.y, self.prediction_cv), 3)
+        self.mse_cv = round(mean_squared_error(self.y, self.prediction_cv), 3)
+        
+        self.result = {
+            "r2 score": self.r2_score,
+            "mse": self.mse,
+            "r2 score cv": self.r2_score_cv,
+            "mse cv": self.mse_cv
+        }
 
     def optimise_pls(self):
         mse = []
@@ -351,5 +358,3 @@ class PLSR(BaseModel):
             plt.ylabel("Actual")
             plt.title("Crossvalidation")
         return fig
-
-
