@@ -213,10 +213,10 @@ class PCA_Model(BaseModel):
         return fig
 
 
-class CrossVal(BaseModel):
+class Classification(BaseModel):
 
-    def __init__(self, dataset, model,
-                 scaling_method=None, kfold=10):
+    def __init__(self, dataset, model, scaling_method=None,
+                 validation_method="cross validation", kfold=10):
         """
         Performs cross validation and presents results.
         Can be used with all scikit learn models
@@ -234,6 +234,10 @@ class CrossVal(BaseModel):
         scaling_method : str, optional
             'standard', 'auto', 'pareto' and 'var' are valid arguments,
             by default None
+            
+        validation_method : str, optional
+            'cross validation' and 'bootstrapping' are valid arguments,
+            by default 'cross validation'
 
         kfold : int, optional
             Number of splits, by default 10
@@ -241,7 +245,13 @@ class CrossVal(BaseModel):
         super().__init__(dataset, scaling_method)
         self.model = model
         self.kfold = kfold
+        self.validation_method = validation_method
+        if self.validation_method == "cross validation":
+            self._crossval()
+        elif self.validation_method == "bootstrapping":
+            self._bootstrap()
 
+    def _crossval(self):
         with joblib.parallel_backend('loky'):
             self.scores = cross_val_score(
                 self.model, self.X, self.y,
@@ -266,13 +276,8 @@ class CrossVal(BaseModel):
         )
         self.mismatch = self.result[self.result.Actual != self.result.Predicted]
 
-    def __repr__(self):
-        return f'''
-CrossVal:
-{self.dataset.name},
-Scaling: {self.scaling_method},
-{self.model}, {self.kfold} fold
-'''
+    def _bootsrap(self):
+        pass
 
     def plot_confusion_matrix(self):
         """
@@ -293,6 +298,77 @@ Scaling: {self.scaling_method},
         ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
         return ax
     
+
+class Regression(BaseModel):
+
+    def __init__(self, dataset, model, scaling_method=None,
+                 validation_method="cross validation", kfold=10):
+        """
+        Performs cross validation and presents results.
+        Can be used with all scikit learn models
+        or anything that follows the same API like sklearn pipelines
+        XGBoostClassifier, or keras sklearn wrapper ANNs.
+
+        Parameters
+        ----------
+        dataset : varies
+            Dataset or Spectra
+
+        model : scikit learn model
+            Or anything that follows the scikit learn API.
+
+        scaling_method : str, optional
+            'standard', 'auto', 'pareto' and 'var' are valid arguments,
+            by default None
+            
+        validation_method : str, optional
+            'cross validation' and 'bootstrapping' are valid arguments,
+            by default 'cross validation'
+
+        kfold : int, optional
+            Number of splits, by default 10
+        """
+        super().__init__(dataset, scaling_method)
+        self.model = model
+        self.kfold = kfold
+        self.validation_method = validation_method
+        if self.validation_method == "cross validation":
+            self._crossval()
+        elif self.validation_method == "bootstrapping":
+            self._bootstrap()
+
+    def _crossval(self):
+        with joblib.parallel_backend('loky'):
+            self.scores = cross_val_score(
+                self.model, self.X, self.y,
+                cv=self.kfold
+                )
+            self.score = self.scores.mean()
+            self.prediction = cross_val_predict(
+                self.model, self.X,
+                self.y, cv=self.kfold
+                )
+            
+            self.r2_score = round(r2_score(self.y, self.prediction), 3)
+            self.mse = round(mean_squared_error(self.y, self.prediction_cv), 3)
+
+    def _bootstrap(self):
+        pass
+
+    def plot(self):
+        z = np.polyfit(self.y, self.prediction, 1)
+        with plt.style.context("seaborn"):
+            fig = plt.figure()
+            plt.scatter(self.prediction, self.y)
+            plt.plot(self.y, self.y, label="Ideal", c="tab:green", linewidth=1)
+            plt.plot(np.polyval(z, self.y), self.y, label="Regression",
+                     c="tab:orange", linewidth=1)
+            plt.xlabel("Predicted")
+            plt.ylabel("Actual")
+            plt.title("Crossvalidation")
+            plt.legend(frameon=True, fancybox=True, facecolor="white")
+        return fig
+
 
 class PLSR(BaseModel):
     
