@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator, AutoMinorLocator
 import seaborn as sns
-import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
@@ -252,15 +251,14 @@ class Classification(BaseModel):
             self._bootstrap()
 
     def _crossval(self):
-        with joblib.parallel_backend('loky'):
-            self.scores = cross_val_score(
-                self.model, self.X, self.y,
-                cv=self.kfold
-                )
-            self.predictions = cross_val_predict(
-                self.model, self.X,
-                self.y, cv=self.kfold
-                )
+        self.scores = cross_val_score(
+            self.model, self.X, self.y,
+            cv=self.kfold
+            )
+        self.predictions = cross_val_predict(
+            self.model, self.X,
+            self.y, cv=self.kfold
+            )
 
         self.score = self.scores.mean()
         self.confusion_matrix = confusion_matrix(self.y, self.predictions)
@@ -277,6 +275,9 @@ class Classification(BaseModel):
         self.mismatch = self.result[self.result.Actual != self.result.Predicted]
 
     def _bootsrap(self):
+        pass
+    
+    def _leave_one_out(self):
         pass
 
     def plot_confusion_matrix(self):
@@ -338,21 +339,23 @@ class Regression(BaseModel):
             self._bootstrap()
 
     def _crossval(self):
-        with joblib.parallel_backend('loky'):
-            self.scores = cross_val_score(
-                self.model, self.X, self.y,
-                cv=self.kfold
-                )
-            self.score = self.scores.mean()
-            self.prediction = cross_val_predict(
-                self.model, self.X,
-                self.y, cv=self.kfold
-                )
-            
-            self.r2_score = round(r2_score(self.y, self.prediction), 3)
-            self.mse = round(mean_squared_error(self.y, self.prediction_cv), 3)
+        self.scores = cross_val_score(
+            self.model, self.X, self.y,
+            cv=self.kfold
+            )
+        self.score = self.scores.mean()
+        self.prediction = cross_val_predict(
+            self.model, self.X,
+            self.y, cv=self.kfold
+            )
+        
+        self.r2_score = round(r2_score(self.y, self.prediction), 3)
+        self.mse = round(mean_squared_error(self.y, self.prediction), 3)
 
     def _bootstrap(self):
+        pass
+    
+    def _leave_one_out(self):
         pass
 
     def plot(self):
@@ -365,7 +368,7 @@ class Regression(BaseModel):
                      c="tab:orange", linewidth=1)
             plt.xlabel("Predicted")
             plt.ylabel("Actual")
-            plt.title("Crossvalidation")
+            # plt.title("Crossvalidation")
             plt.legend(frameon=True, fancybox=True, facecolor="white")
         return fig
 
