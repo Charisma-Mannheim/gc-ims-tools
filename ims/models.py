@@ -181,9 +181,8 @@ class PCA_Model(BaseModel):
         plt.title(f"PCA Loadings of PC {PC}", fontsize=16)
         return fig
 
-    def expl_var_ratio_plot(self, width=7, height=6, style="seaborn"):
+    def scree_plot(self, width=7, height=6, style="seaborn"):
         """
-        expl_var_ratio_plot
         Plots the explained variance ratio per principal component
         and cumulatively.
 
@@ -293,10 +292,11 @@ class Classification(BaseModel):
                              index=np.unique(self.y),
                              columns=np.unique(self.y))
 
-        sns.set(rc={'figure.figsize':(7, 6)})
-        ax = sns.heatmap(cm_df, cbar=False, annot=True, cmap='Reds')
-        ax.set(xlabel='Predicted', ylabel='Actual')
-        ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
+        with plt.style.context("seaborn"):
+            sns.set(rc={'figure.figsize':(7, 6)})
+            ax = sns.heatmap(cm_df, cbar=False, annot=True, cmap='Reds')
+            ax.set(xlabel='Predicted', ylabel='Actual')
+            ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
         return ax
     
 
