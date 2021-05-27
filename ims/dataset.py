@@ -235,7 +235,6 @@ class Dataset:
             exports.append(np.save(f'{folder_name}/data/{i}', j.values))
 
 
-    # TODO: add out of bounds checking
     def select(self, label=None, sample=None):
         """
         Selects all spectra of specified label or sample.
@@ -269,6 +268,59 @@ class Dataset:
             indices = []
             for i, j in enumerate(self.samples):
                 if j == sample:
+                    indices.append(i)
+
+        result = []
+        files = []
+        labels = []
+        samples = []
+        for i in indices:
+            result.append(self.data[i])
+            files.append(self.files[i])
+            labels.append(self.labels[i])
+            samples.append(self.samples[i])
+
+        return Dataset(
+            data=result,
+            name=name,
+            files=files,
+            samples=samples,
+            labels=labels,
+        )
+        
+    def remove(self, label=None, sample=None):
+        """
+        Removes all spectra of specified label or sample from Dataset.
+        Must give at least one argument.
+
+        Parameters
+        ----------
+        label : str, optional
+            Label name to keep, by default None
+
+        sample : str, optional
+            Sample name to keep, by default None
+
+        Returns
+        -------
+        Dataset
+            Contains only matching spectra.
+        """
+        if label is None and sample is None:
+            raise ValueError("Must give either label or sample value.")
+        
+        if label is not None:
+            name = label
+            indices = []
+            for i, j in enumerate(self.labels):
+                if j != label:
+                    indices.append(i)
+
+        if sample is not None:
+            name = sample
+            indices = []
+            for i, j in enumerate(self.samples):
+                if j != sample:
                     indices.append(i)
 
         result = []
