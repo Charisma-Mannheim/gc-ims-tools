@@ -1,15 +1,15 @@
 import os
 import re
+import json
 import h5py
 from array import array
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 from datetime import date, datetime
-
-import json
+from skimage.morphology import white_tophat, disk
 from zipfile import ZipFile
-import pandas as pd
 
 class Spectrum:
 
@@ -262,6 +262,39 @@ class Spectrum:
             f.attrs['name'] = self.name
             f.attrs['time'] = datetime.strftime(self.time, "%Y-%m-%dT%H:%M:%S")
 
+    def tophat(self, size=15):
+        """
+        Applies white tophat filter on values.
+        Baseline correction.
+        (Slower with larger size.)
+
+        Parameters
+        ----------
+        size : int, optional
+            Size of structuring element, by default 15
+        Returns
+        -------
+        Spectrum
+            With tophat applied.
+        """      
+        self.values = white_tophat(self.values, disk(size))
+        return self
+
+    def sub_first_row(self):
+        """
+        Subtracts first row from every row in spectrum.
+        Baseline correction.
+
+        Returns
+        -------
+        Spectrum
+            With corrected baseline.
+        """
+        fl = self.values[0, :]
+        self.values = self.values - fl
+        self.values[self.values < 0] = 0
+        return self
+    
     def riprel(self):
         """
         Replaces drift time coordinate with RIP relative values.

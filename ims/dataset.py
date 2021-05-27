@@ -408,6 +408,39 @@ class Dataset:
         self.preprocessing.append('mean')
         return self
 
+    def tophat(self, size=15):
+        """
+        Applies white tophat filter on values.
+        Baseline correction.
+        (Slower with larger size.)
+
+        Parameters
+        ----------
+        size : int, optional
+            Size of structuring element, by default 15
+        Returns
+        -------
+        Spectrum
+            With tophat applied.
+        """    
+        self.data = [Spectrum.tophat(i, size) for i in self.data]
+        self.preprocessing.append('tophat')
+        return self
+
+    def sub_first_row(self):
+        """
+        Subtracts first row from every row in spectrum.
+        Baseline correction.
+
+        Returns
+        -------
+        Spectrum
+            With corrected baseline.
+        """
+        self.data = [Spectrum.sub_first_row(i) for i in self.data]
+        self.preprocessing.append('sub_first_row')
+        return self
+
     def interp_riprel(self):
         """
         Interpolates all spectra to common RIP relative drift time coordinate.
