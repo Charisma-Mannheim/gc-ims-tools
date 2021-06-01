@@ -288,7 +288,7 @@ class Dataset:
             labels=labels,
         )
         
-    def remove(self, label=None, sample=None):
+    def drop(self, label=None, sample=None):
         """
         Removes all spectra of specified label or sample from Dataset.
         Must give at least one argument.
