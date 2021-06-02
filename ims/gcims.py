@@ -7,9 +7,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
-from datetime import date, datetime
+from datetime import datetime
 from skimage.morphology import white_tophat, disk
 from zipfile import ZipFile
+import imageio
 
 class Spectrum:
 
@@ -517,15 +518,21 @@ class Spectrum:
         fig.savefig(f'{path}/{self.name}.{file_format}', dpi=dpi, quality=95,
                     bbox_inches="tight", pad_inches=0.5)
 
-    # TODO: Add automated peak finding and integrating features
-    # def find_peaks(self):
-    #     return peak_local_max(self.values, min_distance=5, threshold_abs=100)
+    def export_image(self, path=os.getcwd(), file_format='jpeg'):
+        """
+        Exports spectrum as grayscale image for classification in Orange 3.
+        (Not a plot!)
 
-    # def integrate_peak(self, dt_range, rt_range):
-    #     values = self.values[dt_range[0]:dt_range[1],
-    #                          rt_range[0]:rt_range[1]]
+        Parameters
+        ----------
+        path : str, optional
+            Directory to save the image,
+            by default current working directory
 
-    # def signal_to_noise(self):
-    #     m = self.values.mean(axis=None)
-    #     sd = self.values.std(axis=None)
-    #     return np.where(sd == 0, 0, m/sd)
+        file_format : str, optional
+            See imageio docs for supported formats:
+            https://imageio.readthedocs.io/en/stable/formats.html,
+            by default 'jpg'
+        """
+        imageio.imwrite(uri=f'{path}/{self.name}.{file_format}',
+                        im=self.values)

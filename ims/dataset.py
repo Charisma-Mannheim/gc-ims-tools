@@ -601,7 +601,39 @@ class Dataset:
                 label = self.labels[j]
                 Spectrum.export_plot(
                     self.data[j], path=f'{folder_name}/{label}',
-                    file_format=file_format, **kwargs)
+                    file_format=file_format, **kwargs
+                    )
+
+    def export_images(self, folder_name, file_format='jpeg'):
+        """
+        Exports spectrum as grayscale image for classification in Orange 3.
+        (Not a plot!)
+
+        Parameters
+        ----------
+        folder_name : str, optional
+            New directory to save the images
+
+        file_format : str, optional
+            See imageio docs for supported formats:
+            https://imageio.readthedocs.io/en/stable/formats.html,
+            by default 'jpeg'
+        """
+        group_names = np.unique(self.labels)
+        sample_names = np.unique(self.samples)
+        sample_indices = self.sample_indices
+        os.mkdir(folder_name)
+        for group in group_names:
+            os.mkdir(f'{folder_name}/{group}')
+
+        for i in sample_names:
+            indices = sample_indices[i]
+            for j in indices:
+                label = self.labels[j]
+                Spectrum.export_image(
+                    self.data[j], path=f'{folder_name}/{label}',
+                    file_format=file_format
+                )
 
     def get_xy(self, flatten=True):
         """
