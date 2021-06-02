@@ -4,5 +4,5 @@ scipy
 matplotlib
 seaborn
 h5py
-sklearn
-skimage
+scikit-learn
+scikit-image
