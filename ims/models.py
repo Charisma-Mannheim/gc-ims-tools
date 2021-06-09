@@ -141,6 +141,11 @@ class PCA_Model(BaseModel):
             plt.legend(frameon=True, fancybox=True, facecolor="white")
             plt.xlabel(f"PC {PC_x} ({expl_var[PC_x-1]} % of variance)")
             plt.ylabel(f"PC {PC_y} ({expl_var[PC_y-1]} % of variance)")
+            
+            if label:
+                for i, point in pc_df.iterrows():
+                    ax.text(point[f"PC {PC_x}"], point[f"PC {PC_y}"],
+                            point["Sample"])
 
         return fig
 
