@@ -5,6 +5,7 @@ from matplotlib.ticker import MaxNLocator, AutoMinorLocator
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import LeaveOneOut
 from sklearn.decomposition import PCA
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.model_selection import cross_val_score, cross_val_predict
@@ -79,19 +80,30 @@ class PCA_Model(BaseModel):
 {self.scaling_method} scaling
 '''
 
-    def scatter_plot(self, PC_x=1, PC_y=2, width=7, height=6, style="seaborn"):
+    def scatter_plot(self, PC_x=1, PC_y=2, width=9, height=8, hue="Label"):
         """
-        scatter_plot
-        Scatter plot of two principal components.
+        Scatter plot of principal components
 
         Parameters
         ----------
-        PCs : tuple, optional
-            The principal components to plot, by default (1, 2)
+        PC_x : int, optional
+            PC x axis, by default 1
+
+        PC_y : int, optional
+            PC y axis, by default 2
+
+        width : int, optional
+            plot width in inches, by default 8
+
+        height : int, optional
+            plot height in inches, by default 7
+            
+        hue : str, optional
+            color markers either by 'Label' or by 'Sample'
 
         Returns
         -------
-        matplotlib.pyplot.figure
+        matplotlib figure
         """
         expl_var = []
         for i in range(1, self.pca.n_components_ + 1):
@@ -104,15 +116,16 @@ class PCA_Model(BaseModel):
         pc_df['Sample'] = self.dataset.samples
         pc_df['Label'] = self.dataset.labels
 
-        with plt.style.context(style):
+        with plt.style.context("seaborn"):
             fig, ax = plt.subplots(figsize=(width, height))
             sns.scatterplot(
                 ax=ax,
                 x=f"PC {PC_x}",
                 y=f"PC {PC_y}",
                 data=pc_df,
-                hue="Label",
-                style="Label"
+                hue=hue,
+                style="Label",
+                s=100
             )
 
             plt.legend(frameon=True, fancybox=True, facecolor="white")
@@ -181,7 +194,7 @@ class PCA_Model(BaseModel):
         plt.title(f"PCA Loadings of PC {PC}", fontsize=16)
         return fig
 
-    def scree_plot(self, width=7, height=6, style="seaborn"):
+    def scree_plot(self, width=9, height=8, style="seaborn"):
         """
         Plots the explained variance ratio per principal component
         and cumulatively.
@@ -234,29 +247,38 @@ class Classification(BaseModel):
             by default None
             
         validation_method : str, optional
-            'cross validation' and 'bootstrapping' are valid arguments,
+            'cross validation', 'leave one out' and 'bootstrapping' are valid arguments,
             by default 'cross validation'
 
         kfold : int, optional
-            Number of splits, by default 10
+            Number of splits for cross validation
+            ignored for 'leave one out' and 'bootstrapping',
+            by default 10
         """
         super().__init__(dataset, scaling_method)
         self.model = model
         self.kfold = kfold
         self.validation_method = validation_method
-        if self.validation_method == "cross validation":
+        if self.validation_method == "cross validation" or "leave one out":
             self._crossval()
         elif self.validation_method == "bootstrapping":
             self._bootstrap()
 
     def _crossval(self):
+        """Performs crossvalidation with either kfold split or leave one out"""
+
+        if self.validation_method == "cross validation":
+            cv = self.kfold
+        elif self.validation_method == "leave one out":
+            cv = LeaveOneOut()
+        
         self.scores = cross_val_score(
             self.model, self.X, self.y,
-            cv=self.kfold
+            cv=cv
             )
         self.predictions = cross_val_predict(
             self.model, self.X,
-            self.y, cv=self.kfold
+            self.y, cv=cv
             )
 
         self.score = self.scores.mean()
@@ -274,9 +296,6 @@ class Classification(BaseModel):
         self.mismatch = self.result[self.result.Actual != self.result.Predicted]
 
     def _bootsrap(self):
-        pass
-    
-    def _leave_one_out(self):
         pass
 
     def plot_confusion_matrix(self):
