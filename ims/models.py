@@ -80,7 +80,8 @@ class PCA_Model(BaseModel):
 {self.scaling_method} scaling
 '''
 
-    def scatter_plot(self, PC_x=1, PC_y=2, width=9, height=8, hue="Label"):
+    def scatter_plot(self, PC_x=1, PC_y=2, width=9, height=8,
+                     hue="Label", style="Label", label=False):
         """
         Scatter plot of principal components
 
@@ -99,7 +100,16 @@ class PCA_Model(BaseModel):
             plot height in inches, by default 7
             
         hue : str, optional
-            color markers either by 'Label' or by 'Sample'
+            color markers either by 'Label' or by 'Sample',
+            by default 'Label'
+            
+        style : str, optional
+            marker style either by 'Label' or by 'Sample',
+            by default 'Label'
+            
+        label : bool, optional
+            label data points with sample name,
+            by default False
 
         Returns
         -------
@@ -124,7 +134,7 @@ class PCA_Model(BaseModel):
                 y=f"PC {PC_y}",
                 data=pc_df,
                 hue=hue,
-                style="Label",
+                style=style,
                 s=100
             )
 
