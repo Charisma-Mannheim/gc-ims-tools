@@ -473,3 +473,66 @@ class PLSR(BaseModel):
             plt.title("Crossvalidation")
             plt.legend(frameon=True, fancybox=True, facecolor="white")
         return fig
+
+
+class PLS_DA(BaseModel):
+    
+    def __init__(self, dataset, scaling_method, n_components):
+        super().__init__(dataset, scaling_method)
+        self.n_components = n_components
+        self._fit()
+        self.vips = self._calc_vips
+        
+    def _fit(self):
+        groups = np.unique(self.dataset.labels)
+        y_binary = np.zeros((len(self.dataset), len(groups)))
+        for i, j in enumerate(groups):
+            col = [j in label for label in self.dataset.labels]
+            y_binary[:, i] = col
+            
+        self._pls = PLSRegression(self.n_components)
+        self._pls.fit(self.X, y_binary)
+
+        self.x_scores = self._pls.x_scores_
+        self.y_scores = self._pls.y_scores_
+        self.x_weigts = self._pls.x_weights_
+        self.y_weigts = self._pls.y_weights_
+
+        if self.scaling_method is None:
+            self.x_loadings = self._pls.x_loadings_
+            self.y_loadings = self._pls.y_loadings_
+        else:
+            self.x_loadings = self._pls.x_loadings_ / self.weights
+            self.y_loadings = self._pls.y_loadings_ / self.weights
+        
+    def _calc_vips(self):
+        """https://github.com/scikit-learn/scikit-learn/issues/7050"""
+        t = self.x_scores
+        w = self.x_weights
+        q = self.y_loadings
+        
+        p, h = w.shape
+        
+        vips = np.zeros((p,))
+        
+        s = np.diag(t.T @ t @ q.T @ q).reshape(h, -1)
+        total_s = np.sum(s)
+        
+        for i in range(p):
+            weight = np.array([(w[i, j] / np.linalg.norm(w[:, j]))**2 for j in range(h)])
+            vips[i] = np.sqrt(p * (s.T @ weight)/total_s)
+
+        return vips
+
+    def plot(self, x_comp=1, y_comp=2):
+        cols = [f"PLS Comp {i}" for i in range(self.n_components)]
+        df = pd.DataFrame(self.x_scores, columns=cols)
+        with plt.style.context("seaborn"):
+            fig = plt.figure()
+            sns.scatterplot(x=f"PLS Comp {x_comp}", y=f"PLS Comp {y_comp}",
+                            data=df, hue="Group", style="Group", s=50)
+            plt.legend(frameon=True, fancybox=True, facecolor="white")
+        return fig
+    
+    def vip_plot(self):
+        pass
