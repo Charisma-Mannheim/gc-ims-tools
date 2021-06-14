@@ -38,11 +38,11 @@ class BaseModel:
         Calculate weights for scaling dependent on the method.
         '''
         if self.scaling_method == 'auto':
-            weights = 1/np.std(self.X, 0)
+            weights = 1 / np.std(self.X, 0)
         elif self.scaling_method == 'pareto':
-            weights = 1/np.sqrt(np.std(self.X, 0))
+            weights = 1 / np.sqrt(np.std(self.X, 0))
         elif self.scaling_method == 'var':
-            weights = 1/np.var(self.X, 0)
+            weights = 1 / np.var(self.X, 0)
         else:
             raise ValueError(f'{self.scaling_method} is not a supported method')
         weights = np.nan_to_num(weights, posinf=0, neginf=0)
@@ -477,11 +477,11 @@ class PLSR(BaseModel):
 
 class PLS_DA(BaseModel):
     
-    def __init__(self, dataset, scaling_method, n_components):
+    def __init__(self, dataset, scaling_method=None, n_components=20):
         super().__init__(dataset, scaling_method)
         self.n_components = n_components
         self._fit()
-        self.vips = self._calc_vips
+        self.vip_scores = self._calc_vips()
         
     def _fit(self):
         groups = np.unique(self.dataset.labels)
@@ -502,8 +502,8 @@ class PLS_DA(BaseModel):
             self.x_loadings = self._pls.x_loadings_
             self.y_loadings = self._pls.y_loadings_
         else:
-            self.x_loadings = self._pls.x_loadings_ / self.weights
-            self.y_loadings = self._pls.y_loadings_ / self.weights
+            self.x_loadings = self._pls.x_loadings_ / self.weights[: None]
+            self.y_loadings = self._pls.y_loadings_ / self.weights[:, None]
         
     def _calc_vips(self):
         """https://github.com/scikit-learn/scikit-learn/issues/7050"""
@@ -527,6 +527,8 @@ class PLS_DA(BaseModel):
     def plot(self, x_comp=1, y_comp=2):
         cols = [f"PLS Comp {i}" for i in range(self.n_components)]
         df = pd.DataFrame(self.x_scores, columns=cols)
+        df["Group"] = self.dataset.labels
+        
         with plt.style.context("seaborn"):
             fig = plt.figure()
             sns.scatterplot(x=f"PLS Comp {x_comp}", y=f"PLS Comp {y_comp}",
