@@ -481,7 +481,7 @@ class PLS_DA(BaseModel):
         super().__init__(dataset, scaling_method)
         self.n_components = n_components
         self._fit()
-        self.vip_scores = self._calc_vips()
+        # self.vip_scores = self._calc_vips()
         
     def _fit(self):
         groups = np.unique(self.dataset.labels)
@@ -489,21 +489,20 @@ class PLS_DA(BaseModel):
         for i, j in enumerate(groups):
             col = [j in label for label in self.dataset.labels]
             y_binary[:, i] = col
-            
+
         self._pls = PLSRegression(self.n_components)
         self._pls.fit(self.X, y_binary)
 
         self.x_scores = self._pls.x_scores_
         self.y_scores = self._pls.y_scores_
-        self.x_weigts = self._pls.x_weights_
-        self.y_weigts = self._pls.y_weights_
+        self.x_weights = self._pls.x_weights_
+        self.y_weights = self._pls.y_weights_
+        self.y_loadings = self._pls.y_loadings_
 
         if self.scaling_method is None:
-            self.x_loadings = self._pls.x_loadings_
-            self.y_loadings = self._pls.y_loadings_
+            self.x_loadings = self._pls.x_loadings_    
         else:
-            self.x_loadings = self._pls.x_loadings_ / self.weights[: None]
-            self.y_loadings = self._pls.y_loadings_ / self.weights[:, None]
+            self.x_loadings = self._pls.x_loadings_ / self.weights[:, None]
         
     def _calc_vips(self):
         """https://github.com/scikit-learn/scikit-learn/issues/7050"""
