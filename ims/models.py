@@ -177,7 +177,8 @@ class PCA_Model(BaseModel):
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
 
-        loading_pc = self.loadings[PC-1, :].reshape(len(ret_time), len(drift_time))
+        loading_pc = self.loadings[PC-1, :].reshape(len(ret_time),
+                                                    len(drift_time))
 
         fig, ax = plt.subplots(figsize=(width, height))
 
@@ -535,5 +536,30 @@ class PLS_DA(BaseModel):
             plt.legend(frameon=True, fancybox=True, facecolor="white")
         return fig
     
-    def vip_plot(self):
+    def plot_coef(self, group=1):
+        coef = self._pls.coef_[:, group-1].\
+            reshape(self.dataset[0].values.shape)
+        
+        fig, ax = plt.subplots(figsize=(9, 10))
+        plt.imshow(coef, cmap="RdBu_r", origin="lower", aspect="auto")
+        plt.colorbar()
+
+        xlocs, _ = plt.xticks()
+        ylocs, _ = plt.yticks()
+
+        ret_time = self.dataset[0].ret_time
+        drift_time = self.dataset[0].drift_time
+
+        rt_ticks = [round(ret_time[int(i)]) for i in ylocs[1:-1]]
+        dt_ticks = [round(drift_time[int(i)], 1) for i in xlocs[1:-1]]
+
+        plt.xticks(xlocs[1:-1], dt_ticks)
+        plt.yticks(ylocs[1:-1], rt_ticks)
+
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
+        
+        return fig
+    
+    def plot_vip(self):
         pass
