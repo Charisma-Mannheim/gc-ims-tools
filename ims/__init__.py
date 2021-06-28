@@ -1,3 +1,6 @@
 from .gcims import *
 from .dataset import *
-from .models import *
+from .basemodel import *
+from .generalmodels import *
+from .pca import *
+from .pls import *
