@@ -86,7 +86,7 @@ class PLS_DA(BaseModel):
         self.n_components = n_components
         self.kfold = kfold
 
-        self.groups = np.unique(self.dataset.labels)
+        self.groups = list(np.unique(self.dataset.labels))
         self.y_binary = np.zeros((len(self.dataset), len(self.groups)))
         for i, j in enumerate(self.groups):
             col = [j in label for label in self.dataset.labels]
@@ -206,14 +206,28 @@ class PLS_DA(BaseModel):
             plt.legend(frameon=True, fancybox=True, facecolor="white")
         return fig
     
-    def plot_coef(self, group=1):
+    def plot_coef(self, group=0):
         """Plots coefficients"""
-        coef = self._pls.coef_[:, group-1].\
-            reshape(self.dataset[0].values.shape)
         
+        if isinstance(group, str):
+            group_index = self.groups.index(group)
+            group_name = group
+
+        if isinstance(group, int):
+            group_index = group
+            group_name = self.groups[group]
+        
+        coef = self._pls.coef_[:, group_index].\
+            reshape(self.dataset[0].values.shape)
+
         fig, ax = plt.subplots(figsize=(9, 10))
         plt.imshow(coef, cmap="RdBu_r", origin="lower", aspect="auto")
         plt.colorbar()
+
+        plt.title(f"PLS-DA coefficients of {group_name}", fontsize=14)
+
+        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
+        plt.ylabel("Retention Time [s]", fontsize=12)
 
         xlocs, _ = plt.xticks()
         ylocs, _ = plt.yticks()
@@ -231,6 +245,6 @@ class PLS_DA(BaseModel):
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         
         return fig
-    
+
     def plot_vip(self):
         pass
