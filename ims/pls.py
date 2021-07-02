@@ -80,11 +80,12 @@ class PLSR(BaseModel):
 class PLS_DA(BaseModel):
 
     def __init__(self, dataset, scaling_method=None, optimize=False,
-                 n_components=20, kfold=5):
+                 n_components=20, kfold=5, n_vips=None):
         super().__init__(dataset, scaling_method)
         self.optimize = optimize
         self.n_components = n_components
         self.kfold = kfold
+        self.n_vips = n_vips
 
         self.groups = list(np.unique(self.dataset.labels))
         self.y_binary = np.zeros((len(self.dataset), len(self.groups)))
@@ -96,7 +97,10 @@ class PLS_DA(BaseModel):
             self._best_comp, self._accuracy = self._optimise_plsda()
 
         self._fit()
-        # self.vip_scores = self._calc_vips()
+        
+        if self.n_vips is not None:
+            self._indices = self._get_top_coef_indices()
+            self.vip_scores = self._calc_vips()
 
 
     def _crossval(self, n):
@@ -173,11 +177,24 @@ class PLS_DA(BaseModel):
             self.x_loadings = self._pls.x_loadings_    
         else:
             self.x_loadings = self._pls.x_loadings_ / self.weights[:, None]
-        
+    
+    def _get_top_coef_indices(self):
+        n = self.n_vips
+        indices = []
+        for i in range(len(self.groups)):
+            numbers = self._pls.coef_[:, i]
+            idx = np.argpartition(numbers, -n)[-n:]
+            index = idx[np.argsort((-numbers)[idx])]
+            indices.append(index)
+
+        indices = np.sort(np.array(indices).flatten())
+        return np.unique(indices)
+            
     def _calc_vips(self):
         """https://github.com/scikit-learn/scikit-learn/issues/7050"""
+        
         t = self.x_scores
-        w = self.x_weights
+        w = self.x_weights[self._indices, :]
         q = self.y_loadings
         
         p, h = w.shape
@@ -246,5 +263,34 @@ class PLS_DA(BaseModel):
         
         return fig
 
-    def plot_vip(self):
-        pass
+    def plot_vips(self):
+        vip_matrix = np.zeros(self.X.shape[1])
+        vip_matrix[self._indices] = self.vip_scores
+        vip_matrix = vip_matrix.reshape(self.dataset[0].values.shape)
+
+        fig, ax = plt.subplots(figsize=(9, 10))
+        plt.imshow(vip_matrix, cmap="RdBu_r", origin="lower", aspect="auto")
+        plt.colorbar(label="VIP scores")
+
+        plt.title(f"PLS-DA VIP scores for top {self.n_vips} coefficients",
+                  fontsize=14)
+
+        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
+        plt.ylabel("Retention Time [s]", fontsize=12)
+
+        xlocs, _ = plt.xticks()
+        ylocs, _ = plt.yticks()
+
+        ret_time = self.dataset[0].ret_time
+        drift_time = self.dataset[0].drift_time
+
+        rt_ticks = [round(ret_time[int(i)]) for i in ylocs[1:-1]]
+        dt_ticks = [round(drift_time[int(i)], 1) for i in xlocs[1:-1]]
+
+        plt.xticks(xlocs[1:-1], dt_ticks)
+        plt.yticks(ylocs[1:-1], rt_ticks)
+
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
+        
+        return fig
