@@ -11,15 +11,18 @@ from ims import BaseModel
 
 class PLSR(BaseModel):
     
-    def __init__(self, dataset, scaling_method=None, max_comp=20, 
-                 kfold=10, plot_components=True, **kwargs):
+    def __init__(self, dataset, scaling_method=None, optimize=True,
+                 n_components=20, kfold=5, **kwargs):
         
         super().__init__(dataset, scaling_method)
         self.kfold = kfold
-        self.max_comp = max_comp
-        self.plot_components = plot_components
+        self.n_components = n_components
+        self.optimize = optimize
 
-        self._best_comp = self.optimise_pls()
+        if self.optimize:
+            # _accuracy is needed for the optimization plot
+            self._best_comp, self._accuracy = self._optimize_pls()
+
         self._pls = PLSRegression(n_components=self._best_comp, **kwargs)
         self._pls.fit(self.X, self.y)
         
@@ -38,9 +41,9 @@ class PLSR(BaseModel):
             "accuracy cv": self.mse_cv
         }
 
-    def optimise_pls(self):
+    def _optimize_pls(self):
         accuracy = []
-        component = np.arange(1, self.max_comp)
+        component = np.arange(1, self.n_components)
         
         for i in component:
             pls = PLSRegression(n_components=i)
@@ -48,19 +51,22 @@ class PLSR(BaseModel):
             accuracy.append(mean_squared_error(self.y, y_cv))
             
         best_ac = np.argmin(accuracy)
+        return component[best_ac], accuracy
         
-        if self.plot_components:
-            with plt.style.context("seaborn"):
-                plt.plot(component, accuracy)
-                plt.scatter(component, accuracy)
-                plt.plot(component[best_ac], accuracy[best_ac], color="tab:orange",
-                         marker="*", markersize=20)
-                plt.xlabel("Number of PLS Components")
-                plt.ylabel("MSE")
-                plt.title("PLS")
-                plt.show()
+    def plot_optimization(self):
+        component = np.arange(1, self.n_components)
+        best_ac = np.argmin(self._accuracy)
 
-        return component[best_ac]
+        with plt.style.context("seaborn"):
+            fig = plt.figure()
+            plt.plot(component, self._accuracy)
+            plt.scatter(component, self._accuracy)
+            plt.plot(component[best_ac], self._accuracy[best_ac], color="tab:orange",
+                        marker="*", markersize=20)
+            plt.xlabel("Number of PLS Components")
+            plt.ylabel("MSE")
+            plt.title("PLS")
+        return fig
 
     def plot(self):
         z = np.polyfit(self.y, self.prediction, 1)
@@ -80,12 +86,11 @@ class PLSR(BaseModel):
 class PLS_DA(BaseModel):
 
     def __init__(self, dataset, scaling_method=None, optimize=False,
-                 n_components=20, kfold=5, n_vips=None):
+                 n_components=10, kfold=5):
         super().__init__(dataset, scaling_method)
         self.optimize = optimize
         self.n_components = n_components
         self.kfold = kfold
-        self.n_vips = n_vips
 
         self.groups = list(np.unique(self.dataset.labels))
         self.y_binary = np.zeros((len(self.dataset), len(self.groups)))
@@ -94,14 +99,9 @@ class PLS_DA(BaseModel):
             self.y_binary[:, i] = col
 
         if self.optimize:
-            self._best_comp, self._accuracy = self._optimise_plsda()
+            self._best_comp, self._accuracy = self._optimize_plsda()
 
         self._fit()
-        
-        if self.n_vips is not None:
-            self._indices = self._get_top_coef_indices()
-            self.vip_scores = self._calc_vips()
-
 
     def _crossval(self, n):
         '''Crossvalidation zu optimize number of components'''
@@ -130,7 +130,7 @@ class PLS_DA(BaseModel):
 
         return np.array(accuracy).mean()
 
-    def _optimise_plsda(self):
+    def _optimize_plsda(self):
         """Optimizes number of components"""
         component = np.arange(1, self.n_components + 1)
         accuracy = []
@@ -142,19 +142,24 @@ class PLS_DA(BaseModel):
         return component[best_ac], accuracy
     
     def plot_optimisation(self):
+        if not self.optimize:
+            raise ValueError("Can only plot optimization results if optimize argument is True.")
+            
         component = np.arange(1, self.n_components + 1)
+        best_ac = np.argmax(self._accuracy)
+        
         with plt.style.context("seaborn"):
             plt.plot(component, self._accuracy)
             plt.scatter(component, self._accuracy)
             plt.plot(
-                component[self._best_comp],
-                self._accuracy[self._best_comp - 1],
+                component[best_ac],
+                self._accuracy[best_ac],
                 color="tab:orange",
                 marker="*",
                 markersize=20
                 )
             plt.xlabel("Number of PLS Components")
-            plt.ylabel("Accuracy in %")
+            plt.ylabel("Accuracy")
             plt.title("PLS-DA")
             plt.show()
     
@@ -174,12 +179,11 @@ class PLS_DA(BaseModel):
         self.y_loadings = self._pls.y_loadings_
 
         if self.scaling_method is None:
-            self.x_loadings = self._pls.x_loadings_    
+            self.x_loadings = self._pls.x_loadings_
         else:
             self.x_loadings = self._pls.x_loadings_ / self.weights[:, None]
     
-    def _get_top_coef_indices(self):
-        n = self.n_vips
+    def _get_top_coef_indices(self, n):
         indices = []
         for i in range(len(self.groups)):
             numbers = self._pls.coef_[:, i]
@@ -190,42 +194,54 @@ class PLS_DA(BaseModel):
         indices = np.sort(np.array(indices).flatten())
         return np.unique(indices)
             
-    def _calc_vips(self):
+    def calc_vip_scores(self, top_n_coeff=None):
         """https://github.com/scikit-learn/scikit-learn/issues/7050"""
-        
+
+        if top_n_coeff is None:
+            w = self.x_weights
+        else:
+            self._indices = self._get_top_coef_indices(top_n_coeff)
+            w = self.x_weights[self._indices, :]
+
         t = self.x_scores
-        w = self.x_weights[self._indices, :]
         q = self.y_loadings
-        
+
         p, h = w.shape
         
         vips = np.zeros((p,))
-        
+
         s = np.diag(t.T @ t @ q.T @ q).reshape(h, -1)
         total_s = np.sum(s)
-        
+
         for i in range(p):
             weight = np.array([(w[i, j] / np.linalg.norm(w[:, j]))**2 for j in range(h)])
             vips[i] = np.sqrt(p * (s.T @ weight)/total_s)
 
+        self.vip_scores = vips
         return vips
 
     def plot(self, x_comp=1, y_comp=2):
         """Plots PLS components as scatter plot """
-        cols = [f"PLS Comp {i}" for i in range(self.n_components)]
+        cols = [f"PLS Component {i}" for i in range(1, self.n_components + 1)]
         df = pd.DataFrame(self.x_scores, columns=cols)
         df["Group"] = self.dataset.labels
         
         with plt.style.context("seaborn"):
             fig = plt.figure()
-            sns.scatterplot(x=f"PLS Comp {x_comp}", y=f"PLS Comp {y_comp}",
-                            data=df, hue="Group", style="Group", s=50)
+            sns.scatterplot(
+                x=f"PLS Component {x_comp}",
+                y=f"PLS Component {y_comp}",
+                data=df,
+                hue="Group",
+                style="Group",
+                s=50
+                )
             plt.legend(frameon=True, fancybox=True, facecolor="white")
         return fig
-    
-    def plot_coef(self, group=0):
+
+    def plot_coefficients(self, group=0):
         """Plots coefficients"""
-        
+
         if isinstance(group, str):
             group_index = self.groups.index(group)
             group_name = group
@@ -233,7 +249,7 @@ class PLS_DA(BaseModel):
         if isinstance(group, int):
             group_index = group
             group_name = self.groups[group]
-        
+
         coef = self._pls.coef_[:, group_index].\
             reshape(self.dataset[0].values.shape)
 
@@ -260,10 +276,10 @@ class PLS_DA(BaseModel):
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
-        
+
         return fig
 
-    def plot_vips(self):
+    def plot_vip_scores(self):
         vip_matrix = np.zeros(self.X.shape[1])
         vip_matrix[self._indices] = self.vip_scores
         vip_matrix = vip_matrix.reshape(self.dataset[0].values.shape)
@@ -272,8 +288,7 @@ class PLS_DA(BaseModel):
         plt.imshow(vip_matrix, cmap="RdBu_r", origin="lower", aspect="auto")
         plt.colorbar(label="VIP scores")
 
-        plt.title(f"PLS-DA VIP scores for top {self.n_vips} coefficients",
-                  fontsize=14)
+        plt.title(f"PLS-DA VIP scores", fontsize=14)
 
         plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
         plt.ylabel("Retention Time [s]", fontsize=12)
