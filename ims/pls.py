@@ -220,11 +220,12 @@ class PLS_DA(BaseModel):
         self.vip_scores = vips
         return vips
 
-    def plot(self, x_comp=1, y_comp=2):
+    def plot(self, x_comp=1, y_comp=2, annotate=False):
         """Plots PLS components as scatter plot """
         cols = [f"PLS Component {i}" for i in range(1, self.n_components + 1)]
         df = pd.DataFrame(self.x_scores, columns=cols)
         df["Group"] = self.dataset.labels
+        df["Sample"] = self.dataset.samples
         
         with plt.style.context("seaborn"):
             fig = plt.figure()
@@ -237,6 +238,16 @@ class PLS_DA(BaseModel):
                 s=50
                 )
             plt.legend(frameon=True, fancybox=True, facecolor="white")
+            
+            if annotate:
+                for _, row in df.iterrows():
+                    plt.annotate(
+                        row["Sample"],
+                        xy=(row[f"PLS Component {x_comp}"], row[f"PLS Component {y_comp}"]),
+                        xycoords="data"
+                    )
+            
+            
         return fig
 
     def plot_coefficients(self, group=0):
