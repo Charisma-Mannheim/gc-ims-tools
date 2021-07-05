@@ -470,21 +470,13 @@ class Spectrum:
             aspect="auto",
             cmap="RdBu_r",
             vmin=vmin,
-            vmax=vmax
+            vmax=vmax,
+            extent=(min(self.drift_time), max(self.drift_time),
+                    min(self.ret_time), max(self.ret_time))
             )
 
         plt.colorbar().set_label("Intensities [arbitrary units]")
         plt.title(self.name, fontsize=16)
-
-        # TODO: axis labels display weird numbers
-        xlocs, _ = plt.xticks()
-        ylocs, _ = plt.yticks()
-
-        rt_ticks = [round(self.ret_time[int(i)]) for i in ylocs[1:-1]]
-        dt_ticks = [round(self.drift_time[int(i)], 1) for i in xlocs[1:-1]]
-
-        plt.xticks(xlocs[1:-1], dt_ticks)
-        plt.yticks(ylocs[1:-1], rt_ticks)
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())

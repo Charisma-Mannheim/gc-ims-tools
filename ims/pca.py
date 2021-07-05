@@ -146,19 +146,12 @@ class PCA_Model(BaseModel):
             aspect="auto",
             cmap="RdBu_r",
             vmin=(-color_range),
-            vmax=color_range
+            vmax=color_range,
+            extent=(min(drift_time), max(drift_time),
+                    min(ret_time), max(ret_time))
             )
 
         plt.colorbar()
-
-        xlocs, _ = plt.xticks()
-        ylocs, _ = plt.yticks()
-
-        rt_ticks = [round(ret_time[int(i)]) for i in ylocs[1:-1]]
-        dt_ticks = [round(drift_time[int(i)], 1) for i in xlocs[1:-1]]
-
-        plt.xticks(xlocs[1:-1], dt_ticks)
-        plt.yticks(ylocs[1:-1], rt_ticks)
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())

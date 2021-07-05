@@ -253,26 +253,26 @@ class PLS_DA(BaseModel):
         coef = self._pls.coef_[:, group_index].\
             reshape(self.dataset[0].values.shape)
 
+        ret_time = self.dataset[0].ret_time
+        drift_time = self.dataset[0].drift_time
+        
         fig, ax = plt.subplots(figsize=(9, 10))
-        plt.imshow(coef, cmap="RdBu_r", origin="lower", aspect="auto")
-        plt.colorbar()
+        
+        plt.imshow(
+            coef,
+            cmap="RdBu_r",
+            origin="lower",
+            aspect="auto",
+            extent=(min(drift_time), max(drift_time),
+                    min(ret_time), max(ret_time))
+            )
+
+        plt.colorbar(label="Coefficients")
 
         plt.title(f"PLS-DA coefficients of {group_name}", fontsize=14)
 
         plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
         plt.ylabel("Retention Time [s]", fontsize=12)
-
-        xlocs, _ = plt.xticks()
-        ylocs, _ = plt.yticks()
-
-        ret_time = self.dataset[0].ret_time
-        drift_time = self.dataset[0].drift_time
-
-        rt_ticks = [round(ret_time[int(i)]) for i in ylocs[1:-1]]
-        dt_ticks = [round(drift_time[int(i)], 1) for i in xlocs[1:-1]]
-
-        plt.xticks(xlocs[1:-1], dt_ticks)
-        plt.yticks(ylocs[1:-1], rt_ticks)
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
@@ -284,26 +284,26 @@ class PLS_DA(BaseModel):
         vip_matrix[self._indices] = self.vip_scores
         vip_matrix = vip_matrix.reshape(self.dataset[0].values.shape)
 
+        ret_time = self.dataset[0].ret_time
+        drift_time = self.dataset[0].drift_time
+
         fig, ax = plt.subplots(figsize=(9, 10))
-        plt.imshow(vip_matrix, cmap="RdBu_r", origin="lower", aspect="auto")
+        
+        plt.imshow(
+            vip_matrix,
+            cmap="RdBu_r",
+            origin="lower",
+            aspect="auto",
+            extent=(min(drift_time), max(drift_time),
+                    min(ret_time), max(ret_time))
+            )
+        
         plt.colorbar(label="VIP scores")
 
         plt.title(f"PLS-DA VIP scores", fontsize=14)
 
         plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
         plt.ylabel("Retention Time [s]", fontsize=12)
-
-        xlocs, _ = plt.xticks()
-        ylocs, _ = plt.yticks()
-
-        ret_time = self.dataset[0].ret_time
-        drift_time = self.dataset[0].drift_time
-
-        rt_ticks = [round(ret_time[int(i)]) for i in ylocs[1:-1]]
-        dt_ticks = [round(drift_time[int(i)], 1) for i in xlocs[1:-1]]
-
-        plt.xticks(xlocs[1:-1], dt_ticks)
-        plt.yticks(ylocs[1:-1], rt_ticks)
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
