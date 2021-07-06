@@ -108,10 +108,10 @@ class PLS_DA(BaseModel):
         if self.optimize:
             self._best_comp, self._accuracies = self._optimize_plsda()
             self._fit(self._best_comp)
-            self._crossval(self._best_comp)
+            self.accuracy, self.precision, self.recall = self._crossval(self._best_comp)
         else:    
             self._fit(self.n_components)
-            self._crossval(self.n_components)
+            self.accuracy, self.precision, self.recall = self._crossval(self.n_components)
 
     def _crossval(self, n):
         '''Crossvalidation zu optimize number of components'''
@@ -147,9 +147,11 @@ class PLS_DA(BaseModel):
             re = recall_score(y_test, y_pred)
             recall.append(re)
 
-        self.accuracy = round(np.array(accuracy).mean(), 2)
-        self.precision = round(np.array(precision).mean(), 2)
-        self.recall = round(np.array(recall).mean(), 2)
+        accuracy = round(np.array(accuracy).mean(), 2)
+        precision = round(np.array(precision).mean(), 2)
+        recall = round(np.array(recall).mean(), 2)
+        
+        return (accuracy, precision, recall)
 
     def _optimize_plsda(self):
         """Optimizes number of components"""
