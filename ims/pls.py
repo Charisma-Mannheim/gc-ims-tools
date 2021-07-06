@@ -90,6 +90,28 @@ class PLS_DA(BaseModel):
 
     def __init__(self, dataset, scaling_method=None, optimize=False,
                  n_components=10, kfold=5):
+        """
+        Performs PLS_DA with IMS data. Automatically determines the optimal
+        number of components.
+
+        Parameters
+        ----------
+        dataset : ims.Dataset
+
+        scaling_method : str, optional
+            'standard', 'auto', 'pareto' and 'var' are valid arguments,
+            by default None
+
+        optimize : bool, optional
+            If true finds the number of components with highest accuracy, by default False
+
+        n_components : int, optional
+            If optimize is true the maximum number of components
+            otherwise the number of components for PLS, by default 10
+
+        kfold : int, optional
+            Number of splits for crossvalidation, by default 5
+        """        
         super().__init__(dataset, scaling_method)
         self.optimize = optimize
         self.n_components = n_components
@@ -164,27 +186,6 @@ class PLS_DA(BaseModel):
         best_ac = np.argmax(accuracy)
         return component[best_ac], accuracy
     
-    def plot_optimisation(self):
-        if not self.optimize:
-            raise ValueError("Can only plot optimization results if optimize argument is True.")
-            
-        component = np.arange(1, self.n_components + 1)
-        best_ac = np.argmax(self._accuracies)
-        
-        with plt.style.context("seaborn"):
-            plt.plot(component, self._accuracies)
-            plt.scatter(component, self._accuracies)
-            plt.plot(
-                component[best_ac],
-                self._accuracies[best_ac],
-                color="tab:orange",
-                marker="*",
-                markersize=20
-                )
-            plt.xlabel("Number of PLS Components")
-            plt.ylabel("Accuracy")
-            plt.title("PLS-DA")
-            plt.show()
     
     def _fit(self, n_comps):
         self._pls = PLSRegression(n_comps)
@@ -213,8 +214,20 @@ class PLS_DA(BaseModel):
         return np.unique(indices)
             
     def calc_vip_scores(self, top_n_coeff=None):
-        """https://github.com/scikit-learn/scikit-learn/issues/7050"""
+        """
+        Calculates variable importance in projection (VIP) scores.
+        Optionally only of features with high coefficients.
 
+        Parameters
+        ----------
+        top_n_coeff : int, optional
+            Number highest coefficients per group
+            if None calculates all, by default None
+
+        Returns
+        -------
+        numpy.ndarray
+        """
         if top_n_coeff is None:
             w = self.x_weights
         else:
@@ -238,8 +251,27 @@ class PLS_DA(BaseModel):
         self.vip_scores = vips
         return vips
 
+
     def plot(self, x_comp=1, y_comp=2, annotate=False):
-        """Plots PLS components as scatter plot """
+        """
+        Plots PLS components as scatter plot.
+
+        Parameters
+        ----------
+        x_comp : int, optional
+            Component x axis, by default 1
+
+        y_comp : int, optional
+            Component y axis, by default 2
+
+        annotate : bool, optional
+            If True adds sample names to markers,
+            by default False
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+        """        
         cols = [f"PLS Component {i}" for i in range(1, self.n_components + 1)]
         df = pd.DataFrame(self.x_scores, columns=cols)
         df["Group"] = self.dataset.labels
@@ -267,8 +299,56 @@ class PLS_DA(BaseModel):
 
         return fig
 
+    def plot_optimisation(self):
+        """
+        Plots accuracy from crossvalidation vs number of components
+        to find the best parameter.
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        Raises
+        ------
+        ValueError
+            If optimize is set to False during initial Method.
+        """
+        if not self.optimize:
+            raise ValueError("Can only plot optimization results if optimize argument is True.")
+            
+        component = np.arange(1, self.n_components + 1)
+        best_ac = np.argmax(self._accuracies)
+        
+        with plt.style.context("seaborn"):
+            fig = plt.figure()
+            plt.plot(component, self._accuracies)
+            plt.scatter(component, self._accuracies)
+            plt.plot(
+                component[best_ac],
+                self._accuracies[best_ac],
+                color="tab:orange",
+                marker="*",
+                markersize=20
+                )
+            plt.xlabel("Number of PLS Components")
+            plt.ylabel("Accuracy")
+            plt.title("PLS-DA")
+        return fig
+
     def plot_coefficients(self, group=0):
-        """Plots coefficients"""
+        """
+        Plots PLS coefficients of selected group as image
+        with retention and drift time axis.
+
+        Parameters
+        ----------
+        group : int or str, optional
+            Index or name of group, by default 0
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+        """
 
         if isinstance(group, str):
             group_index = self.groups.index(group)
@@ -308,6 +388,21 @@ class PLS_DA(BaseModel):
         return fig
 
     def plot_vip_scores(self):
+        """
+        Plots VIP scores as image with retention and drift time axis.
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        Raises
+        ------
+        ValueError
+            If VIP scores are not calculated.
+        """        
+        if not hasattr(self.vip_scores):
+            raise ValueError("Must calculate VIP scores first.")
+        
         vip_matrix = np.zeros(self.X.shape[1])
         vip_matrix[self._indices] = self.vip_scores
         vip_matrix = vip_matrix.reshape(self.dataset[0].values.shape)
@@ -316,7 +411,7 @@ class PLS_DA(BaseModel):
         drift_time = self.dataset[0].drift_time
 
         fig, ax = plt.subplots(figsize=(9, 10))
-        
+
         plt.imshow(
             vip_matrix,
             cmap="RdBu_r",
@@ -325,7 +420,7 @@ class PLS_DA(BaseModel):
             extent=(min(drift_time), max(drift_time),
                     min(ret_time), max(ret_time))
             )
-        
+
         plt.colorbar(label="VIP scores")
 
         plt.title(f"PLS-DA VIP scores", fontsize=14)
