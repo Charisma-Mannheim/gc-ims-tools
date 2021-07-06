@@ -5,7 +5,10 @@ from matplotlib.ticker import AutoMinorLocator
 import seaborn as sns
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.model_selection import cross_val_predict, KFold
-from sklearn.metrics import mean_squared_error, r2_score, accuracy_score
+from sklearn.metrics import (
+    mean_squared_error, r2_score, accuracy_score,
+    precision_score, recall_score
+)
 from ims import BaseModel
 
 
@@ -20,8 +23,8 @@ class PLSR(BaseModel):
         self.optimize = optimize
 
         if self.optimize:
-            # _accuracy is needed for the optimization plot
-            self._best_comp, self._accuracy = self._optimize_pls()
+            # _accuracies is needed for the optimization plot
+            self._best_comp, self._accuracies = self._optimize_pls()
 
         self._pls = PLSRegression(n_components=self._best_comp, **kwargs)
         self._pls.fit(self.X, self.y)
@@ -55,13 +58,13 @@ class PLSR(BaseModel):
         
     def plot_optimization(self):
         component = np.arange(1, self.n_components)
-        best_ac = np.argmin(self._accuracy)
+        best_ac = np.argmin(self._accuracies)
 
         with plt.style.context("seaborn"):
             fig = plt.figure()
-            plt.plot(component, self._accuracy)
-            plt.scatter(component, self._accuracy)
-            plt.plot(component[best_ac], self._accuracy[best_ac], color="tab:orange",
+            plt.plot(component, self._accuracies)
+            plt.scatter(component, self._accuracies)
+            plt.plot(component[best_ac], self._accuracies[best_ac], color="tab:orange",
                         marker="*", markersize=20)
             plt.xlabel("Number of PLS Components")
             plt.ylabel("MSE")
@@ -92,22 +95,31 @@ class PLS_DA(BaseModel):
         self.n_components = n_components
         self.kfold = kfold
 
+        # generates the binary matrix used as labels for PLS regression
+        # one column for each group and one row for each sample
         self.groups = list(np.unique(self.dataset.labels))
         self.y_binary = np.zeros((len(self.dataset), len(self.groups)))
         for i, j in enumerate(self.groups):
             col = [j in label for label in self.dataset.labels]
             self.y_binary[:, i] = col
 
+        # either iterates from 1 to n_components and finds best accuracy
+        # or uses n_components as the number of components directly 
         if self.optimize:
-            self._best_comp, self._accuracy = self._optimize_plsda()
-
-        self._fit()
+            self._best_comp, self._accuracies = self._optimize_plsda()
+            self._fit(self._best_comp)
+            self._crossval(self._best_comp)
+        else:    
+            self._fit(self.n_components)
+            self._crossval(self.n_components)
 
     def _crossval(self, n):
         '''Crossvalidation zu optimize number of components'''
         kf = KFold(self.kfold, shuffle=True, random_state=1)
 
         accuracy = []
+        precision = []
+        recall = []
         for train_index, test_index in kf.split(self.X):
             X_train = self.X[train_index, :]
             y_train = self.y_binary[train_index, :]
@@ -125,17 +137,26 @@ class PLS_DA(BaseModel):
             # reformat to vector so sklearn accuracy_score works
             y_pred = y_pred.flatten()
             y_test = y_test.flatten()
+            
             ac = accuracy_score(y_test, y_pred)
             accuracy.append(ac)
+            
+            pre = precision_score(y_test, y_pred)
+            precision.append(pre)
+            
+            re = recall_score(y_test, y_pred)
+            recall.append(re)
 
-        return np.array(accuracy).mean()
+        self.accuracy = round(np.array(accuracy).mean(), 2)
+        self.precision = round(np.array(precision).mean(), 2)
+        self.recall = round(np.array(recall).mean(), 2)
 
     def _optimize_plsda(self):
         """Optimizes number of components"""
         component = np.arange(1, self.n_components + 1)
         accuracy = []
         for i in component:
-            ac = self._crossval(i)
+            ac, _, _ = self._crossval(i)
             accuracy.append(ac)
             
         best_ac = np.argmax(accuracy)
@@ -146,14 +167,14 @@ class PLS_DA(BaseModel):
             raise ValueError("Can only plot optimization results if optimize argument is True.")
             
         component = np.arange(1, self.n_components + 1)
-        best_ac = np.argmax(self._accuracy)
+        best_ac = np.argmax(self._accuracies)
         
         with plt.style.context("seaborn"):
-            plt.plot(component, self._accuracy)
-            plt.scatter(component, self._accuracy)
+            plt.plot(component, self._accuracies)
+            plt.scatter(component, self._accuracies)
             plt.plot(
                 component[best_ac],
-                self._accuracy[best_ac],
+                self._accuracies[best_ac],
                 color="tab:orange",
                 marker="*",
                 markersize=20
@@ -163,12 +184,7 @@ class PLS_DA(BaseModel):
             plt.title("PLS-DA")
             plt.show()
     
-    def _fit(self):
-        if self.optimize:
-            n_comps = self._best_comp
-        else:
-            n_comps = self.n_components
-        
+    def _fit(self, n_comps):
         self._pls = PLSRegression(n_comps)
         self._pls.fit(self.X, self.y_binary)
 
@@ -246,8 +262,7 @@ class PLS_DA(BaseModel):
                         xy=(row[f"PLS Component {x_comp}"], row[f"PLS Component {y_comp}"]),
                         xycoords="data"
                     )
-            
-            
+
         return fig
 
     def plot_coefficients(self, group=0):
