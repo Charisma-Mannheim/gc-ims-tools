@@ -508,7 +508,7 @@ class Dataset:
         self.preprocessing.append(f'resample({n})')
         return self
     
-    def rebin(self, n):
+    def binning(self, n):
         """
         Downsamples each spectrum by binning the array.
         If the dims are not devisible by the binning factor
@@ -524,8 +524,8 @@ class Dataset:
         Dataset
             Downsampled spectra
         """
-        self.data = [Spectrum.rebin(i, n) for i in self.data]
-        self.preprocessing.append(f'rebin({n})')
+        self.data = [Spectrum.binning(i, n) for i in self.data]
+        self.preprocessing.append(f'binning({n})')
         return self
 
     def cut_dt(self, start, stop):

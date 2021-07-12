@@ -345,11 +345,11 @@ class Spectrum:
         self.ret_time = self.ret_time[::n]
         return self
 
-    def rebin(self, n):
+    def binning(self, n):
         """
         Downsamples spectrum by binning the array.
-        If the dims are not devisible by the binning factor
-        shortens the dim by the remainder at the long end. 
+        If the dimensions are not devisible by the binning factor
+        shortens the dim by the remainder at the long end.
 
         Parameters
         ----------
@@ -431,7 +431,7 @@ class Spectrum:
     def wavelet_compression(self):
         pass
 
-    def plot(self, vmin=30, vmax=300, width=9, height=10):
+    def plot(self, vmin=30, vmax=400, width=9, height=10):
         """
         ims.Spectrum.plot
         -----------------
