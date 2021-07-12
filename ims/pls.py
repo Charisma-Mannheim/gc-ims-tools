@@ -14,8 +14,8 @@ from ims import BaseModel
 
 class PLSR(BaseModel):
 
-    def __init__(self, dataset, scaling_method=None, optimize=True,
-                 n_components=20, kfold=5, **kwargs):
+    def __init__(self, dataset, scaling_method=None, optimize=False,
+                 n_components=5, kfold=5, **kwargs):
 
         super().__init__(dataset, scaling_method)
         self.kfold = kfold
@@ -23,79 +23,187 @@ class PLSR(BaseModel):
         self.optimize = optimize
 
         if self.optimize:
-            # _accuracies is needed for the optimization plot
-            self._best_comp, self._accuracies = self._optimize_pls()
+            # _mse_scores is needed for the optimization plot
+            self._best_comp, self._mse_scores = self._optimize_pls(**kwargs)
+            self._fit(self._best_comp, **kwargs)
+        else:
+            self._fit(self.n_components)
 
-        self._fit(**kwargs)
-
-    def _fit(self, **kwargs):
-        self._pls = PLSRegression(n_components=self._best_comp, **kwargs)
+    def _fit(self, n_comps, **kwargs):
+        self._pls = PLSRegression(n_components=n_comps, **kwargs)
         self._pls.fit(self.X, self.y)
         
+        self.x_scores = self._pls.x_scores_
+        self.y_scores = self._pls.y_scores_
+        self.x_weights = self._pls.x_weights_
+        self.y_weights = self._pls.y_weights_
+        self.y_loadings = self._pls.y_loadings_
+        self.coefficients = self._pls.coef_
+
+        if self.scaling_method is None:
+            self.x_loadings = self._pls.x_loadings_
+        else:
+            self.x_loadings = self._pls.x_loadings_ / self.weights[:, None]
+
         self.prediction = self._pls.predict(self.X)
         self.r2_score = round(r2_score(self.y, self.prediction), 2)
         self.mse = round(mean_squared_error(self.y, self.prediction), 2)
-        
-        self.prediction_cv = cross_val_predict(self._pls, self.X, self.y, cv=self.kfold)
-        self.r2_score_cv = round(r2_score(self.y, self.prediction_cv), 2)
-        self.mse_cv = round(mean_squared_error(self.y, self.prediction_cv), 2)
-        
-        self.result = {
-            "r2 score": self.r2_score,
-            "mse": self.accuracy,
-            "r2 score cv": self.r2_score_cv,
-            "mse cv": self.mse_cv
-        }
 
-    def _optimize_pls(self):
+    def _optimize_pls(self, **kwargs):
         mse = []
-        component = np.arange(1, self.n_components)
+        component = np.arange(2, self.n_components + 1)
         
         for i in component:
-            pls = PLSRegression(n_components=i)
+            pls = PLSRegression(n_components=i, **kwargs)
             y_cv = cross_val_predict(pls, self.X, self.y, cv=self.kfold)
             mse.append(mean_squared_error(self.y, y_cv))
-            
+
         best_ac = np.argmin(mse)
         return component[best_ac], mse
     
-    def calc_vip_scores(self):
-        pass
+    def _get_top_coef_indices(self, n):
+        """Finds indices of top n highest coefficients"""
+        numbers = self.coefficients[:, 0]
+        idx = np.argpartition(numbers, -n)[-n:]
+        indices = idx[np.argsort((-numbers)[idx])]
+        indices = np.sort(np.array(indices).flatten())
+        return indices
     
-    def plot_vip_scores(self):
-        pass
+    def predict(self, data):
+        return self._pls.predict(data)
+
+    def calc_vip_scores(self, top_n_coeff=None, threshold=None):
+        if top_n_coeff is None:
+            xw = self.x_weights
+        else:
+            self._indices = self._get_top_coef_indices(top_n_coeff)
+            xw = self.x_weights[self._indices, :]
+
+        xs = self.x_scores
+        yl = self.y_loadings
+
+        vips = _vip_scores(xw, xs, yl)
+
+        self.vip_scores = vips
+        
+        if threshold is not None:
+            i = np.where(self.vip_scores > threshold)
+            self.vip_scores = self.vip_scores[i]
+            self._indices = self._indices[i]
+
+        return vips
     
-    def plot_optimization(self):
-        component = np.arange(1, self.n_components)
-        best_ac = np.argmin(self._accuracies)
-
-        with plt.style.context("seaborn"):
-            fig = plt.figure()
-            plt.plot(component, self._accuracies)
-            plt.scatter(component, self._accuracies)
-            plt.plot(component[best_ac], self._accuracies[best_ac], color="tab:orange",
-                        marker="*", markersize=20)
-            plt.xlabel("Number of PLS Components")
-            plt.ylabel("MSE")
-            plt.title("PLS")
-        return fig
-
     def plot(self):
         z = np.polyfit(self.y, self.prediction, 1)
         with plt.style.context("seaborn"):
-            fig = plt.figure()
+            fig = plt.figure(figsize=(9, 8))
             plt.scatter(self.prediction, self.y)
-            plt.plot(self.y, self.y, label="Ideal", c="tab:green", linewidth=1)
-            plt.plot(np.polyval(z, self.y), self.y, label="Regression",
-                     c="tab:orange", linewidth=1)
-            plt.xlabel("Predicted")
-            plt.ylabel("Actual")
-            plt.title("Crossvalidation")
-            plt.legend(frameon=True, fancybox=True, facecolor="white")
+            plt.plot(
+                self.y,
+                self.y,
+                label="Ideal",
+                c="tab:green",
+                linewidth=1
+                )
+            plt.plot(
+                np.polyval(z, self.y),
+                self.y,
+                label=f"PLS-Regression\n$R^2$: {self.r2_score}",
+                c="tab:orange",
+                linewidth=1
+                )
+            plt.xlabel("Predicted", fontsize=12)
+            plt.ylabel("Actual", fontsize=12)
+            plt.legend(frameon=True, fancybox=True, facecolor="white", fontsize=12)
         return fig
     
+    def plot_vip_scores(self):
+        if not hasattr(self, "vip_scores"):
+            raise ValueError("Must calculate VIP scores first.")
+        
+        vip_matrix = np.zeros(self.X.shape[1])
+        vip_matrix[self._indices] = self.vip_scores
+        vip_matrix = vip_matrix.reshape(self.dataset[0].values.shape)
+
+        ret_time = self.dataset[0].ret_time
+        drift_time = self.dataset[0].drift_time
+
+        fig, ax = plt.subplots(figsize=(9, 10))
+
+        plt.imshow(
+            vip_matrix,
+            cmap="RdBu_r",
+            origin="lower",
+            aspect="auto",
+            extent=(min(drift_time), max(drift_time),
+                    min(ret_time), max(ret_time))
+            )
+
+        plt.colorbar(label="VIP scores")
+
+        plt.title(f"PLS VIP scores", fontsize=14)
+
+        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
+        plt.ylabel("Retention Time [s]", fontsize=12)
+
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
+        
+        return fig
+    
+    def plot_optimization(self):
+        
+        if not self.optimize:
+            raise ValueError("Can only plot optimization results if optimize argument is True.")
+        
+        component = np.arange(2, self.n_components + 1)
+        best_ac = np.argmin(self._mse_scores)
+
+        with plt.style.context("seaborn"):
+            fig = plt.figure(figsize=(9, 8))
+            plt.plot(component, self._mse_scores)
+            plt.scatter(component, self._mse_scores)
+            plt.plot(
+                component[best_ac],
+                self._mse_scores[best_ac],
+                color="tab:orange",
+                marker="*",
+                markersize=20
+                )
+            plt.xlabel("Number of PLS Components", fontsize=12)
+            plt.ylabel("MSE", fontsize=12)
+            plt.title("PLS Optimization", fontsize=14)
+        return fig
+
     def plot_coefficients(self):
-        pass
+        
+        coef = self.coefficients.reshape(self.dataset[0].values.shape)
+
+        ret_time = self.dataset[0].ret_time
+        drift_time = self.dataset[0].drift_time
+        
+        fig, ax = plt.subplots(figsize=(9, 10))
+        
+        plt.imshow(
+            coef,
+            cmap="RdBu_r",
+            origin="lower",
+            aspect="auto",
+            extent=(min(drift_time), max(drift_time),
+                    min(ret_time), max(ret_time))
+            )
+
+        plt.colorbar(label="Coefficients")
+
+        plt.title("PLS Coefficients", fontsize=14)
+
+        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
+        plt.ylabel("Retention Time [s]", fontsize=12)
+
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
+
+        return fig
 
 
 class PLS_DA(BaseModel):
@@ -190,7 +298,7 @@ class PLS_DA(BaseModel):
 
     def _optimize_plsda(self):
         """Optimizes number of components"""
-        component = np.arange(1, self.n_components + 1)
+        component = np.arange(2, self.n_components + 1)
         accuracy = []
         precision = []
         recall = []
@@ -212,6 +320,7 @@ class PLS_DA(BaseModel):
         self.x_weights = self._pls.x_weights_
         self.y_weights = self._pls.y_weights_
         self.y_loadings = self._pls.y_loadings_
+        self.coefficients = self._pls.coef_
 
         if self.scaling_method is None:
             self.x_loadings = self._pls.x_loadings_
@@ -229,9 +338,11 @@ class PLS_DA(BaseModel):
         indices = np.sort(np.array(indices).flatten())
         return np.unique(indices)
     
-    def plot_confusion_matrix(self):
+    def predict(self, data):
         pass
     
+    def plot_confusion_matrix(self):
+        pass
     
     def calc_vip_scores(self, top_n_coeff=None, threshold=None):
         """
@@ -301,7 +412,7 @@ class PLS_DA(BaseModel):
         df["Sample"] = self.dataset.samples
         
         with plt.style.context("seaborn"):
-            fig = plt.figure()
+            fig = plt.figure(figsize=(9, 8))
             sns.scatterplot(
                 x=f"PLS Component {x_comp}",
                 y=f"PLS Component {y_comp}",
@@ -339,7 +450,7 @@ class PLS_DA(BaseModel):
         if not self.optimize:
             raise ValueError("Can only plot optimization results if optimize argument is True.")
             
-        component = np.arange(1, self.n_components + 1)
+        component = np.arange(2, self.n_components + 1)
         best_ac = np.argmax(self._accuracies)
         
         with plt.style.context("seaborn"):
@@ -469,7 +580,7 @@ class PLS_DA(BaseModel):
 
 def _vip_scores(xw, xs, yl):
     """
-    Calculates VIP scores of PLS x_weights, x_scores
+    Calculates VIP scores from PLS x_weights, x_scores
     and y_loadings.
 
     Parameters
@@ -487,13 +598,13 @@ def _vip_scores(xw, xs, yl):
     -------
     numpy.ndarray
         Vector of VIP scores
-    """    
+    """
     p, h = xw.shape
 
     vips = np.zeros((p,))
     weight = np.zeros((h,))
 
-    s = np.diag(xs.T @ xs @ yl.T @ yl)
+    s = np.diag((xs.T @ xs) @ (yl.T @ yl))
     s = s.reshape(h, -1)
 
     total_s = np.sum(s)
