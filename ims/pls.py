@@ -166,6 +166,57 @@ class PLSR(BaseModel):
             plt.legend(frameon=True, fancybox=True, facecolor="white", fontsize=12)
         return fig
     
+    def plot_loadings(self, component=1, color_range=0.02):
+        """
+        Plots PLS x loadings as image with retention and drift
+        time coordinates.
+
+        Parameters
+        ----------
+        component : int, optional
+            Component to plot, by default 1
+
+        color_range : float, optional
+            Minimum and Maximum to adjust to different scaling methods,
+            by default 0.02
+
+        Returns
+        -------
+        matplotlib.Figure
+        """        
+        loadings = self.x_loadings[:, component-1].\
+            reshape(self.dataset[0].shape)
+            
+        ret_time = self.dataset[0].ret_time
+        drift_time = self.dataset[0].drift_time
+
+        fig, ax = plt.subplots(figsize=(9, 10))
+
+        plt.imshow(
+            loadings,
+            cmap="RdBu_r",
+            norm=CenteredNorm(0),
+            vmin=(-color_range),
+            vmax=color_range,
+            origin="lower",
+            aspect="auto",
+            extent=(min(drift_time), max(drift_time),
+                    min(ret_time), max(ret_time))
+            )
+
+        plt.colorbar(label="Loadings")
+
+        plt.title(f"PLS-DA loadings of component {component}",
+                  fontsize=14)
+
+        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
+        plt.ylabel("Retention Time [s]", fontsize=12)
+
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
+
+        return fig
+    
     def plot_vip_scores(self):
         """
         Plots VIP scores as image with retention and drift time axis.
@@ -557,6 +608,57 @@ class PLS_DA(BaseModel):
             axs[2].scatter(component, self._recalls)
             axs[2].set_xlabel("Number of PLS components", fontsize=12)
             axs[2].set_ylabel("Recall", fontsize=12)
+
+        return fig
+
+    def plot_loadings(self, component=1, color_range=0.02):
+        """
+        Plots PLS x loadings as image with retention and drift
+        time coordinates.
+
+        Parameters
+        ----------
+        component : int, optional
+            Component to plot, by default 1
+
+        color_range : float, optional
+            Minimum and Maximum to adjust to different scaling methods,
+            by default 0.02
+
+        Returns
+        -------
+        matplotlib.Figure
+        """        
+        loadings = self.x_loadings[:, component-1].\
+            reshape(self.dataset[0].shape)
+            
+        ret_time = self.dataset[0].ret_time
+        drift_time = self.dataset[0].drift_time
+
+        fig, ax = plt.subplots(figsize=(9, 10))
+
+        plt.imshow(
+            loadings,
+            cmap="RdBu_r",
+            norm=CenteredNorm(0),
+            vmin=(-color_range),
+            vmax=color_range,
+            origin="lower",
+            aspect="auto",
+            extent=(min(drift_time), max(drift_time),
+                    min(ret_time), max(ret_time))
+            )
+
+        plt.colorbar(label="Loadings")
+
+        plt.title(f"PLS-DA loadings of component {component}",
+                  fontsize=14)
+
+        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
+        plt.ylabel("Retention Time [s]", fontsize=12)
+
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
 
         return fig
 
