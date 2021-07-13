@@ -16,7 +16,29 @@ class PLSR(BaseModel):
 
     def __init__(self, dataset, scaling_method=None, optimize=False,
                  n_components=5, kfold=5, **kwargs):
+        """
+        Performs PLS regression on IMS-Spectra in dataset.
 
+        Parameters
+        ----------
+        dataset : ims.Dataset
+            dataset with numeric labels
+
+        scaling_method : str, optional
+            'standard', 'auto', 'pareto' and 'var' are valid arguments,
+            by default None
+
+        optimize : bool, optional
+            If true finds the number of components with highest accuracy,
+            by default False
+
+        n_components : int, optional
+            If optimize is true the maximum number of components
+            otherwise the number of components for PLS, by default 10
+
+        kfold : int, optional
+            Number of splits for crossvalidation, by default 5
+        """
         super().__init__(dataset, scaling_method)
         self.kfold = kfold
         self.n_components = n_components
@@ -50,6 +72,7 @@ class PLSR(BaseModel):
         self.mse = round(mean_squared_error(self.y, self.prediction), 2)
 
     def _optimize_pls(self, **kwargs):
+        """Finds optimal number of components by minimal MSE"""
         mse = []
         component = np.arange(2, self.n_components + 1)
         
@@ -73,6 +96,24 @@ class PLSR(BaseModel):
         return self._pls.predict(data)
 
     def calc_vip_scores(self, top_n_coeff=None, threshold=None):
+        """
+        Calculates variable importance in projection (VIP) scores.
+        Optionally only of features with high coefficients.
+
+        Parameters
+        ----------
+        top_n_coeff : int, optional
+            Number highest coefficients per group
+            if None calculates all, by default None
+            
+        threshold : int, optional
+            if given keeps only VIP scores greater than threshold,
+            by default None
+
+        Returns
+        -------
+        numpy.ndarray
+        """
         if top_n_coeff is None:
             xw = self.x_weights
         else:
@@ -94,6 +135,13 @@ class PLSR(BaseModel):
         return vips
     
     def plot(self):
+        """
+        Plots prediction vs actual values and shows regression line.
+
+        Returns
+        -------
+        matplotlib.Figure
+        """        
         z = np.polyfit(self.y, self.prediction, 1)
         with plt.style.context("seaborn"):
             fig = plt.figure(figsize=(9, 8))
@@ -118,6 +166,18 @@ class PLSR(BaseModel):
         return fig
     
     def plot_vip_scores(self):
+        """
+        Plots VIP scores as image with retention and drift time axis.
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        Raises
+        ------
+        ValueError
+            If VIP scores have not been calculated prior.
+        """        
         if not hasattr(self, "vip_scores"):
             raise ValueError("Must calculate VIP scores first.")
         
@@ -152,7 +212,19 @@ class PLSR(BaseModel):
         return fig
     
     def plot_optimization(self):
-        
+        """
+        Plots MSE from crossvalidation vs number of components
+        to find the best parameter.
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        Raises
+        ------
+        ValueError
+            If optimize is set to False during initial Method.
+        """
         if not self.optimize:
             raise ValueError("Can only plot optimization results if optimize argument is True.")
         
@@ -176,7 +248,13 @@ class PLSR(BaseModel):
         return fig
 
     def plot_coefficients(self):
-        
+        """
+        Plots PLS coefficients as image with retention and drift time axis.
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+        """
         coef = self.coefficients.reshape(self.dataset[0].values.shape)
 
         ret_time = self.dataset[0].ret_time
@@ -223,7 +301,8 @@ class PLS_DA(BaseModel):
             by default None
 
         optimize : bool, optional
-            If true finds the number of components with highest accuracy, by default False
+            If true finds the number of components with highest accuracy,
+            by default False
 
         n_components : int, optional
             If optimize is true the maximum number of components
@@ -231,7 +310,7 @@ class PLS_DA(BaseModel):
 
         kfold : int, optional
             Number of splits for crossvalidation, by default 5
-        """        
+        """
         super().__init__(dataset, scaling_method)
         self.optimize = optimize
         self.n_components = n_components
@@ -493,7 +572,6 @@ class PLS_DA(BaseModel):
         -------
         matplotlib.figure.Figure
         """
-
         if isinstance(group, str):
             group_index = self.groups.index(group)
             group_name = group
@@ -542,7 +620,7 @@ class PLS_DA(BaseModel):
         Raises
         ------
         ValueError
-            If VIP scores are not calculated.
+            If VIP scores have not been calculated prior.
         """        
         if not hasattr(self, "vip_scores"):
             raise ValueError("Must calculate VIP scores first.")
