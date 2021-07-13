@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.ticker import MaxNLocator, AutoMinorLocator
+from matplotlib.colors import CenteredNorm
 from sklearn.decomposition import PCA
 from ims import BaseModel
 
@@ -145,6 +146,7 @@ class PCA_Model(BaseModel):
             origin="lower",
             aspect="auto",
             cmap="RdBu_r",
+            norm=CenteredNorm(0),
             vmin=(-color_range),
             vmax=color_range,
             extent=(min(drift_time), max(drift_time),

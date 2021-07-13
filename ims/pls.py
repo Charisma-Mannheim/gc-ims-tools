@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
+from matplotlib.colors import CenteredNorm
 import seaborn as sns
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.model_selection import cross_val_predict, KFold
@@ -265,6 +266,7 @@ class PLSR(BaseModel):
         plt.imshow(
             coef,
             cmap="RdBu_r",
+            norm=CenteredNorm(0),
             origin="lower",
             aspect="auto",
             extent=(min(drift_time), max(drift_time),
@@ -591,6 +593,7 @@ class PLS_DA(BaseModel):
         plt.imshow(
             coef,
             cmap="RdBu_r",
+            norm=CenteredNorm(0),
             origin="lower",
             aspect="auto",
             extent=(min(drift_time), max(drift_time),
