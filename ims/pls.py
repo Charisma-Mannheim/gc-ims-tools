@@ -46,8 +46,8 @@ class PLSR(BaseModel):
         self.optimize = optimize
 
         if self.optimize:
-            # _mse_scores is needed for the optimization plot
-            self._best_comp, self._mse_scores = self._optimize_pls(**kwargs)
+            # _rmse_scores is needed for the optimization plot
+            self._best_comp, self._rmse_scores = self._optimize_pls(**kwargs)
             self._fit(self._best_comp, **kwargs)
         else:
             self._fit(self.n_components)
@@ -70,20 +70,20 @@ class PLSR(BaseModel):
 
         self.prediction = self._pls.predict(self.X)
         self.r2_score = round(r2_score(self.y, self.prediction), 2)
-        self.mse = round(mean_squared_error(self.y, self.prediction), 2)
+        self.rmse = round(mean_squared_error(self.y, self.prediction, squared=False), 2)
 
     def _optimize_pls(self, **kwargs):
-        """Finds optimal number of components by minimal MSE"""
-        mse = []
+        """Finds optimal number of components by minimal RMSE"""
+        rmse = []
         component = np.arange(2, self.n_components + 1)
         
         for i in component:
             pls = PLSRegression(n_components=i, **kwargs)
             y_cv = cross_val_predict(pls, self.X, self.y, cv=self.kfold)
-            mse.append(mean_squared_error(self.y, y_cv))
+            rmse.append(mean_squared_error(self.y, y_cv, squared=False))
 
-        best_ac = np.argmin(mse)
-        return component[best_ac], mse
+        best_ac = np.argmin(rmse)
+        return component[best_ac], rmse
     
     def _get_top_coef_indices(self, n):
         """Finds indices of top n highest coefficients"""
@@ -148,16 +148,9 @@ class PLSR(BaseModel):
             fig = plt.figure(figsize=(9, 8))
             plt.scatter(self.prediction, self.y)
             plt.plot(
-                self.y,
-                self.y,
-                label="Ideal",
-                c="tab:green",
-                linewidth=1
-                )
-            plt.plot(
                 np.polyval(z, self.y),
                 self.y,
-                label=f"PLS-Regression\n$R^2$: {self.r2_score}",
+                label=f"RMSE: {self.rmse}",
                 c="tab:orange",
                 linewidth=1
                 )
@@ -206,7 +199,7 @@ class PLSR(BaseModel):
 
         plt.colorbar(label="Loadings")
 
-        plt.title(f"PLS-DA loadings of component {component}",
+        plt.title(f"PLS loadings of component {component}",
                   fontsize=14)
 
         plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
@@ -265,7 +258,7 @@ class PLSR(BaseModel):
     
     def plot_optimization(self):
         """
-        Plots MSE from crossvalidation vs number of components
+        Plots RMSE from crossvalidation vs number of components
         to find the best parameter.
 
         Returns
@@ -281,21 +274,21 @@ class PLSR(BaseModel):
             raise ValueError("Can only plot optimization results if optimize argument is True.")
         
         component = np.arange(2, self.n_components + 1)
-        best_ac = np.argmin(self._mse_scores)
+        best_ac = np.argmin(self._rmse_scores)
 
         with plt.style.context("seaborn"):
             fig = plt.figure(figsize=(9, 8))
-            plt.plot(component, self._mse_scores)
-            plt.scatter(component, self._mse_scores)
+            plt.plot(component, self._rmse_scores)
+            plt.scatter(component, self._rmse_scores)
             plt.plot(
                 component[best_ac],
-                self._mse_scores[best_ac],
+                self._rmse_scores[best_ac],
                 color="tab:orange",
                 marker="*",
                 markersize=20
                 )
             plt.xlabel("Number of PLS Components", fontsize=12)
-            plt.ylabel("MSE", fontsize=12)
+            plt.ylabel("RMSE", fontsize=12)
             plt.title("PLS Optimization", fontsize=14)
         return fig
 
