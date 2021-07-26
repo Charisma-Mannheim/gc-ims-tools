@@ -96,7 +96,7 @@ class PLSR(BaseModel):
     def predict(self, data):
         return self._pls.predict(data)
 
-    def calc_vip_scores(self, top_n_coeff=None, threshold=None):
+    def calc_vip_scores(self, threshold=None):
         """
         Calculates variable importance in projection (VIP) scores.
         Optionally only of features with high coefficients.
@@ -115,24 +115,15 @@ class PLSR(BaseModel):
         -------
         numpy.ndarray
         """
-        if top_n_coeff is None:
-            xw = self.x_weights
-        else:
-            self._indices = self._get_top_coef_indices(top_n_coeff)
-            xw = self.x_weights[self._indices, :]
+        vips = _vip_scores(self.x_weights, self.x_scores, self.y_loadings)
 
-        xs = self.x_scores
-        yl = self.y_loadings
-
-        vips = _vip_scores(xw, xs, yl)
+        if threshold is not None:
+            vip_array = np.zeros_like(vips)
+            i = np.where(vips > threshold)
+            vip_array[i] = vips[i]
+            vips = vip_array
 
         self.vip_scores = vips
-        
-        if threshold is not None:
-            i = np.where(self.vip_scores > threshold)
-            self.vip_scores = self.vip_scores[i]
-            self._indices = self._indices[i]
-
         return vips
     
     def plot(self):
@@ -226,9 +217,7 @@ class PLSR(BaseModel):
         if not hasattr(self, "vip_scores"):
             raise ValueError("Must calculate VIP scores first.")
         
-        vip_matrix = np.zeros(self.X.shape[1])
-        vip_matrix[self._indices] = self.vip_scores
-        vip_matrix = vip_matrix.reshape(self.dataset[0].values.shape)
+        vip_matrix = self.vip_scores.reshape(self.dataset[0].values.shape)
 
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
@@ -451,35 +440,20 @@ class PLS_DA(BaseModel):
             self.x_loadings = self._pls.x_loadings_
         else:
             self.x_loadings = self._pls.x_loadings_ / self.weights[:, None]
-
-    def _get_top_coef_indices(self, n):
-        indices = []
-        for i in range(len(self.groups)):
-            numbers = self._pls.coef_[:, i]
-            idx = np.argpartition(numbers, -n)[-n:]
-            index = idx[np.argsort((-numbers)[idx])]
-            indices.append(index)
-
-        indices = np.sort(np.array(indices).flatten())
-        return np.unique(indices)
-    
+ 
     def predict(self, data):
         pass
     
     def plot_confusion_matrix(self):
         pass
     
-    def calc_vip_scores(self, top_n_coeff=None, threshold=None):
+    def calc_vip_scores(self, threshold=None):
         """
         Calculates variable importance in projection (VIP) scores.
         Optionally only of features with high coefficients.
 
         Parameters
         ----------
-        top_n_coeff : int, optional
-            Number highest coefficients per group
-            if None calculates all, by default None
-            
         threshold : int, optional
             if given keeps only VIP scores greater than threshold,
             by default None
@@ -488,24 +462,15 @@ class PLS_DA(BaseModel):
         -------
         numpy.ndarray
         """
-        if top_n_coeff is None:
-            xw = self.x_weights
-        else:
-            self._indices = self._get_top_coef_indices(top_n_coeff)
-            xw = self.x_weights[self._indices, :]
+        vips = _vip_scores(self.x_weights, self.x_scores, self.y_loadings)
 
-        xs = self.x_scores
-        yl = self.y_loadings
-
-        vips = _vip_scores(xw, xs, yl)
+        if threshold is not None:
+            vip_array = np.zeros_like(vips)
+            i = np.where(vips > threshold)
+            vip_array[i] = vips[i]
+            vips = vip_array
 
         self.vip_scores = vips
-        
-        if threshold is not None:
-            i = np.where(self.vip_scores > threshold)
-            self.vip_scores = self.vip_scores[i]
-            self._indices = self._indices[i]
-
         return vips
 
     def plot(self, x_comp=1, y_comp=2, annotate=False):
@@ -532,6 +497,7 @@ class PLS_DA(BaseModel):
             cols = [f"PLS Component {i}" for i in range(1, self._best_comp + 1)]
         else:
             cols = [f"PLS Component {i}" for i in range(1, self.n_components + 1)]
+
         df = pd.DataFrame(self.x_scores, columns=cols)
         df["Group"] = self.dataset.labels
         df["Sample"] = self.dataset.samples
@@ -723,9 +689,7 @@ class PLS_DA(BaseModel):
         if not hasattr(self, "vip_scores"):
             raise ValueError("Must calculate VIP scores first.")
         
-        vip_matrix = np.zeros(self.X.shape[1])
-        vip_matrix[self._indices] = self.vip_scores
-        vip_matrix = vip_matrix.reshape(self.dataset[0].values.shape)
+        vip_matrix = self.vip_scores.reshape(self.dataset[0].values.shape)
 
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
@@ -775,20 +739,8 @@ def _vip_scores(xw, xs, yl):
     numpy.ndarray
         Vector of VIP scores
     """
-    p, h = xw.shape
-
-    vips = np.zeros((p,))
-    weight = np.zeros((h,))
-
-    s = np.diag((xs.T @ xs) @ (yl.T @ yl))
-    s = s.reshape(h, -1)
-
-    total_s = np.sum(s)
-
-    for i in range(p):
-        for j in range(h):
-            weight[j] = (xw[i, j] / np.linalg.norm(xw[:, j]))**2
-
-        vips[i] = np.sqrt(p * (s.T @ weight) / total_s)
-
+    W0 = xw / np.sqrt(np.sum(xw**2, 0))
+    p, _ = xw.shape
+    sumSq = np.sum(xs**2, 0) * np.sum(yl**2, 0)
+    vips = np.sqrt(p * np.sum(sumSq * (W0**2), 1) / np.sum(sumSq))
     return vips
