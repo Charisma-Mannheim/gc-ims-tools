@@ -84,15 +84,7 @@ class PLSR(BaseModel):
 
         best_ac = np.argmin(rmse)
         return component[best_ac], rmse
-    
-    def _get_top_coef_indices(self, n):
-        """Finds indices of top n highest coefficients"""
-        numbers = self.coefficients[:, 0]
-        idx = np.argpartition(numbers, -n)[-n:]
-        indices = idx[np.argsort((-numbers)[idx])]
-        indices = np.sort(np.array(indices).flatten())
-        return indices
-    
+     
     def predict(self, data):
         return self._pls.predict(data)
 
@@ -135,19 +127,19 @@ class PLSR(BaseModel):
         matplotlib.Figure
         """        
         z = np.polyfit(self.y, self.prediction, 1)
-        with plt.style.context("seaborn"):
-            fig = plt.figure(figsize=(9, 8))
-            plt.scatter(self.prediction, self.y)
-            plt.plot(
-                np.polyval(z, self.y),
-                self.y,
-                label=f"RMSE: {self.rmse}",
-                c="tab:orange",
-                linewidth=1
-                )
-            plt.xlabel("Predicted", fontsize=12)
-            plt.ylabel("Actual", fontsize=12)
-            plt.legend(frameon=True, fancybox=True, facecolor="white", fontsize=12)
+
+        fig = plt.figure(figsize=(9, 8))
+        plt.scatter(self.prediction, self.y)
+        plt.plot(
+            np.polyval(z, self.y),
+            self.y,
+            label=f"RMSE: {self.rmse}",
+            c="tab:orange",
+            linewidth=1
+            )
+        plt.xlabel("Predicted", fontsize=12)
+        plt.ylabel("Actual", fontsize=12)
+        plt.legend(frameon=True, fancybox=True, facecolor="white", fontsize=12)
         return fig
     
     def plot_loadings(self, component=1, color_range=0.02):
@@ -265,20 +257,20 @@ class PLSR(BaseModel):
         component = np.arange(2, self.n_components + 1)
         best_ac = np.argmin(self._rmse_scores)
 
-        with plt.style.context("seaborn"):
-            fig = plt.figure(figsize=(9, 8))
-            plt.plot(component, self._rmse_scores)
-            plt.scatter(component, self._rmse_scores)
-            plt.plot(
-                component[best_ac],
-                self._rmse_scores[best_ac],
-                color="tab:orange",
-                marker="*",
-                markersize=20
-                )
-            plt.xlabel("Number of PLS Components", fontsize=12)
-            plt.ylabel("RMSE", fontsize=12)
-            plt.title("PLS Optimization", fontsize=14)
+
+        fig = plt.figure(figsize=(9, 8))
+        plt.plot(component, self._rmse_scores)
+        plt.scatter(component, self._rmse_scores)
+        plt.plot(
+            component[best_ac],
+            self._rmse_scores[best_ac],
+            color="tab:orange",
+            marker="*",
+            markersize=20
+            )
+        plt.xlabel("Number of PLS Components", fontsize=12)
+        plt.ylabel("RMSE", fontsize=12)
+        plt.title("PLS Optimization", fontsize=14)
         return fig
 
     def plot_coefficients(self):
@@ -502,25 +494,24 @@ class PLS_DA(BaseModel):
         df["Group"] = self.dataset.labels
         df["Sample"] = self.dataset.samples
         
-        with plt.style.context("seaborn"):
-            fig = plt.figure(figsize=(9, 8))
-            sns.scatterplot(
-                x=f"PLS Component {x_comp}",
-                y=f"PLS Component {y_comp}",
-                data=df,
-                hue="Group",
-                style="Group",
-                s=50
+        fig = plt.figure(figsize=(9, 8))
+        sns.scatterplot(
+            x=f"PLS Component {x_comp}",
+            y=f"PLS Component {y_comp}",
+            data=df,
+            hue="Group",
+            style="Group",
+            s=50
+            )
+        plt.legend(frameon=True, fancybox=True, facecolor="white")
+        
+        if annotate:
+            for _, row in df.iterrows():
+                plt.annotate(
+                    row["Sample"],
+                    xy=(row[f"PLS Component {x_comp}"], row[f"PLS Component {y_comp}"]),
+                    xycoords="data"
                 )
-            plt.legend(frameon=True, fancybox=True, facecolor="white")
-            
-            if annotate:
-                for _, row in df.iterrows():
-                    plt.annotate(
-                        row["Sample"],
-                        xy=(row[f"PLS Component {x_comp}"], row[f"PLS Component {y_comp}"]),
-                        xycoords="data"
-                    )
 
         return fig
 
@@ -544,29 +535,28 @@ class PLS_DA(BaseModel):
         component = np.arange(2, self.n_components + 1)
         best_ac = np.argmax(self._accuracies)
         
-        with plt.style.context("seaborn"):
-            fig, axs = plt.subplots(3, figsize=(8, 12))
+        fig, axs = plt.subplots(3, figsize=(8, 12))
 
-            axs[0].plot(component, self._accuracies)
-            axs[0].scatter(component, self._accuracies) 
-            axs[0].plot(
-                component[best_ac],
-                self._accuracies[best_ac],
-                color="tab:orange",
-                marker="*",
-                markersize=20
-                )
-            axs[0].set_title("PLS-DA Optimization", fontsize=14)
-            axs[0].set_ylabel("Accuracy")
+        axs[0].plot(component, self._accuracies)
+        axs[0].scatter(component, self._accuracies) 
+        axs[0].plot(
+            component[best_ac],
+            self._accuracies[best_ac],
+            color="tab:orange",
+            marker="*",
+            markersize=20
+            )
+        axs[0].set_title("PLS-DA Optimization", fontsize=14)
+        axs[0].set_ylabel("Accuracy")
 
-            axs[1].plot(component, self._precisions)
-            axs[1].scatter(component, self._precisions)
-            axs[1].set_ylabel("Precision", fontsize=12)
+        axs[1].plot(component, self._precisions)
+        axs[1].scatter(component, self._precisions)
+        axs[1].set_ylabel("Precision", fontsize=12)
 
-            axs[2].plot(component, self._recalls)
-            axs[2].scatter(component, self._recalls)
-            axs[2].set_xlabel("Number of PLS components", fontsize=12)
-            axs[2].set_ylabel("Recall", fontsize=12)
+        axs[2].plot(component, self._recalls)
+        axs[2].scatter(component, self._recalls)
+        axs[2].set_xlabel("Number of PLS components", fontsize=12)
+        axs[2].set_ylabel("Recall", fontsize=12)
 
         return fig
 
@@ -716,7 +706,7 @@ class PLS_DA(BaseModel):
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         
         return fig
-    
+
 
 def _vip_scores(xw, xs, yl):
     """

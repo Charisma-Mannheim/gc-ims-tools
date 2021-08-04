@@ -39,8 +39,7 @@ class PCA_Model(BaseModel):
 {self.scaling_method} scaling
 '''
 
-    def scatter_plot(self, PC_x=1, PC_y=2, width=9, height=8,
-                     hue="Label", style="Label", label=False):
+    def scatter_plot(self, PC_x=1, PC_y=2, width=9, height=8, annotate=False):
         """
         Scatter plot of principal components
 
@@ -58,15 +57,7 @@ class PCA_Model(BaseModel):
         height : int, optional
             plot height in inches, by default 7
             
-        hue : str, optional
-            color markers either by 'Label' or by 'Sample',
-            by default 'Label'
-            
-        style : str, optional
-            marker style either by 'Label' or by 'Sample',
-            by default 'Label'
-            
-        label : bool, optional
+        annotate : bool, optional
             label data points with sample name,
             by default False
 
@@ -85,26 +76,25 @@ class PCA_Model(BaseModel):
         pc_df['Sample'] = self.dataset.samples
         pc_df['Label'] = self.dataset.labels
 
-        with plt.style.context("seaborn"):
-            fig, ax = plt.subplots(figsize=(width, height))
-            sns.scatterplot(
-                ax=ax,
-                x=f"PC {PC_x}",
-                y=f"PC {PC_y}",
-                data=pc_df,
-                hue=hue,
-                style=style,
-                s=100
-            )
+        fig, ax = plt.subplots(figsize=(width, height))
+        sns.scatterplot(
+            ax=ax,
+            x=f"PC {PC_x}",
+            y=f"PC {PC_y}",
+            data=pc_df,
+            hue="Label",
+            style="Label",
+            s=100
+        )
 
-            plt.legend(frameon=True, fancybox=True, facecolor="white")
-            plt.xlabel(f"PC {PC_x} ({expl_var[PC_x-1]} % of variance)")
-            plt.ylabel(f"PC {PC_y} ({expl_var[PC_y-1]} % of variance)")
-            
-            if label:
-                for i, point in pc_df.iterrows():
-                    ax.text(point[f"PC {PC_x}"], point[f"PC {PC_y}"],
-                            point["Sample"])
+        plt.legend(frameon=True, fancybox=True, facecolor="white")
+        plt.xlabel(f"PC {PC_x} ({expl_var[PC_x-1]} % of variance)")
+        plt.ylabel(f"PC {PC_y} ({expl_var[PC_y-1]} % of variance)")
+        
+        if annotate:
+            for i, point in pc_df.iterrows():
+                ax.text(point[f"PC {PC_x}"], point[f"PC {PC_y}"],
+                        point["Sample"])
 
         return fig
 
@@ -163,7 +153,7 @@ class PCA_Model(BaseModel):
         plt.title(f"PCA Loadings of PC {PC}", fontsize=16)
         return fig
 
-    def scree_plot(self, width=9, height=8, style="seaborn"):
+    def scree_plot(self, width=9, height=8):
         """
         Plots the explained variance ratio per principal component
         and cumulatively.
@@ -175,19 +165,18 @@ class PCA_Model(BaseModel):
         x = [*range(1, self.pca.n_components_ + 1)]
         y = self.pca.explained_variance_ratio_
 
-        with plt.style.context(style):
-            fig, ax = plt.subplots(figsize=(width, height))
-            
-            for axis in [ax.xaxis, ax.yaxis]:
-                axis.set_major_locator(MaxNLocator(integer=True))
-            
-            plt.xticks(x)
-            plt.xlabel("Principal Component", fontsize=12)
-            plt.ylabel("Explainded variance ratio [%]", fontsize=12)
-            
-            ax.plot(x, np.cumsum(y) * 100, label="cumulative")
-            ax.plot(x, y * 100, label="per PC")
-            
-            plt.legend(frameon=True, fancybox=True, facecolor="white")
+        fig, ax = plt.subplots(figsize=(width, height))
+        
+        for axis in [ax.xaxis, ax.yaxis]:
+            axis.set_major_locator(MaxNLocator(integer=True))
+        
+        plt.xticks(x)
+        plt.xlabel("Principal Component", fontsize=12)
+        plt.ylabel("Explainded variance ratio [%]", fontsize=12)
+        
+        ax.plot(x, np.cumsum(y) * 100, label="cumulative")
+        ax.plot(x, y * 100, label="per PC")
+        
+        plt.legend(frameon=True, fancybox=True, facecolor="white")
 
         return fig

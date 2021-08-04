@@ -98,11 +98,10 @@ class Classification(BaseModel):
                              index=np.unique(self.y),
                              columns=np.unique(self.y))
 
-        with plt.style.context("seaborn"):
-            sns.set(rc={'figure.figsize':(7, 6)})
-            ax = sns.heatmap(cm_df, cbar=False, annot=True, cmap='Reds')
-            ax.set(xlabel='Predicted', ylabel='Actual')
-            ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
+        sns.set(rc={'figure.figsize':(7, 6)})
+        ax = sns.heatmap(cm_df, cbar=False, annot=True, cmap='Reds')
+        ax.set(xlabel='Predicted', ylabel='Actual')
+        ax.set_yticklabels(ax.get_yticklabels(), rotation=0)
         return ax
     
 
@@ -166,14 +165,14 @@ class Regression(BaseModel):
 
     def plot(self):
         z = np.polyfit(self.y, self.prediction, 1)
-        with plt.style.context("seaborn"):
-            fig = plt.figure()
-            plt.scatter(self.prediction, self.y)
-            plt.plot(self.y, self.y, label="Ideal", c="tab:green", linewidth=1)
-            plt.plot(np.polyval(z, self.y), self.y, label="Regression",
-                     c="tab:orange", linewidth=1)
-            plt.xlabel("Predicted")
-            plt.ylabel("Actual")
-            # plt.title("Crossvalidation")
-            plt.legend(frameon=True, fancybox=True, facecolor="white")
+
+        fig = plt.figure()
+        plt.scatter(self.prediction, self.y)
+        plt.plot(self.y, self.y, label="Ideal", c="tab:green", linewidth=1)
+        plt.plot(np.polyval(z, self.y), self.y, label="Regression",
+                    c="tab:orange", linewidth=1)
+        plt.xlabel("Predicted")
+        plt.ylabel("Actual")
+        # plt.title("Crossvalidation")
+        plt.legend(frameon=True, fancybox=True, facecolor="white")
         return fig
