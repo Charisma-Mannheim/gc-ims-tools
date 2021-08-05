@@ -91,8 +91,7 @@ class Classification(BaseModel):
 
         Returns
         -------
-        matplotlib axis object
-            Uses seaborn.
+        matplotlib.pyplot.axes
         """
         cm_df = pd.DataFrame(self.confusion_matrix,
                              index=np.unique(self.y),
@@ -166,7 +165,7 @@ class Regression(BaseModel):
     def plot(self):
         z = np.polyfit(self.y, self.prediction, 1)
 
-        fig = plt.figure()
+        _, ax = plt.subplots()
         plt.scatter(self.prediction, self.y)
         plt.plot(self.y, self.y, label="Ideal", c="tab:green", linewidth=1)
         plt.plot(np.polyval(z, self.y), self.y, label="Regression",
@@ -175,4 +174,5 @@ class Regression(BaseModel):
         plt.ylabel("Actual")
         # plt.title("Crossvalidation")
         plt.legend(frameon=True, fancybox=True, facecolor="white")
-        return fig
+        return ax
+    

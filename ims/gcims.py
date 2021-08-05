@@ -459,7 +459,7 @@ class Spectrum:
 
         Returns
         -------
-        matplotlib.pyplot.Figure
+        matplotlib.pyplot.axes
         """        
 
         fig, ax = plt.subplots(figsize=(width, height))
@@ -483,7 +483,7 @@ class Spectrum:
 
         plt.xlabel(self._drift_time_label, fontsize=12)
         plt.ylabel("Retention Time [s]", fontsize=12)
-        return fig
+        return fig, ax
 
     # TODO: Write compare spectra plot method
     def compare(self, other):
@@ -506,14 +506,13 @@ class Spectrum:
         file_format : str, optional
             by default 'jpg'
         """
-        fig = self.plot(**kwargs)
-        fig.savefig(f'{path}/{self.name}.{file_format}', dpi=dpi, quality=95,
+        fig, _ = self.plot(**kwargs)
+        fig.savefig(f'{path}/{self.name}.{file_format}', dpi=dpi,
                     bbox_inches="tight", pad_inches=0.5)
 
     def export_image(self, path=os.getcwd(), file_format='jpeg'):
         """
-        Exports spectrum as grayscale image for classification in Orange 3.
-        (Not a plot!)
+        Exports spectrum as grayscale image (Not a plot!).
 
         Parameters
         ----------

@@ -63,7 +63,7 @@ class PCA_Model(BaseModel):
 
         Returns
         -------
-        matplotlib figure
+        matplotlib.pyplot.axes
         """
         expl_var = []
         for i in range(1, self.pca.n_components_ + 1):
@@ -76,7 +76,7 @@ class PCA_Model(BaseModel):
         pc_df['Sample'] = self.dataset.samples
         pc_df['Label'] = self.dataset.labels
 
-        fig, ax = plt.subplots(figsize=(width, height))
+        _, ax = plt.subplots(figsize=(width, height))
         sns.scatterplot(
             ax=ax,
             x=f"PC {PC_x}",
@@ -96,7 +96,7 @@ class PCA_Model(BaseModel):
                 ax.text(point[f"PC {PC_x}"], point[f"PC {PC_y}"],
                         point["Sample"])
 
-        return fig
+        return ax
 
     def loadings_plot(self, PC=1, color_range=0.1, width=9, height=10):
         """
@@ -120,7 +120,7 @@ class PCA_Model(BaseModel):
 
         Returns
         -------
-        matplotlib.pyplot.figure
+        matplotlib.pyplot.axes
         """        
         # use retention and drift time axis from the first spectrum
         ret_time = self.dataset[0].ret_time
@@ -129,7 +129,7 @@ class PCA_Model(BaseModel):
         loading_pc = self.loadings[PC-1, :].reshape(len(ret_time),
                                                     len(drift_time))
 
-        fig, ax = plt.subplots(figsize=(width, height))
+        _, ax = plt.subplots(figsize=(width, height))
 
         plt.imshow(
             loading_pc,
@@ -151,7 +151,7 @@ class PCA_Model(BaseModel):
         plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
         plt.ylabel("Retention Time [s]", fontsize=12)
         plt.title(f"PCA Loadings of PC {PC}", fontsize=16)
-        return fig
+        return ax
 
     def scree_plot(self, width=9, height=8):
         """
@@ -160,12 +160,12 @@ class PCA_Model(BaseModel):
 
         Returns
         -------
-        matplotlib.pyplot.figure
+        matplotlib.pyplot.axes
         """        
         x = [*range(1, self.pca.n_components_ + 1)]
         y = self.pca.explained_variance_ratio_
 
-        fig, ax = plt.subplots(figsize=(width, height))
+        _, ax = plt.subplots(figsize=(width, height))
         
         for axis in [ax.xaxis, ax.yaxis]:
             axis.set_major_locator(MaxNLocator(integer=True))
@@ -179,4 +179,4 @@ class PCA_Model(BaseModel):
         
         plt.legend(frameon=True, fancybox=True, facecolor="white")
 
-        return fig
+        return ax

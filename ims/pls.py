@@ -124,11 +124,11 @@ class PLSR(BaseModel):
 
         Returns
         -------
-        matplotlib.Figure
+        matplotlib.pyplot.axes
         """        
         z = np.polyfit(self.y, self.prediction, 1)
 
-        fig = plt.figure(figsize=(9, 8))
+        _, ax = plt.subplots(figsize=(9, 8))
         plt.scatter(self.prediction, self.y)
         plt.plot(
             np.polyval(z, self.y),
@@ -140,7 +140,7 @@ class PLSR(BaseModel):
         plt.xlabel("Predicted", fontsize=12)
         plt.ylabel("Actual", fontsize=12)
         plt.legend(frameon=True, fancybox=True, facecolor="white", fontsize=12)
-        return fig
+        return ax
     
     def plot_loadings(self, component=1, color_range=0.02):
         """
@@ -158,7 +158,7 @@ class PLSR(BaseModel):
 
         Returns
         -------
-        matplotlib.Figure
+        matplotlib.pyplot.axes
         """        
         loadings = self.x_loadings[:, component-1].\
             reshape(self.dataset[0].shape)
@@ -166,7 +166,7 @@ class PLSR(BaseModel):
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
 
-        fig, ax = plt.subplots(figsize=(9, 10))
+        _, ax = plt.subplots(figsize=(9, 10))
 
         plt.imshow(
             loadings,
@@ -191,7 +191,7 @@ class PLSR(BaseModel):
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
 
-        return fig
+        return ax
     
     def plot_vip_scores(self):
         """
@@ -199,7 +199,7 @@ class PLSR(BaseModel):
 
         Returns
         -------
-        matplotlib.figure.Figure
+        matplotlib.pyplot.axes
 
         Raises
         ------
@@ -214,7 +214,7 @@ class PLSR(BaseModel):
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
 
-        fig, ax = plt.subplots(figsize=(9, 10))
+        _, ax = plt.subplots(figsize=(9, 10))
 
         plt.imshow(
             vip_matrix,
@@ -235,7 +235,7 @@ class PLSR(BaseModel):
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         
-        return fig
+        return ax
     
     def plot_optimization(self):
         """
@@ -244,7 +244,7 @@ class PLSR(BaseModel):
 
         Returns
         -------
-        matplotlib.figure.Figure
+        matplotlib.pyplot.axes
 
         Raises
         ------
@@ -258,7 +258,7 @@ class PLSR(BaseModel):
         best_ac = np.argmin(self._rmse_scores)
 
 
-        fig = plt.figure(figsize=(9, 8))
+        _, ax = plt.subplots(figsize=(9, 8))
         plt.plot(component, self._rmse_scores)
         plt.scatter(component, self._rmse_scores)
         plt.plot(
@@ -271,7 +271,7 @@ class PLSR(BaseModel):
         plt.xlabel("Number of PLS Components", fontsize=12)
         plt.ylabel("RMSE", fontsize=12)
         plt.title("PLS Optimization", fontsize=14)
-        return fig
+        return ax
 
     def plot_coefficients(self):
         """
@@ -279,14 +279,14 @@ class PLSR(BaseModel):
 
         Returns
         -------
-        matplotlib.figure.Figure
+        matplotlib.pyplot.axes
         """
         coef = self.coefficients.reshape(self.dataset[0].values.shape)
 
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
         
-        fig, ax = plt.subplots(figsize=(9, 10))
+        _, ax = plt.subplots(figsize=(9, 10))
         
         plt.imshow(
             coef,
@@ -308,7 +308,7 @@ class PLSR(BaseModel):
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
 
-        return fig
+        return ax
 
 
 class PLS_DA(BaseModel):
@@ -483,7 +483,7 @@ class PLS_DA(BaseModel):
 
         Returns
         -------
-        matplotlib.figure.Figure
+        matplotlib.pyplot.axes
         """
         if self.optimize:
             cols = [f"PLS Component {i}" for i in range(1, self._best_comp + 1)]
@@ -494,8 +494,8 @@ class PLS_DA(BaseModel):
         df["Group"] = self.dataset.labels
         df["Sample"] = self.dataset.samples
         
-        fig = plt.figure(figsize=(9, 8))
-        sns.scatterplot(
+        plt.figure(figsize=(9, 8))
+        ax = sns.scatterplot(
             x=f"PLS Component {x_comp}",
             y=f"PLS Component {y_comp}",
             data=df,
@@ -513,7 +513,7 @@ class PLS_DA(BaseModel):
                     xycoords="data"
                 )
 
-        return fig
+        return ax
 
     def plot_optimization(self):
         """
@@ -522,7 +522,7 @@ class PLS_DA(BaseModel):
 
         Returns
         -------
-        matplotlib.figure.Figure
+        matplotlib.pyplot.axes
 
         Raises
         ------
@@ -535,7 +535,7 @@ class PLS_DA(BaseModel):
         component = np.arange(2, self.n_components + 1)
         best_ac = np.argmax(self._accuracies)
         
-        fig, axs = plt.subplots(3, figsize=(8, 12))
+        _, axs = plt.subplots(3, figsize=(8, 12))
 
         axs[0].plot(component, self._accuracies)
         axs[0].scatter(component, self._accuracies) 
@@ -558,7 +558,7 @@ class PLS_DA(BaseModel):
         axs[2].set_xlabel("Number of PLS components", fontsize=12)
         axs[2].set_ylabel("Recall", fontsize=12)
 
-        return fig
+        return axs
 
     def plot_loadings(self, component=1, color_range=0.02):
         """
@@ -576,7 +576,7 @@ class PLS_DA(BaseModel):
 
         Returns
         -------
-        matplotlib.Figure
+        matplotlib.pyplot.axes
         """        
         loadings = self.x_loadings[:, component-1].\
             reshape(self.dataset[0].shape)
@@ -584,7 +584,7 @@ class PLS_DA(BaseModel):
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
 
-        fig, ax = plt.subplots(figsize=(9, 10))
+        _, ax = plt.subplots(figsize=(9, 10))
 
         plt.imshow(
             loadings,
@@ -609,7 +609,7 @@ class PLS_DA(BaseModel):
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
 
-        return fig
+        return ax
 
     def plot_coefficients(self, group=0):
         """
@@ -623,7 +623,7 @@ class PLS_DA(BaseModel):
 
         Returns
         -------
-        matplotlib.figure.Figure
+        matplotlib.pyplot.axes
         """
         if isinstance(group, str):
             group_index = self.groups.index(group)
@@ -639,7 +639,7 @@ class PLS_DA(BaseModel):
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
         
-        fig, ax = plt.subplots(figsize=(9, 10))
+        _, ax = plt.subplots(figsize=(9, 10))
         
         plt.imshow(
             coef,
@@ -661,7 +661,7 @@ class PLS_DA(BaseModel):
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
 
-        return fig
+        return ax
 
     def plot_vip_scores(self):
         """
@@ -669,7 +669,7 @@ class PLS_DA(BaseModel):
 
         Returns
         -------
-        matplotlib.figure.Figure
+        matplotlib.pyplot.axes
 
         Raises
         ------
@@ -684,7 +684,7 @@ class PLS_DA(BaseModel):
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
 
-        fig, ax = plt.subplots(figsize=(9, 10))
+        _, ax = plt.subplots(figsize=(9, 10))
 
         plt.imshow(
             vip_matrix,
@@ -705,7 +705,7 @@ class PLS_DA(BaseModel):
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         
-        return fig
+        return ax
 
 
 def _vip_scores(xw, xs, yl):
