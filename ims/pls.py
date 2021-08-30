@@ -137,9 +137,9 @@ class PLSR(BaseModel):
             c="tab:orange",
             linewidth=1
             )
-        plt.xlabel("Predicted", fontsize=12)
-        plt.ylabel("Actual", fontsize=12)
-        plt.legend(frameon=True, fancybox=True, facecolor="white", fontsize=12)
+        plt.xlabel("Predicted")
+        plt.ylabel("Actual")
+        plt.legend(frameon=True, fancybox=True, facecolor="white")
         return ax
     
     def plot_loadings(self, component=1, color_range=0.02):
@@ -182,11 +182,10 @@ class PLSR(BaseModel):
 
         plt.colorbar(label="Loadings")
 
-        plt.title(f"PLS loadings of component {component}",
-                  fontsize=14)
+        plt.title(f"PLS loadings of component {component}")
 
-        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
-        plt.ylabel("Retention Time [s]", fontsize=12)
+        plt.xlabel(self.dataset[0]._drift_time_label)
+        plt.ylabel("Retention Time [s]")
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
@@ -227,10 +226,10 @@ class PLSR(BaseModel):
 
         plt.colorbar(label="VIP scores")
 
-        plt.title(f"PLS VIP scores", fontsize=14)
+        plt.title(f"PLS VIP scores")
 
-        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
-        plt.ylabel("Retention Time [s]", fontsize=12)
+        plt.xlabel(self.dataset[0]._drift_time_label)
+        plt.ylabel("Retention Time [s]")
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
@@ -268,9 +267,9 @@ class PLSR(BaseModel):
             marker="*",
             markersize=20
             )
-        plt.xlabel("Number of PLS Components", fontsize=12)
-        plt.ylabel("RMSE", fontsize=12)
-        plt.title("PLS Optimization", fontsize=14)
+        plt.xlabel("Number of PLS Components")
+        plt.ylabel("RMSE")
+        plt.title("PLS Optimization")
         return ax
 
     def plot_coefficients(self):
@@ -300,10 +299,10 @@ class PLSR(BaseModel):
 
         plt.colorbar(label="Coefficients")
 
-        plt.title("PLS Coefficients", fontsize=14)
+        plt.title("PLS Coefficients")
 
-        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
-        plt.ylabel("Retention Time [s]", fontsize=12)
+        plt.xlabel(self.dataset[0]._drift_time_label)
+        plt.ylabel("Retention Time [s]")
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
@@ -546,17 +545,17 @@ class PLS_DA(BaseModel):
             marker="*",
             markersize=20
             )
-        axs[0].set_title("PLS-DA Optimization", fontsize=14)
+        axs[0].set_title("PLS-DA Optimization")
         axs[0].set_ylabel("Accuracy")
 
         axs[1].plot(component, self._precisions)
         axs[1].scatter(component, self._precisions)
-        axs[1].set_ylabel("Precision", fontsize=12)
+        axs[1].set_ylabel("Precision")
 
         axs[2].plot(component, self._recalls)
         axs[2].scatter(component, self._recalls)
-        axs[2].set_xlabel("Number of PLS components", fontsize=12)
-        axs[2].set_ylabel("Recall", fontsize=12)
+        axs[2].set_xlabel("Number of PLS components")
+        axs[2].set_ylabel("Recall")
 
         return axs
 
@@ -600,11 +599,10 @@ class PLS_DA(BaseModel):
 
         plt.colorbar(label="Loadings")
 
-        plt.title(f"PLS-DA loadings of component {component}",
-                  fontsize=14)
+        plt.title(f"PLS-DA loadings of component {component}")
 
-        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
-        plt.ylabel("Retention Time [s]", fontsize=12)
+        plt.xlabel(self.dataset[0]._drift_time_label)
+        plt.ylabel("Retention Time [s]")
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
@@ -653,10 +651,10 @@ class PLS_DA(BaseModel):
 
         plt.colorbar(label="Coefficients")
 
-        plt.title(f"PLS-DA coefficients of {group_name}", fontsize=14)
+        plt.title(f"PLS-DA coefficients of {group_name}")
 
-        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
-        plt.ylabel("Retention Time [s]", fontsize=12)
+        plt.xlabel(self.dataset[0]._drift_time_label)
+        plt.ylabel("Retention Time [s]")
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
@@ -697,10 +695,10 @@ class PLS_DA(BaseModel):
 
         plt.colorbar(label="VIP scores")
 
-        plt.title(f"PLS-DA VIP scores", fontsize=14)
+        plt.title(f"PLS-DA VIP scores")
 
-        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
-        plt.ylabel("Retention Time [s]", fontsize=12)
+        plt.xlabel(self.dataset[0]._drift_time_label)
+        plt.ylabel("Retention Time [s]")
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())

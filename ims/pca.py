@@ -148,9 +148,9 @@ class PCA_Model(BaseModel):
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         
-        plt.xlabel(self.dataset[0]._drift_time_label, fontsize=12)
-        plt.ylabel("Retention Time [s]", fontsize=12)
-        plt.title(f"PCA Loadings of PC {PC}", fontsize=16)
+        plt.xlabel(self.dataset[0]._drift_time_label)
+        plt.ylabel("Retention Time [s]")
+        plt.title(f"PCA Loadings of PC {PC}")
         return ax
 
     def scree_plot(self, width=9, height=8):
@@ -171,8 +171,8 @@ class PCA_Model(BaseModel):
             axis.set_major_locator(MaxNLocator(integer=True))
         
         plt.xticks(x)
-        plt.xlabel("Principal Component", fontsize=12)
-        plt.ylabel("Explainded variance ratio [%]", fontsize=12)
+        plt.xlabel("Principal Component")
+        plt.ylabel("Explainded variance ratio [%]")
         
         ax.plot(x, np.cumsum(y) * 100, label="cumulative")
         ax.plot(x, y * 100, label="per PC")

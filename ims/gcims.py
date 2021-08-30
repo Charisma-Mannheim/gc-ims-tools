@@ -476,13 +476,14 @@ class Spectrum:
             )
 
         plt.colorbar().set_label("Intensities [arbitrary units]")
-        plt.title(self.name, fontsize=16)
+        plt.title(self.name)
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
 
-        plt.xlabel(self._drift_time_label, fontsize=12)
-        plt.ylabel("Retention Time [s]", fontsize=12)
+        plt.xlabel(self._drift_time_label)
+        plt.ylabel("Retention Time [s]")
+
         return fig, ax
 
     # TODO: Write compare spectra plot method
