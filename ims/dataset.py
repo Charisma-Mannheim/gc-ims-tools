@@ -1,4 +1,3 @@
-from tokenize import String
 from ims import Spectrum
 import numpy as np
 import os
@@ -730,3 +729,45 @@ class Dataset:
             X = X.reshape(a, b*c)
 
         return (X, y)
+
+    def scaling(self, method="pareto"):
+        """
+        Scales features according to selected method.
+
+        Parameters
+        ----------
+        method : str, optional
+            'pareto', 'auto' or 'var' are valid,
+            by default "pareto"
+
+        Returns
+        -------
+        ims.Dataset
+
+        Raises
+        ------
+        ValueError
+            If scaling method is not supported.
+        """
+        X = [i.values for i in self.data]
+        X = np.stack(X)
+        a, b, c = X.shape
+        X = X.reshape(a, b*c)
+
+        if method == "auto":
+            weights = 1 / np.std(X, 0)
+        elif method == "pareto":
+            weights = 1 / np.sqrt(np.std(X, 0))
+        elif method == "var":
+            weights = 1 / np.var(X, 0)
+        else:
+            raise ValueError(f'{method} is not a supported method!')
+
+        weights = np.nan_to_num(weights, posinf=0, neginf=0)
+
+        X = X * weights
+        X = X.reshape(a, b, c)
+        for i, j in enumerate(self.data):
+            j.values = X[:, :, i]
+
+        return self
