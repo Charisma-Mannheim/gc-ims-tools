@@ -6,6 +6,7 @@ from glob import glob
 import h5py
 from scipy.interpolate import interp1d
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import ShuffleSplit
 
 
 class Dataset:
@@ -49,7 +50,32 @@ class Dataset:
         return f'Dataset: {self.name}, {len(self)} Spectra'
 
     def __getitem__(self, key):
-        return self.data[key]
+        if isinstance(key, int):
+            return self.data[key]
+        
+        if isinstance(key, slice):
+            return Dataset(
+                self.data[key],
+                self.name,
+                self.files[key],
+                self.samples[key],
+                self.labels[key]
+            )
+            
+        if isinstance(key, list) or isinstance(key, np.ndarray):
+            return Dataset(
+                [self.data[i] for i in key],
+                self.name,
+                [self.files[i] for i in key],
+                [self.samples[i] for i in key],
+                [self.labels[i] for i in key]
+            )
+        
+    def __delitem__(self, key):
+        del self.data[key]
+        del self.files[key]
+        del self.samples[key]
+        del self.labels[key]
 
     def __len__(self):
         return len(self.data)
@@ -308,7 +334,7 @@ class Dataset:
         """
         if label is None and sample is None:
             raise ValueError("Must give either label or sample value.")
-        
+
         if label is not None:
             name = label
             indices = []
@@ -340,6 +366,27 @@ class Dataset:
             samples=samples,
             labels=labels,
         )
+        
+    def add(self, spectrum, sample, label):
+        """
+        Adds a gcims.Spectrum to the dataset.
+        Sample name and label must be provided because they are
+        not stored in the Spectrum class.
+
+        Parameters
+        ----------
+        spectrum : ims.gcims.Spectrum
+            
+        sample : str
+
+        label : various
+            Classification or Regression labels
+        """        
+        self.data.append(spectrum)
+        self.files.append(spectrum.name)
+        self.samples.append(sample)
+        self.labels.append(label)
+        return self
 
     def groupby(self, key="label"):
         """
@@ -368,6 +415,31 @@ class Dataset:
             for sample in np.unique(self.samples):
                 result.append(self.select(sample=sample))
             return result
+        
+    def train_test_split(self, test_size=0.2, random_state=1):
+        """
+        Splits the dataset in train and test sets.
+
+        Parameters
+        ----------
+        test_size : float, optional
+            Proportion of the dataset to be used for validation.
+            Should be between 0.0 and 1.0,
+            by default 0.2
+
+        random_state : int, optional
+            Controls the randomness. Pass an int for reproducible output,
+            by default 1
+
+        Returns
+        -------
+        tuple   
+            Training dataset, Test dataset
+        """        
+        s = ShuffleSplit(n_splits=1, test_size=test_size,
+                         random_state=random_state)
+        train, test = next(s.split(self.data))
+        return self[train], self[test]
 
     def mean(self):
         """
@@ -572,7 +644,6 @@ class Dataset:
         self.preprocessing.append(f'cut_rt({start, stop})')
         return self
 
-    # find a way to disable ipython autoplot features for this method
     def export_plots(self, folder_name=None, file_format='jpg', **kwargs):
         """
         Exports a static plot for each spectrum to disk.
