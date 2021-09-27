@@ -5,41 +5,33 @@ import seaborn as sns
 from matplotlib.ticker import MaxNLocator, AutoMinorLocator
 from matplotlib.colors import CenteredNorm
 from sklearn.decomposition import PCA
-from ims import BaseModel
 
 
-class PCA_Model(BaseModel):
+class PCA_Model:
     
-    def __init__(self, dataset, scaling_method=None, **kwargs):
-        """
-        Wrapper class for scikit learn PCA.
-        Adds plots for explained variance ratio,
-        loadings and scatter plots of components.
+    def __init__(self, dataset, n_components=None, svd_solver="auto", **kwargs):
+        self.dataset = dataset
+        self.n_components = n_components
+        self.svd_solver = svd_solver
+        
+        self._sk_pca = PCA(n_components, svd_solver=svd_solver, **kwargs)
+        
+    def fit(self, X_train, y_train=None):
+        self._sk_pca.fit(X_train)
+        
+        # assigning attributes here means less typing for the user
+        self.scores = self._sk_pca.transform(X_train)
+        self.explained_variance = self._sk_pca.explained_variance_
+        self.explained_variance_ratio = self._sk_pca.explained_variance_ratio_
+        self.singular_values = self._sk_pca.singular_values_
+        self.mean = self._sk_pca.mean_
 
-        Parameters
-        ----------
-        dataset : varies
-            Dataset or Spectra
-
-        scaling_method : str, optional
-            'standard', 'auto', 'pareto' and 'var' are valid arguments,
-            by default None
-        """
-        super().__init__(dataset, scaling_method)
-        self.pca = PCA(**kwargs).fit(self.X)
-        self.pc = self.pca.transform(self.X)
-        if self.scaling_method is not None and scaling_method != 'standard':
-            self.loadings = self.pca.components_ / self.weights
+        if hasattr(self.dataset, "weights"):
+            self.loadings = self._sk_pca.components_ / self.dataset.weights
         else:
-            self.loadings = self.pca.components_
+            self.loadings = self._sk_pca.components_
 
-    def __repr__(self):
-        return f'''PCA:
-{self.dataset.name},
-{self.scaling_method} scaling
-'''
-
-    def scatter_plot(self, PC_x=1, PC_y=2, width=9, height=8, annotate=False):
+    def plot(self, PC_x=1, PC_y=2, width=9, height=8, annotate=False):
         """
         Scatter plot of principal components
 
@@ -66,12 +58,12 @@ class PCA_Model(BaseModel):
         matplotlib.pyplot.axes
         """
         expl_var = []
-        for i in range(1, self.pca.n_components_ + 1):
-            expl_var.append(round(self.pca.explained_variance_ratio_[i-1] * 100, 1))
+        for i in range(1, self.n_components + 1):
+            expl_var.append(round(self.explained_variance_ratio[i-1] * 100, 1))
         
         pc_df = pd.DataFrame(
-            data=self.pc,
-            columns=[f"PC {x}" for x in range(1, self.pca.n_components_ + 1)]
+            data=self.scores,
+            columns=[f"PC {x}" for x in range(1, self.n_components + 1)]
         )
         pc_df['Sample'] = self.dataset.samples
         pc_df['Label'] = self.dataset.labels
@@ -98,7 +90,7 @@ class PCA_Model(BaseModel):
 
         return ax
 
-    def loadings_plot(self, PC=1, color_range=0.1, width=9, height=10):
+    def plot_loadings(self, PC=1, color_range=0.1, width=9, height=10):
         """
         Plots loadings of a principle component with the original retention
         and drift time coordinates.
@@ -161,9 +153,9 @@ class PCA_Model(BaseModel):
         Returns
         -------
         matplotlib.pyplot.axes
-        """        
-        x = [*range(1, self.pca.n_components_ + 1)]
-        y = self.pca.explained_variance_ratio_
+        """
+        x = [*range(1, self.n_components + 1)]
+        y = self.explained_variance_ratio
 
         _, ax = plt.subplots(figsize=(width, height))
         
@@ -178,5 +170,4 @@ class PCA_Model(BaseModel):
         ax.plot(x, y * 100, label="per PC")
         
         plt.legend(frameon=True, fancybox=True, facecolor="white")
-
         return ax
