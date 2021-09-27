@@ -438,7 +438,9 @@ class Dataset:
         s = ShuffleSplit(n_splits=1, test_size=test_size,
                          random_state=random_state)
         train, test = next(s.split(self.data))
-        return self[train], self[test]
+        X_train, y_train = self[train].get_xy()
+        X_test, y_test = self[test].get_xy()
+        return X_train, X_test, y_train, y_test
 
     def mean(self):
         """
@@ -766,8 +768,8 @@ class Dataset:
         weights = np.nan_to_num(weights, posinf=0, neginf=0)
 
         X = X * weights
-        X = X.reshape(a, b, c)
         for i, j in enumerate(self.data):
-            j.values = X[:, :, i]
+            j.values = X[i, :].reshape(b, c)
 
+        self.weights = weights
         return self
