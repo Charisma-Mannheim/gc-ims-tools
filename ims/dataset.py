@@ -415,7 +415,7 @@ class Dataset:
                 result.append(self.select(sample=sample))
             return result
         
-    def train_test_split(self, test_size=0.2, random_state=1):
+    def train_test_split(self, test_size=0.2, random_state=None):
         """
         Splits the dataset in train and test sets.
 
