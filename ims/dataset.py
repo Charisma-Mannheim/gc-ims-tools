@@ -3,9 +3,11 @@ import numpy as np
 import os
 from glob import glob
 import h5py
+import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import ShuffleSplit
+from sklearn.model_selection import (ShuffleSplit,
+    KFold, StratifiedKFold, LeaveOneOut)
 
 
 class Dataset:
@@ -415,6 +417,25 @@ class Dataset:
                 result.append(self.select(sample=sample))
             return result
         
+    def plot(self, index=0):
+        """
+        Plots the spectrum of selected index and adds the label to the title.
+        Equivalent to:
+
+        Parameters
+        ----------
+        index : int, optional
+            Index of spectrum to plot, by default 0
+
+        Returns
+        -------
+        tuple
+            matplotlib.figure.Figure, matplotlib.axes._subplots.AxesSubplot
+        """
+        ax = self[index].plot()
+        plt.title(f"{self[index].name}; {self.labels[index]}")
+        return ax
+
     def train_test_split(self, test_size=0.2, random_state=None):
         """
         Splits the dataset in train and test sets.
@@ -432,8 +453,14 @@ class Dataset:
 
         Returns
         -------
-        tuple   
-            Training dataset, Test dataset
+        tuple of numpy.ndarray
+            X_train, X_test, y_train, y_test
+            
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_Data")
+        >>> X_train, X_test, y_train, y_test = ds.train_test_split()
         """        
         s = ShuffleSplit(n_splits=1, test_size=test_size,
                          random_state=random_state)
@@ -441,6 +468,91 @@ class Dataset:
         X_train, y_train = self[train].get_xy()
         X_test, y_test = self[test].get_xy()
         return X_train, X_test, y_train, y_test
+    
+    def kfold_split(self, n_splits=5, shuffle=True,
+                    random_state=None, stratify=False):
+        """
+        K-Folds cross-validator (sklearn.model_selection.KFold).
+        Splits the dataset into k consecutive folds and provides
+        train and test data.
+        
+        If stratify is True uses StratifiedKfold instead.
+
+        Parameters
+        ----------
+        n_splits : int, optional
+            Number of folds. Must be at least 2,
+            by default 5
+            
+        shuffle : bool, optional
+            Whether to shuffle the data before splitting,
+            by default True
+            
+        random_state : int, optional
+            When shuffle is True random_state affects the order of the indice.
+            Pass an int for reproducible splits,
+            by default None
+            
+        stratify : bool, optional
+            Wheter to stratify output or not.
+            Preserves the percentage of samples from each class in each split.
+            By default False
+
+        Yields
+        ------
+        KFolds iterator
+            Tuple X_train, X_test, y_train, y_test per iteration
+            
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_Data")
+        >>> model = ims.PLS_DA(ds)
+        >>> for X_train, X_test, y_train, y_test in ds.kfold_split():
+        >>>     model.fit(X_train, y_train)
+        >>>     y_pred = model.predict(X_test, y_test)
+        
+        """        
+        if stratify:
+            kf = StratifiedKFold(n_splits=n_splits, shuffle=shuffle,
+                                 random_state=random_state)
+        else:
+            kf = KFold(n_splits, shuffle=shuffle, random_state=random_state)
+
+        for train_index, test_index in kf.split(self):
+            train_data = self[train_index]
+            test_data = self[test_index]
+            X_train, y_train = train_data.get_xy()
+            X_test, y_test = test_data.get_xy()
+            yield X_train, X_test, y_train, y_test
+            
+    def leave_one_out(self):
+        """
+        Leave-One-Out cross-validator.
+        Provides train test splits and uses each sample once as test set
+        while the remaining data is used for training.
+
+        Yields
+        -------
+        tuple
+            X_train, X_test, y_train, y_test
+            
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_Data")
+        >>> model = ims.PLS_DA(ds)
+        >>> for X_train, X_test, y_train, y_test in ds.leave_one_out():
+        >>>     model.fit(X_train, y_train)
+        >>>     y_pred = model.predict(X_test, y_test)
+        """ 
+        loo = LeaveOneOut()
+        for train_index, test_index in loo.split(self):
+            train_data = self[train_index]
+            test_data = self[test_index]
+            X_train, y_train = train_data.get_xy()
+            X_test, y_test = test_data.get_xy()
+            yield X_train, X_test, y_train, y_test
 
     def mean(self):
         """
