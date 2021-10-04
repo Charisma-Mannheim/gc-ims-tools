@@ -519,7 +519,7 @@ class Dataset:
         else:
             kf = KFold(n_splits, shuffle=shuffle, random_state=random_state)
 
-        for train_index, test_index in kf.split(self):
+        for train_index, test_index in kf.split(self, self.labels):
             train_data = self[train_index]
             test_data = self[test_index]
             X_train, y_train = train_data.get_xy()
