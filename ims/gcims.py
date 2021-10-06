@@ -92,7 +92,12 @@ class Spectrum:
         values = np.array(values)
         values = np.delete(values, -1, axis=1)
 
-        ret_time, drift_time = Spectrum.calc_coordinates(meta_attr)
+        ret_time = np.arange(meta_attr['Chunks count'])\
+            * (meta_attr['Chunk averages'] + 1)\
+            * meta_attr['Chunk trigger repetition [ms]']\
+            / 1000
+        drift_time = np.arange(meta_attr['Chunk sample count'])\
+            / meta_attr["Chunk sample rate [kHz]"]
 
         path = os.path.normpath(path)
         name = os.path.split(path)[1]
@@ -101,121 +106,69 @@ class Spectrum:
 
         return cls(name, values, ret_time, drift_time, time)
 
-    @staticmethod
-    def read_meta_attr(path):
-        '''
-        Reads and formats just the meta attributes from GAS mea file.
-        '''
-        with open(path, "rb") as f:
-            data = f.read()
-            meta_attr = []
-            for i in data:
-                if i == 0:
-                    break
-                meta_attr.append(chr(i))
-
-        meta_attr = "".join(meta_attr)
-        meta_attr = meta_attr.split('\n')[:-1]
-
-        # regex matching can be improved to ignore leading and trailing whitespace
-        # insted of calling str.strip so often
-        key_re = re.compile("^.*?(?==)")
-        value_re = re.compile("(?<==)(.*?)(?=\[|$)")
-        unit_re = re.compile("\[(.*?)\]")
-
-        keys = []
-        values = []
-        for i in meta_attr:
-            value = value_re.search(i).group(0).strip()
-            if '"' in value:
-                value = value.strip('"')
-            else:
-                value = int(value)
-            values.append(value)
-            key_name = key_re.search(i).group(0).strip()
-            unit = unit_re.search(i)
-            if unit is None:
-                unit = ""
-            else:
-                unit = unit.group(0).strip()
-            key = " ".join((key_name, unit)).strip()
-            keys.append(key)
-
-        meta_attr = dict(zip(keys, values))
-        meta_attr["Timestamp"] = datetime.strptime(meta_attr["Timestamp"],
-                                                   "%Y-%m-%dT%H:%M:%S")
-        return meta_attr
-
-    @staticmethod
-    def calc_coordinates(meta_attr):
-        '''
-        Calculates retention and drift time coordinates from meta attributes.
-        '''
-        ret_time = np.arange(meta_attr['Chunks count'])\
-            * (meta_attr['Chunk averages'] + 1)\
-            * meta_attr['Chunk trigger repetition [ms]']\
-            / 1000
-        drift_time = np.arange(meta_attr['Chunk sample count'])\
-            / meta_attr["Chunk sample rate [kHz]"]
-        return (ret_time, drift_time)
 
     @classmethod
     def read_mea(cls, path):
         """
         Reads mea files from GAS.
-
-        If subfolders=True expects the following folder structure
-        for each group and sample:
-
-        Data
-        |--> Group A
-            |--> Sample A
-                |--> file a
-                |--> file b
-
-        Labels are auto-generated from directory names.
+        Alternative constructor for `ims.Spectrum` class
 
         Parameters
         ----------
         path : str
-            Directory to the file.
-
-        subfolders : bool, optional
-            Uses subdirectory names as labels,
-            by default False
+            Directory of the file.
 
         Returns
         -------
-        Dataset
+        `ims.Spectrum`
+        
+        Example
+        -------
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
         """
-        meta_attr = Spectrum.read_meta_attr(path)
-        ret_time, drift_time = Spectrum.calc_coordinates(meta_attr)
-        time = meta_attr["Timestamp"]
-
-        # get sample and group names from folder names
         path = os.path.normpath(path)
         name = os.path.split(path)[1]
         name = name.split('.')[0]
 
-        with open(path, mode='rb') as f:
-            data = f.read()
+        with open(path, "rb") as f:
+            content = f.read()
+            i = content.index(0)
+            meta_attr = content[:i-1]
+            meta_attr = meta_attr.decode("windows-1252")
+            data = content[i+1:]
+            data = array('h', data)
+
+        meta_attr = meta_attr.split("\n")
+
+        key_re = re.compile("^.*?(?==)")
+        value_re = re.compile("(?<==)(.*?)(?=\[|$)")
+        # unit_re = re.compile("\[(.*?)\]")
+
+        for i in meta_attr:
+            key = key_re.search(i).group(0).strip()
+            value = value_re.search(i).group(0).strip()
+            if "Chunks count" in key:
+                chunks_count = int(value)
+            elif "Chunk averages" in key:
+                chunk_averages = int(value)
+            elif "Chunk sample count" in key:
+                chunk_sample_count = int(value)
+            elif "Chunk sample rate" in key:
+                chunk_sample_rate = int(value)
+            elif "Chunk trigger repetition" in key:
+                chunk_trigger_repetition = int(value)
+            elif "Timestamp" in key:
+                time = datetime.strptime(value, '"%Y-%m-%dT%H:%M:%S"')
+
+        data = np.array(data)
+        data = data.reshape(chunks_count, chunk_sample_count)
+
+        ret_time = np.arange(chunks_count) * (chunk_averages + 1)\
+            * chunk_trigger_repetition / 1000
             
-            # meta attributes are separated by a null byte
-            # add 1 to exclude it
-            start = data.index(0) + 1
+        drift_time = np.arange(chunk_sample_count) / chunk_sample_rate
 
-            # read the remaining data
-            # values are stored as signed short int in two bytes
-            # Chunks count is the size of the retention time
-            # Chunks sample count is the size of the drift time
-            values = data[start:]
-            values = array('h', values)
-            values = np.array(values).reshape(
-                meta_attr['Chunks count'],
-                meta_attr['Chunk sample count']
-                )
-
-        return cls(name, values, ret_time, drift_time, time)
+        return cls(name, data, ret_time, drift_time, time)
 
     @classmethod
     def read_hdf5(cls, path):
