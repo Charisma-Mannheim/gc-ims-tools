@@ -13,33 +13,41 @@ from zipfile import ZipFile
 import imageio
 
 class Spectrum:
+    """
+    Represents one GCIMS-Spectrum with the data matrix,
+    retention and drift time coordinates.
+    Sample or file name and timestamp are included unique identifiers.
+    
+    This class contains all methods that can be applied on a per spectrum basis,
+    like I/O, plotting and some preprocessing tools.
 
+    Use one of the read_... methods as constructor.
+
+    Parameters
+    ----------
+    name : str
+        File or sample name as a unique identifier.
+        Reader methods set this attribute to the file name without extension.
+
+    values : numpy.array
+        Intensity matrix.
+        
+    ret_time : numpy.array
+        Retention time coordinate.
+
+    drift_time : numpy.array
+        Drift time coordinate.
+
+    time : datetime object
+        Timestamp when the spectrum was recorded.
+        
+    Example
+    -------
+    >>> import ims
+    >>> sample = ims.Spectrum.read_mea("sample.mea")
+    >>> sample.plot()
+    """
     def __init__(self, name, values, ret_time, drift_time, time):
-        """
-        Represents on GCIMS-Spectrum including the data matrix,
-        retention and drift time coordinates and meta attributes.
-
-        Contains all methods that can be applied per spectrum.
-
-        Use one of the read_... methods as constructor.
-
-        Parameters
-        ----------
-        name : str
-            File or Sample name.
-
-        values : np.array
-            Data array stored as numpy array.
-            
-        ret_time : np.array
-            Retention time as numpy array.
-
-        drift_time : np.array
-            Drift time as numpy array
-
-        time : datetime object
-            Timestamp when the Spectrum was recorded.
-        """
         self.name = name
         self.values = values
         self.ret_time = ret_time
@@ -76,12 +84,34 @@ class Spectrum:
 
     @property
     def shape(self):
+        """
+        Shape property of the data matrix.
+        Equivalent to `ims.Spectrum.values.shape`.
+        """
         return self.values.shape
 
     @classmethod
     def read_zip(cls, path):
         """
-        Reads zip files from GAS mea to csv converter.
+        Reads zipped csv and json files from G.A.S Dortmund mea2zip converting tool.
+        Present for backwards compatibility. Reading mea files is much faster and saves
+        the manual extra step of converting.
+
+        Parameters
+        ----------
+        path : str
+            Absolute or relative file path.
+
+        Returns
+        -------
+        ims.Spectrum
+        
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_zip("sample.mea")
+        >>> print(sample)
+        GC-IMS Spectrum: sample
         """
         with ZipFile(path) as myzip:
             with myzip.open('csv_data.csv', 'r') as mycsv:
@@ -102,29 +132,32 @@ class Spectrum:
         path = os.path.normpath(path)
         name = os.path.split(path)[1]
         time = datetime.strptime(meta_attr["Timestamp"],
-                                      "%Y-%m-%dT%H:%M:%S")
+                                 "%Y-%m-%dT%H:%M:%S")
 
         return cls(name, values, ret_time, drift_time, time)
-
 
     @classmethod
     def read_mea(cls, path):
         """
-        Reads mea files from GAS.
-        Alternative constructor for `ims.Spectrum` class
+        Reads mea files from G.A.S Dortmund instruments.
+        Alternative constructor for `ims.Spectrum` class.
+        Much faster than reading csv files and therefore preferred.
 
         Parameters
         ----------
         path : str
-            Directory of the file.
+            Absolute or relative file path.
 
         Returns
         -------
-        `ims.Spectrum`
+        ims.Spectrum
         
         Example
         -------
+        >>> import ims
         >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> print(sample)
+        GC-IMS Spectrum: sample
         """
         path = os.path.normpath(path)
         name = os.path.split(path)[1]
@@ -165,7 +198,7 @@ class Spectrum:
 
         ret_time = np.arange(chunks_count) * (chunk_averages + 1)\
             * chunk_trigger_repetition / 1000
-            
+
         drift_time = np.arange(chunk_sample_count) / chunk_sample_rate
 
         return cls(name, data, ret_time, drift_time, time)
@@ -174,17 +207,26 @@ class Spectrum:
     def read_hdf5(cls, path):
         """
         Reads hdf5 files exported by the to_hdf5 method.
-        Labels are attached to the file, so a folder strucutre is
-        not necessary.
+        Convenient way to store preprocessed spectra.
+        Especially useful for larger datasets as preprocessing
+        requires more time.
+        Preferred to csv because of very fast read and write speeds.
 
         Parameters
         ----------
         path : str
-            Directory of the file.
+            Absolute or relative file path.
 
         Returns
         -------
-        Spectrum
+        ims.Spectrum
+        
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> sample.to_hdf5()
+        >>> sample = ims.Spectrum.read_hdf5("sample.hdf5")
         """     
         with h5py.File(path, 'r') as f:
             values = np.array(f['values'])
@@ -196,18 +238,23 @@ class Spectrum:
 
     def to_hdf5(self, path=os.getcwd()):
         """
-        Exports spectrum including all coordinates
-        and labels as hdf5 file.
-
-        Use read_hdf5 method on those files.
+        Exports spectrum as hdf5 file.
+        Useful to save preprocessed spectra, especially for larger datasets.
+        Preferred to csv format because of very fast read and write speeds.
 
         Parameters
         ----------
         path : str, optional
             Directory to export files to,
-            by default os.getcwd()
-        """
+            by default the current working directory.
 
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> sample.to_hdf5()
+        >>> sample = ims.Spectrum.read_hdf5("sample.hdf5")
+        """
         with h5py.File(f'{path}/{self.name}.hdf5', 'w-') as f:
             f.create_dataset('values', data=self.values)
             f.create_dataset('ret_time', data=self.ret_time)
@@ -218,44 +265,48 @@ class Spectrum:
 
     def tophat(self, size=15):
         """
-        Applies white tophat filter on values.
-        Baseline correction.
-        (Slower with larger size.)
+        Applies white tophat filter on data matrix as a baseline correction.
+        Size parameter is the diameter of the circular structuring element.
+        (Slow with large size values.)
 
         Parameters
         ----------
         size : int, optional
             Size of structuring element, by default 15
+
         Returns
         -------
-        Spectrum
+        ims.Spectrum
             With tophat applied.
-        """      
+        """
         self.values = white_tophat(self.values, disk(size))
         return self
 
     def sub_first_row(self):
         """
         Subtracts first row from every row in spectrum.
-        Baseline correction.
+        Effective and simple baseline correction
+        if RIP tailing is a concern but can hide small peaks.
 
         Returns
         -------
-        Spectrum
-            With corrected baseline.
+        ims.Spectrum
         """
         fl = self.values[0, :]
         self.values = self.values - fl
         self.values[self.values < 0] = 0
         return self
-    
+
     def riprel(self):
         """
         Replaces drift time coordinate with RIP relative values.
+        Useful to cut away the RIP because it´s position is set to 1.
+        Does not interpolate the data matrix to a completly artificial
+        axis like ims.Dataset.interp_riprel.
 
         Returns
         -------
-        Spectrum
+        ims.Spectrum
             RIP relative drift time coordinate
             otherwise unchanged.
         """
@@ -269,10 +320,12 @@ class Spectrum:
     def rip_scaling(self):
         """
         Scales values relative to global maximum.
+        Can be useful to directly compare spectra from
+        instruments with different sensitivity. 
 
         Returns
         -------
-        Spectrum
+        ims.Spectrum
             With scaled values.
         """
         m = np.max(self.values)
@@ -282,27 +335,48 @@ class Spectrum:
     def resample(self, n):
         """
         Resamples spectrum by calculating means of every n rows.
-        (Retention time coordinate needs to be divisible by n)
+        If the length of the retention time is not divisible by n
+        it and the data matrix get cropped by the remainder at the long end.
 
         Parameters
         ----------
         n : int
-            Number of rows to mean
+            Number of rows to mean.
 
         Returns
         -------
-        GCIMS-Spectrum
-            Resampled values array
+        ims.Spectrum
+            Resampled values.
+            
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> print(sample.shape)
+        (4082, 3150)
+        >>> sample.resample(2)
+        >>> print(sample.shape)
+        (2041, 3150)
         """
+        a, _ = self.values.shape
+        rest = a % n
+        if rest != 0:
+            self.values = self.values[:a-rest, :]
+            self.ret_time = self.ret_time[:a-rest]
+
         self.values = (self.values[0::n, :] + self.values[1::n, :]) / n
         self.ret_time = self.ret_time[::n]
         return self
 
     def binning(self, n):
         """
-        Downsamples spectrum by binning the array.
-        If the dimensions are not devisible by the binning factor
-        shortens the dim by the remainder at the long end.
+        Downsamples spectrum by binning the array with factor n.
+        Similar to ims.Spectrum.resampling but works on both dimensions
+        simultaneously.
+        If the dimensions are not divisible by the binning factor
+        shortens it by the remainder at the long end.
+        Very effective data reduction because a factor n=2 already 
+        reduces the number of features to a quarter.
 
         Parameters
         ----------
@@ -311,18 +385,30 @@ class Spectrum:
 
         Returns
         -------
-        Spectrum
-            Downsampled
+        ims.Spectrum
+            Downsampled data matrix.
+
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> print(sample.shape)
+        (4082, 3150)
+        >>> sample.binning(2)
+        >>> print(sample.shape)
+        (2041, 1575)
         """
         a, b = self.values.shape
         rest0 = a % n
         rest1 = b % n
-        
+
         if rest0 != 0:
             self.values = self.values[:a-rest0, :]
+            self.ret_time = self.ret_time[:a-rest0]
         if rest1 != 0:
             self.values = self.values[:, :b-rest1]
-            
+            self.drift_time = self.drift_time[:b-rest1]
+
         new_dims = (a // n, b // n)
         
         shape = (new_dims[0], a // new_dims[0],
@@ -333,86 +419,120 @@ class Spectrum:
         self.drift_time = self.drift_time[::n]
         return self
 
-    def cut_dt(self, start, stop):
+    def cut_dt(self, start, stop=None):
         """
         Cuts data along drift time coordinate.
         Range in between start and stop is kept.
+        If stop is not given uses the end of the array instead.
+        Combination with RIP relative drift time
+        values makes it easier to cut the RIP away and focus
+        on the peak area.
 
         Parameters
         ----------
-        start : int/float
-            start value on drift time coordinate
+        start : int or float
+            Start value on drift time coordinate.
         
-        stop : int/float
-            stop value on drift time coordinate
+        stop : int or float, optional
+            Stop value on drift time coordinate.
+            If None uses the end of the array,
+            by default None.
 
         Returns
         -------
         Spectrum
-            With cut drift time
+            New drift time range.
+
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> print(sample.shape)
+        (4082, 3150)
+        >>> sample.riprel().cut_dt(1.05, 2)
+        >>> print(sample.shape)
+        (4082, 1005)
         """
+        if stop is None:
+            stop = len(self.drift_time)
+
         idx_start = np.abs(self.drift_time - start).argmin()
         idx_stop = np.abs(self.drift_time - stop).argmin()
         self.drift_time = self.drift_time[idx_start:idx_stop]
         self.values = self.values[:, idx_start:idx_stop]
         return self
 
-    def cut_rt(self, start, stop):
+    def cut_rt(self, start, stop=None):
         """
         Cuts data along retention time coordinate.
         Range in between start and stop is kept.
+        If stop is not given uses the end of the array instead.
 
         Parameters
         ----------
-        start : int/float
-            start value on retention time coordinate
-        
-        stop : int/float
-            stop value on retention time coordinate
+        start : int or float
+            Start value on retention time coordinate.
+
+        stop : int or float, optional
+            Stop value on retention time coordinate.
+            If None uses the end of the array,
+            by default None.
 
         Returns
         -------
         Spectrum
-            With cut retention time
+            New retention time range.
+
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> print(sample.shape)
+        (4082, 3150)
+        >>> sample.cut_rt(80, 500)
+        >>> print(sample.shape)
+        (2857, 3150)
         """
+        if stop is None:
+            stop = len(self.ret_time)
+
         idx_start = np.abs(self.ret_time - start).argmin()
         idx_stop = np.abs(self.ret_time - stop).argmin()
         self.ret_time = self.ret_time[idx_start:idx_stop]
         self.values = self.values[idx_start:idx_stop, :]
         return self
 
-    def wavelet_compression(self):
-        pass
-
     def plot(self, vmin=30, vmax=400, width=9, height=10):
         """
-        ims.Spectrum.plot
-        -----------------
-
-        Plots Spectrum using pyplot.imshow.
+        Plots Spectrum using matplotlibs imshow.
         Use %matplotlib widget in IPython or %matplotlib notebook
-        in jupyter notebooks to get an interactive plot.
-        
-        Disable the autoshow function in IPython with a semicolon
-        otherwise plots may show up twice.
+        in jupyter notebooks to get an interactive plot widget.
+        Returning the figure is needed to make the export plot utilities possible.
 
         Parameters
         ----------
         vmin : int, optional
-            min of color range, by default 30
+            Minimum of color range, by default 30.
 
         vmax : int, optional
-            max of color range, by default 300
+            Maximum of color range, by default 300.
 
         width : int, optional
-            width in inches, by default 9
+            Width in inches, by default 9.
 
         height : int, optional
-            height in inches, by default 10
+            Height in inches, by default 10.
 
         Returns
         -------
-        matplotlib.pyplot.axes
+        tuple
+            (matplotlib.figure.Figure, matplotlib.pyplot.axes)
+        
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> fig, ax = sample.plot()
         """        
 
         fig, ax = plt.subplots(figsize=(width, height))
@@ -439,26 +559,28 @@ class Spectrum:
 
         return fig, ax
 
-    # TODO: Write compare spectra plot method
-    def compare(self, other):
-        pass
-
     def export_plot(self, path=os.getcwd(), dpi=300,
                     file_format='jpg', **kwargs):
         """
-        ims.Spectrum.export_plot
-        ------------------------
-
-        Exports plot to disk.
+        Saves the figure as image file. See the docs for
+        matplotlib savefig function for supported file formats and kwargs
+        (https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html).
 
         Parameters
         ----------
         path : str, optional
             Directory to save the image,
-            by default current working directory
+            by default current working directory.
 
         file_format : str, optional
-            by default 'jpg'
+            See matplotlib savefig docs for information about supported formats,
+            by default 'jpg'.
+
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> sample.export_plot()
         """
         fig, _ = self.plot(**kwargs)
         fig.savefig(f'{path}/{self.name}.{file_format}', dpi=dpi,
@@ -472,12 +594,18 @@ class Spectrum:
         ----------
         path : str, optional
             Directory to save the image,
-            by default current working directory
+            by default current working directory.
 
         file_format : str, optional
             See imageio docs for supported formats:
             https://imageio.readthedocs.io/en/stable/formats.html,
-            by default 'jpg'
+            by default 'jpg'.
+
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> sample.export_image()
         """
         imageio.imwrite(uri=f'{path}/{self.name}.{file_format}',
                         im=self.values)
