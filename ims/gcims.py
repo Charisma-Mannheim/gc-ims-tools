@@ -140,7 +140,7 @@ class Spectrum:
     def read_mea(cls, path):
         """
         Reads mea files from G.A.S Dortmund instruments.
-        Alternative constructor for `ims.Spectrum` class.
+        Alternative constructor for ims.Spectrum class.
         Much faster than reading csv files and therefore preferred.
 
         Parameters
@@ -277,7 +277,6 @@ class Spectrum:
         Returns
         -------
         ims.Spectrum
-            With tophat applied.
         """
         self.values = white_tophat(self.values, disk(size))
         return self
@@ -301,6 +300,7 @@ class Spectrum:
         """
         Replaces drift time coordinate with RIP relative values.
         Useful to cut away the RIP because it´s position is set to 1.
+
         Does not interpolate the data matrix to a completly artificial
         axis like ims.Dataset.interp_riprel.
 
@@ -410,10 +410,10 @@ class Spectrum:
             self.drift_time = self.drift_time[:b-rest1]
 
         new_dims = (a // n, b // n)
-        
+
         shape = (new_dims[0], a // new_dims[0],
                  new_dims[1], b // new_dims[1])
-        
+
         self.values = self.values.reshape(shape).mean(axis=(-1, 1))
         self.ret_time = self.ret_time[::n]
         self.drift_time = self.drift_time[::n]
@@ -440,7 +440,7 @@ class Spectrum:
 
         Returns
         -------
-        Spectrum
+        ims.Spectrum
             New drift time range.
 
         Example
@@ -480,7 +480,7 @@ class Spectrum:
 
         Returns
         -------
-        Spectrum
+        ims.Spectrum
             New retention time range.
 
         Example
