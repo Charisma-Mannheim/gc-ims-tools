@@ -11,35 +11,43 @@ from sklearn.model_selection import (ShuffleSplit,
 
 
 class Dataset:
+    """
+    Dataset class coordinates many GC-IMS spectra
+    (instances of ims.Spectrum class) with labels, file
+    and sample names.
 
+    ims.Spectrum methods are applied to all spectra. It also contains
+    additional functionality and methods that require multiple spectra
+    at a time such as alignments and calculating means.
+
+    Use one of the read_... methods as constructor.
+
+    Parameters
+    ----------
+    data : list
+        Lists instances of `ims.Spectrum`.
+
+    name : str
+        Name of the dataset.
+
+    files : list
+        Lists one file name per spectrum. Must be unique.
+
+    samples : list
+        Lists sample names. A sample can have multiple files in
+        case of repeat determination. Needed to calculate means.
+
+    labels : list or numpy.ndarray
+        Classification or regression labels.
+        
+    Example    
+    -------
+    >>> import ims
+    >>> ds = ims.Dataset.read_mea("IMS_data")
+    >>> print(ds)
+    Dataset: IMS_data, 58 Spectra
+    """
     def __init__(self, data, name, files, samples, labels):
-        """
-        DataSet class to coordinate many Spectrum instances
-        as dask delayed objects with label and sample names available
-        as attributes.
-        Maps Spectrum methods to all spectra in DataSet and contains
-        methods that require multiple spectra.
-
-        Use one of the read_... methods as alternative constructor.
-
-        Parameters
-        ----------
-        data : list
-            lists instances of Spectrum
-
-        name : str
-            Uses the folder name if alternative constructor is used.
-
-        files : list
-            Lists file names of every file that
-            was originally in the dataset.
-
-        samples : list
-            Lists sample names, one entry per spectrum.
-
-        labels : list
-            Lists label names, one entry per spectrum.
-        """
         self.data = data
         self.name = name
         self.files = files
@@ -87,14 +95,14 @@ class Dataset:
     @property
     def sample_indices(self):
         """
-        Property method. Gives information about where each
-        sample is in the dataset.
+        This property returns information about all spectra indices
+        for each sample in the dataset.
+        Useful to select or remove specific samples or files.
 
         Returns
         -------
         dict
-            Sample names as keys,
-            lists with indices of spectra as values
+            Sample names as keys, lists with indices of spectra as values.
         """
         u_samples = np.unique(self.samples)
         indices = []
@@ -137,31 +145,45 @@ class Dataset:
     @classmethod
     def read_mea(cls, path, subfolders=False):
         """
-        Reads all GAS mea files in directory.
+        Reads all mea files from G.A.S Dortmund instruments in the
+        given directory and combines them into a dataset.
+        Much faster than reading csv files and therefore preferred.
 
         If subfolders=True expects the following folder structure
         for each label and sample:
 
-        Data
-        |--> Group A
-            |--> Sample A
-                |--> file a
-                |--> file b
+        * Data
+            * Group A
+                * Sample A
+                    * file a
+                    * file b
+                * Sample B
+                    * file a
+                    * file b
 
-        Labels are auto-generated from directory names.
+        Labels can then be auto-generated from directory names.
+        Otherwise labels and sample names need to be added from other sources
+        for all methods to work.
 
         Parameters
         ----------
         path : str
-            Directory with the data.
+            Absolute or relative file path.
 
         subfolders : bool, optional
             Uses subdirectory names as labels,
-            by default True
+            by default False.
 
         Returns
         -------
-        Dataset
+        ims.Dataset
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data", subfolders=True)
+        >>> print(ds)
+        Dataset: IMS_data, 58 Spectra       
         """
         paths, name, files, samples, labels = Dataset._measurements(
             path, subfolders
@@ -172,7 +194,41 @@ class Dataset:
     @classmethod
     def read_zip(cls, path, subfolders=False):
         """
-        Reads zip files from GAS mea to csv converter.
+        Reads zipped csv and json files from G.A.S Dortmund mea2zip converting tool.
+        Present for backwards compatibility. Reading mea files is much faster and saves
+        the manual extra step of converting.
+        
+        If subfolders=True expects the following folder structure
+        for each label and sample:
+
+        * Data
+            * Group A
+                * Sample A
+                    * file a
+                    * file b
+                * Sample B
+                    * file a
+                    * file b
+
+        Labels can then be auto-generated from directory names.
+        Otherwise labels and sample names need to be added from other sources
+        for all methods to work.
+
+        Parameters
+        ----------
+        path : str
+            Absolute or relative file path.
+
+        Returns
+        -------
+        ims.Dataset
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_zip("IMS_data", subfolders=True)
+        >>> print(ds)
+        Dataset: IMS_data, 58 Spectra
         """
         paths, name, files, samples, labels = Dataset._measurements(
             path, subfolders
@@ -183,22 +239,28 @@ class Dataset:
     @classmethod
     def read_hdf5(cls, path):
         """
-        Reads all hdf5 files generated by Spectrum.to_hdf5
-        method in input directory.
-
-        (Preferred over read_zip because it is much faster.)
+        Reads hdf5 files exported by the to_hdf5 method.
+        Convenient way to store preprocessed spectra.
+        Especially useful for larger datasets as preprocessing
+        requires more time.
+        Preferred to csv because of very fast read and write speeds.
 
         Parameters
         ----------
         path : str
-            Directory with the data.
+            Absolute or relative file path.
 
         Returns
         -------
-        Dataset
-            data, samples and labels attributes are not
-            ordered but correctly associated.
-        """
+        ims.Spectrum
+        
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Dataset.read_mea("IMS_data")
+        >>> sample.to_hdf5("IMS_data_hdf5")
+        >>> sample = ims.Dataset.read_hdf5("IMS_data_hdf5")
+        """     
         name = os.path.split(path)[1]
         data_paths = glob(f"{path}/data/*.hdf5")
         data = [Spectrum.read_hdf5(i) for i in data_paths]
@@ -211,7 +273,6 @@ class Dataset:
             samples = [i.decode() for i in samples]
             files = [i.decode() for i in files]
             labels = [i.decode() for i in labels]
-
 
         return cls(data, name, files, samples, labels)
 
@@ -261,11 +322,10 @@ class Dataset:
         for i, j in enumerate(self.data):
             exports.append(np.save(f'{folder_name}/data/{i}', j.values))
 
-
     def select(self, label=None, sample=None):
         """
         Selects all spectra of specified label or sample.
-        Must give at least one argument.
+        Must set at least one of the parameters.
 
         Parameters
         ----------
@@ -317,8 +377,8 @@ class Dataset:
         
     def drop(self, label=None, sample=None):
         """
-        Removes all spectra of specified label or sample from Dataset.
-        Must give at least one argument.
+        Removes all spectra of specified label or sample from dataset.
+        Must set at least one of the parameters.
 
         Parameters
         ----------
@@ -332,6 +392,10 @@ class Dataset:
         -------
         Dataset
             Contains only matching spectra.
+
+        Example
+        -------
+        
         """
         if label is None and sample is None:
             raise ValueError("Must give either label or sample value.")
@@ -370,19 +434,30 @@ class Dataset:
         
     def add(self, spectrum, sample, label):
         """
-        Adds a gcims.Spectrum to the dataset.
+        Adds a ims.Spectrum to the dataset.
         Sample name and label must be provided because they are
-        not stored in the Spectrum class.
+        not stored in the ims.Spectrum class.
 
         Parameters
         ----------
-        spectrum : ims.gcims.Spectrum
-            
+        spectrum : ims.Spectrum
+            GC-IMS spectrum to add to the dataset.
+
         sample : str
+            The sample name is added to the sample attribute.
+            Necessary because sample names are not stored in ims.Spectrum class.
 
         label : various
-            Classification or Regression labels
-        """        
+            Classification or regression label is added to the label attribute.
+            Necessary because labels are not stored in ims.Spectrum class.
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> ds.add(sample, "sample_name", "class_label")
+        """
         self.data.append(spectrum)
         self.files.append(spectrum.name)
         self.samples.append(sample)
@@ -401,7 +476,7 @@ class Dataset:
         Returns
         -------
         list
-            List of one ims.Dataset instance per group.
+            List of one `ims.Dataset` instance per group or sample.
         """
         if key != "label" and key != "sample":
             raise ValueError('Only "label" or "sample" are valid keys!')
@@ -475,7 +550,7 @@ class Dataset:
         K-Folds cross-validator (sklearn.model_selection.KFold).
         Splits the dataset into k consecutive folds and provides
         train and test data.
-        
+
         If stratify is True uses StratifiedKfold instead.
 
         Parameters
@@ -483,16 +558,16 @@ class Dataset:
         n_splits : int, optional
             Number of folds. Must be at least 2,
             by default 5
-            
+
         shuffle : bool, optional
             Whether to shuffle the data before splitting,
             by default True
-            
+
         random_state : int, optional
             When shuffle is True random_state affects the order of the indice.
             Pass an int for reproducible splits,
             by default None
-            
+
         stratify : bool, optional
             Wheter to stratify output or not.
             Preserves the percentage of samples from each class in each split.
@@ -500,19 +575,18 @@ class Dataset:
 
         Yields
         ------
-        KFolds iterator
-            Tuple X_train, X_test, y_train, y_test per iteration
-            
+        tuple
+            (X_train, X_test, y_train, y_test) per iteration
+
         Example
         -------
         >>> import ims
-        >>> ds = ims.Dataset.read_mea("IMS_Data")
+        >>> ds = ims.Dataset.read_mea("IMS_data")
         >>> model = ims.PLS_DA(ds)
         >>> for X_train, X_test, y_train, y_test in ds.kfold_split():
         >>>     model.fit(X_train, y_train)
         >>>     y_pred = model.predict(X_test, y_test)
-        
-        """        
+        """
         if stratify:
             kf = StratifiedKFold(n_splits=n_splits, shuffle=shuffle,
                                  random_state=random_state)
@@ -536,16 +610,16 @@ class Dataset:
         -------
         tuple
             X_train, X_test, y_train, y_test
-            
+
         Example
         -------
         >>> import ims
-        >>> ds = ims.Dataset.read_mea("IMS_Data")
+        >>> ds = ims.Dataset.read_mea("IMS_data")
         >>> model = ims.PLS_DA(ds)
         >>> for X_train, X_test, y_train, y_test in ds.leave_one_out():
         >>>     model.fit(X_train, y_train)
         >>>     y_pred = model.predict(X_test, y_test)
-        """ 
+        """
         loo = LeaveOneOut()
         for train_index, test_index in loo.split(self):
             train_data = self[train_index]
@@ -595,19 +669,19 @@ class Dataset:
 
     def tophat(self, size=15):
         """
-        Applies white tophat filter on values.
-        Baseline correction.
-        (Slower with larger size.)
+        Applies white tophat filter on data matrix as a baseline correction.
+        Size parameter is the diameter of the circular structuring element.
+        (Slow with large size values.)
 
         Parameters
         ----------
         size : int, optional
             Size of structuring element, by default 15
+
         Returns
         -------
-        Spectrum
-            With tophat applied.
-        """    
+        ims.Dataset
+        """
         self.data = [Spectrum.tophat(i, size) for i in self.data]
         self.preprocessing.append('tophat')
         return self
@@ -615,12 +689,12 @@ class Dataset:
     def sub_first_row(self):
         """
         Subtracts first row from every row in spectrum.
-        Baseline correction.
+        Effective and simple baseline correction
+        if RIP tailing is a concern but can hide small peaks.
 
         Returns
         -------
-        Spectrum
-            With corrected baseline.
+        ims.Dataset
         """
         self.data = [Spectrum.sub_first_row(i) for i in self.data]
         self.preprocessing.append('sub_first_row')
@@ -633,7 +707,7 @@ class Dataset:
 
         Returns
         -------
-        Dataset
+        ims.Dataset
             With RIP relative spectra.
         """
         dt_riprel = []
@@ -656,18 +730,20 @@ class Dataset:
             i.values[:, :len(new_dt)]
             i.values = f(new_dt)
             i.drift_time = new_dt
-            i._drift_time_label = 'Drift Time RIP relative'
+            i._drift_time_label = "Drift Time RIP relative"
         
         self.preprocessing.append("interp_riprel")
         return self
 
     def rip_scaling(self):
         """
-        Scales values relative to global maximum for each spectrum.
+        Scales values relative to global maximum.
+        Can be useful to directly compare spectra from
+        instruments with different sensitivity. 
 
         Returns
         -------
-        Dataset
+        ims.Dataset
             With scaled values.
         """
         self.data = [Spectrum.rip_scaling(i) for i in self.data]
@@ -676,28 +752,43 @@ class Dataset:
     
     def resample(self, n):
         """
-        Resamples spectrum by calculating means of every n rows.
-        (Retention time coordinate needs to be divisible by n)
+        Resamples each spectrum by calculating means of every n rows.
+        If the length of the retention time is not divisible by n
+        it and the data matrix get cropped by the remainder at the long end.
 
         Parameters
-        ---------
+        ----------
         n : int
+            Number of rows to mean.
 
         Returns
         -------
-        GCIMS-DataSet
-            Resampled values array for each spectrum
-
-        """       
+        ims.Dataset
+            Resampled values.
+            
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_Data")
+        >>> print(ds[0].shape)
+        (4082, 3150)
+        >>> ds.resample(2)
+        >>> print(ds[0].shape)
+        (2041, 3150)
+        """   
         self.data = [Spectrum.resample(i, n) for i in self.data]
         self.preprocessing.append(f'resample({n})')
         return self
     
     def binning(self, n):
         """
-        Downsamples each spectrum by binning the array.
-        If the dims are not devisible by the binning factor
-        shortens the dim by the remainder at the long end. 
+        Downsamples each spectrum by binning the array with factor n.
+        Similar to ims.Spectrum.resampling but works on both dimensions
+        simultaneously.
+        If the dimensions are not divisible by the binning factor
+        shortens it by the remainder at the long end.
+        Very effective data reduction because a factor n=2 already 
+        reduces the number of features to a quarter.
 
         Parameters
         ----------
@@ -706,52 +797,91 @@ class Dataset:
 
         Returns
         -------
-        Dataset
-            Downsampled spectra
+        ims.Spectrum
+            Downsampled data matrix.
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_Data")
+        >>> print(ds[0].shape)
+        (4082, 3150)
+        >>> ds.binning(2)
+        >>> print(ds[0].shape)
+        (2041, 1575)
         """
         self.data = [Spectrum.binning(i, n) for i in self.data]
         self.preprocessing.append(f'binning({n})')
         return self
 
-    def cut_dt(self, start, stop):
+    def cut_dt(self, start, stop=None):
         """
-        Cuts spectra on drift time coordinate.
-        Specifiy coordinate values not index directly.
+        Cuts data along drift time coordinate.
+        Range in between start and stop is kept.
+        If stop is not given uses the end of the array instead.
+        Combination with RIP relative drift time
+        values makes it easier to cut the RIP away and focus
+        on the peak area.
 
         Parameters
         ----------
-        start : int/float
-            start value on drift time coordinate
+        start : int or float
+            Start value on drift time coordinate.
         
-        stop : int/float
-            stop value on drift time coordinate
+        stop : int or float, optional
+            Stop value on drift time coordinate.
+            If None uses the end of the array,
+            by default None.
 
         Returns
         -------
-        Dataset
-            With cut spectra.
+        ims.Dataset
+            New drift time range.
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> print(ds[0].shape)
+        (4082, 3150)
+        >>> ds.interp_riprel().cut_dt(1.05, 2)
+        >>> print(ds[0].shape)
+        (4082, 1005)
         """
         self.data = [Spectrum.cut_dt(i, start, stop) for i in self.data]
         self.preprocessing.append(f'cut_dt({start, stop})')
         return self
 
-    def cut_rt(self, start, stop):
+    def cut_rt(self, start, stop=None):
         """
-        Cuts spectra on retention time coordinate.
-        Specifiy coordinate values not index directly.
+        Cuts data along retention time coordinate.
+        Range in between start and stop is kept.
+        If stop is not given uses the end of the array instead.
 
         Parameters
         ----------
-        start : int/float
-            start value on retention time coordinate
-        
-        stop : int/float
-            stop value on retention time coordinate
+        start : int or float
+            Start value on retention time coordinate.
+
+        stop : int or float, optional
+            Stop value on retention time coordinate.
+            If None uses the end of the array,
+            by default None.
 
         Returns
         -------
-        Dataset
-            With cut spectra.
+        ims.Dataset
+            New retention time range.
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> print(ds[0].shape)
+        (4082, 3150)
+        >>> sample.cut_rt(80, 500)
+        >>> print(ds[0].shape)
+        (2857, 3150)
         """
         self.data = [Spectrum.cut_rt(i, start, stop) for i in self.data]
         self.preprocessing.append(f'cut_rt({start, stop})')
@@ -759,16 +889,26 @@ class Dataset:
 
     def export_plots(self, folder_name=None, file_format='jpg', **kwargs):
         """
-        Exports a static plot for each spectrum to disk.
-        Replicates label folders.
+        Saves a figure per spectrum as image file. See the docs for
+        matplotlib savefig function for supported file formats and kwargs
+        (https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html).
+
+        Creates a new folder for the plots in the current working directory.
 
         Parameters
         ----------
         folder_name : str, optional
-            New directory to save the images.
+            New directory to save the images to.
 
         file_format : str, optional
+        See matplotlib savefig docs for information about supported formats,
             by default 'jpeg'
+            
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> ds.export_plots("IMS_data_plots")
         """
         if folder_name is None:
             folder_name = self.name.join("_plots")
@@ -790,8 +930,7 @@ class Dataset:
 
     def export_images(self, folder_name, file_format='jpeg'):
         """
-        Exports spectrum as grayscale image for classification in Orange 3.
-        (Not a plot!)
+        Exports all spectra as greyscale images (Not plots!).
 
         Parameters
         ----------
@@ -802,6 +941,12 @@ class Dataset:
             See imageio docs for supported formats:
             https://imageio.readthedocs.io/en/stable/formats.html,
             by default 'jpeg'
+        
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> ds.export_images("IMS_data_images")
         """
         group_names = np.unique(self.labels)
         sample_names = np.unique(self.samples)
@@ -821,8 +966,7 @@ class Dataset:
 
     def get_xy(self, flatten=True):
         """
-        Returns X and y for machine learning as
-        numpy arrays.
+        Returns features (X) and labels (y) as numpy arrays.
 
         Parameters
         ----------
@@ -832,7 +976,13 @@ class Dataset:
         Returns
         -------
         tuple
-            (X, y) as np.arrays
+            (X, y)
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> X, y = ds.get_xy()
         """
         X = [i.values for i in self.data]
         X = np.stack(X)
@@ -851,8 +1001,8 @@ class Dataset:
         Parameters
         ----------
         method : str, optional
-            'pareto', 'auto' or 'var' are valid,
-            by default "pareto"
+            "pareto", "auto" or "var" are valid,
+            by default "pareto".
 
         Returns
         -------
