@@ -3,6 +3,7 @@ import re
 import json
 import h5py
 from array import array
+from copy import deepcopy
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -19,7 +20,8 @@ class Spectrum:
     Sample or file name and timestamp are included unique identifiers.
     
     This class contains all methods that can be applied on a per spectrum basis,
-    like I/O, plotting and some preprocessing tools.
+    like I/O, plotting and some preprocessing tools. Methods that return ims.Spectrum
+    change the instance inplace. Use the copy method.
 
     Use one of the read_... methods as constructor.
 
@@ -90,12 +92,31 @@ class Spectrum:
         """
         return self.values.shape
 
+    def copy(self):
+        """
+        Uses deepcopy from the copy module in the standard library.
+        Most operations happen inplace. Use this method if you do not
+        want to change the original variable.
+
+        Returns
+        -------
+        ims.Spectrum
+            deepcopy of self
+
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> new_variable = sample.copy()
+        """
+        return deepcopy(self)
+
     @classmethod
     def read_zip(cls, path):
         """
         Reads zipped csv and json files from G.A.S Dortmund mea2zip converting tool.
-        Present for backwards compatibility. Reading mea files is much faster and saves
-        the manual extra step of converting.
+        Present for backwards compatibility.
+        Reading mea files is much faster and saves the manual extra step of converting.
 
         Parameters
         ----------
@@ -105,7 +126,7 @@ class Spectrum:
         Returns
         -------
         ims.Spectrum
-        
+
         Example
         -------
         >>> import ims
@@ -151,7 +172,7 @@ class Spectrum:
         Returns
         -------
         ims.Spectrum
-        
+
         Example
         -------
         >>> import ims

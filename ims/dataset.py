@@ -2,10 +2,10 @@ from ims import Spectrum
 import numpy as np
 import os
 from glob import glob
+from copy import deepcopy
 import h5py
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
-from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import (ShuffleSplit,
     KFold, StratifiedKFold, LeaveOneOut)
 
@@ -18,7 +18,8 @@ class Dataset:
 
     ims.Spectrum methods are applied to all spectra. It also contains
     additional functionality and methods that require multiple spectra
-    at a time such as alignments and calculating means.
+    at a time such as alignments and calculating means. Most operations
+    are done inplace for memory efficiency.
 
     Use one of the read_... methods as constructor.
 
@@ -39,7 +40,16 @@ class Dataset:
 
     labels : list or numpy.ndarray
         Classification or regression labels.
-        
+
+    Attributes
+    ----------
+    preprocessing : list
+        Keeps track of applied preprocessing steps.
+
+    weights : numpy.ndarray of shape (n_samples, n_features)
+        Stores the weights from scaling when the method is called.
+        Needed to correct the loadings in PCA automatically.
+
     Example    
     -------
     >>> import ims
@@ -91,6 +101,25 @@ class Dataset:
 
     def __iter__(self):
         return iter(self.data)
+    
+    def copy(self):
+        """
+        Uses deepcopy from the copy module in the standard library.
+        Most operations happen inplace. Use this method if you do not
+        want to change the original variable.
+
+        Returns
+        -------
+        ims.Dataset
+            deepcopy of self
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> new_variable = ds.copy()
+        """        
+        return deepcopy(self)
 
     @property
     def sample_indices(self):
@@ -183,7 +212,7 @@ class Dataset:
         >>> import ims
         >>> ds = ims.Dataset.read_mea("IMS_data", subfolders=True)
         >>> print(ds)
-        Dataset: IMS_data, 58 Spectra       
+        Dataset: IMS_data, 58 Spectra
         """
         paths, name, files, samples, labels = Dataset._measurements(
             path, subfolders
@@ -252,15 +281,15 @@ class Dataset:
 
         Returns
         -------
-        ims.Spectrum
-        
+        ims.Dataset
+
         Example
         -------
         >>> import ims
         >>> sample = ims.Dataset.read_mea("IMS_data")
         >>> sample.to_hdf5("IMS_data_hdf5")
         >>> sample = ims.Dataset.read_hdf5("IMS_data_hdf5")
-        """     
+        """
         name = os.path.split(path)[1]
         data_paths = glob(f"{path}/data/*.hdf5")
         data = [Spectrum.read_hdf5(i) for i in data_paths]
@@ -279,15 +308,26 @@ class Dataset:
     def to_hdf5(self, folder_name=None):
         """
         Exports all spectra as hdf5 files.
-        Saves them to new folder.
+        Creates a new folder with a data folder that contains
+        one hdf5 file per sample (from ims.Spectrum.to_hdf5 method).
+        Labels, sample and file names are saved to a separate labels.hdf5 file.
+        Use ims.Dataset.read_hdf5 to read the dataset into memory.
 
         Parameters
         ----------
         folder_name : str, optional
-            Name of new directory, the default is None.
+            Name of new directory. If not set uses the dataset name
+            with _hdf5 added, the default is None.
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> ds.to_hdf5("IMS_data_hdf5")
+        >>> ds = ims.Dataset.read_hdf5("IMS_data_hdf5")
         """
         if folder_name is None:
-            folder_name = self.name
+            folder_name = f"{self.name}_hdf5"
 
         os.mkdir(folder_name)
         path = os.path.normpath(f"{folder_name}/data")
@@ -298,29 +338,6 @@ class Dataset:
             f.create_dataset("samples", data=self.samples)
             f.create_dataset("labels", data=self.labels)
             f.create_dataset("files", data=self.files)
-            
-            
-    def to_npy(self, folder_name):
-        """
-        Exports values of all spectra as npy file.
-        Makes a target directory with a data folder
-        and a npy file with label labels.
-
-        Parameters
-        ----------
-        folder_name : str
-            Name of new target directory.
-        """
-        os.mkdir(folder_name)
-        os.mkdir(f'{folder_name}/data')
-        le = LabelEncoder()
-        labels = le.fit_transform(self.labels)
-        np.save(f'{folder_name}/labels.npy', labels)
-        np.save(f'{folder_name}/label_names.npy', self.labels)
-        np.save(f'{folder_name}/samples.npy', self.labels)
-        exports = []
-        for i, j in enumerate(self.data):
-            exports.append(np.save(f'{folder_name}/data/{i}', j.values))
 
     def select(self, label=None, sample=None):
         """
@@ -339,6 +356,12 @@ class Dataset:
         -------
         Dataset
             Contains only matching spectra.
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> group_a = ds.select(label="GroupA") 
         """
         if label is None and sample is None:
             raise ValueError("Must give either label or sample value.")
@@ -395,7 +418,9 @@ class Dataset:
 
         Example
         -------
-        
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> ds = ds.drop(label="GroupA")
         """
         if label is None and sample is None:
             raise ValueError("Must give either label or sample value.")
@@ -476,7 +501,7 @@ class Dataset:
         Returns
         -------
         list
-            List of one `ims.Dataset` instance per group or sample.
+            List of one ims.Dataset instance per group or sample.
         """
         if key != "label" and key != "sample":
             raise ValueError('Only "label" or "sample" are valid keys!')
@@ -495,7 +520,6 @@ class Dataset:
     def plot(self, index=0):
         """
         Plots the spectrum of selected index and adds the label to the title.
-        Equivalent to:
 
         Parameters
         ----------
@@ -504,8 +528,7 @@ class Dataset:
 
         Returns
         -------
-        tuple
-            matplotlib.figure.Figure, matplotlib.axes._subplots.AxesSubplot
+        matplotlib.axes._subplots.AxesSubplot
         """
         ax = self[index].plot()
         plt.title(f"{self[index].name}; {self.labels[index]}")
@@ -630,9 +653,9 @@ class Dataset:
 
     def mean(self):
         """
-        Calculates means for each sample,
-        in case of repeat determinations.
-        Automatically groups by sample.
+        Calculates means for each sample, in case of repeat determinations.
+        Automatically determines which file belongs to which sample.
+        Sample names are used for mean spectra and file names are no longer needed.
 
         Returns
         -------
