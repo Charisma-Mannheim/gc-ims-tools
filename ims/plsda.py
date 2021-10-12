@@ -87,9 +87,7 @@ class PLS_DA:
 
     @staticmethod
     def _create_binary_labels(y):
-        """
-        Creates a binary label matrix with one column per group.
-        """
+        """Creates a binary label matrix with one column per group."""
         groups = np.unique(y)
         y_binary = np.zeros((len(y), len(groups)))
         for i, j in enumerate(groups):
@@ -100,8 +98,8 @@ class PLS_DA:
     @staticmethod
     def _reverse_binary_labels(y, groups):
         """
-        Returns a list of class labels from a binary label matrix and a tuple
-        of unique groups.
+        Returns a list of class labels from a binary label matrix
+        and a tuple of unique groups.
         """
         y_reversed = []
         for label in y:
@@ -150,7 +148,7 @@ class PLS_DA:
         """
         Predicts class labels for test data. Converts back from binary
         labels matrix to a list of class names. If y_test is set also calculates
-        accuracy, precision and recall.
+        accuracy, precision and recall and stores them as attributes.
 
         Parameters
         ----------
@@ -178,6 +176,29 @@ class PLS_DA:
                                        average="weighted")
 
         return np.array(y_pred)
+    
+    def score(self, X_test, y_test, sample_weight=None):
+        """
+        Calculates accuracy score for predicted data.
+
+        Parameters
+        ----------
+        X_test : numpy.ndarray of shape (n_samples, n_features)
+            Feature vectors of the test data.
+
+        y_test : numpy.ndarray of shape (n_samples,)
+            True classification labels.
+
+        sample_weight : array-like of shape (n_samples,), optional
+            Sample weights, by default None.
+
+        Returns
+        -------
+        score : float
+            Mean accuracy score.
+        """
+        y_pred = self.predict(X_test)
+        return accuracy_score(y_test, y_pred, sample_weight=sample_weight)
 
     def calc_vip_scores(self, threshold=None):
         """
