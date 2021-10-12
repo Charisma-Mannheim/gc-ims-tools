@@ -8,17 +8,83 @@ from sklearn.decomposition import PCA
 
 
 class PCA_Model:
-    
+    """
+    PCA_Model is a wrapper class around the scikit-learn PCA implementation
+    and provides prebuilt plots for GC-IMS datasets.
+
+    See the original scikit-learn documentation for a detailed description:
+    https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
+
+    Parameters
+    ----------
+    dataset : ims.Dataset
+        The dataset is needed for the retention and drift time
+        coordinates.
+
+    n_components : int or float, optional
+        Number of components to keep. If not set all components are kept,
+        by default None.
+
+    svd_solver : str, optional
+        "auto", "full", "arpack" or "randomised" are valid,
+        by default "auto".
+
+    **kwargs: optional
+        Additional key word arguments are passed to the scikit-learn PCA.
+        See the original documentation for valid parameters.
+
+    Attributes
+    ----------
+    scores : numpy.ndarray of shape (n_samples, n_features)
+        X with dimension reduction applied.
+
+    loadings : numpy.ndarray of shape (n_components, n_features)
+        PCA loadings already corrected when a scaling method was
+        applied on the dataset.
+
+    explainded_variance : numpy.ndarray of shape (n_components,)
+        The amount of variance explained by each component.
+
+    explained_variance_ratio : numpy.nd_array of shape (n_components,)
+        Percentage of variance explained by each component.
+
+    singular_values : numpy.ndarray of shape (n_components,)
+        The singular values corresponding to each component.
+
+    mean : numpy.ndarray of shape (n_features,)
+        Per feature mean estimated from training data.
+
+    Example
+    -------
+    >>> import ims
+    >>> ds = ims.Dataset.read_mea("IMS_data")
+    >>> X, _ = ds.get_xy()
+    >>> pca = ims.PCA_Model(ds, n_components=20)
+    >>> pca.fit(X)
+    >>> pca.plot()
+    """
     def __init__(self, dataset, n_components=None, svd_solver="auto", **kwargs):
         self.dataset = dataset
         self.n_components = n_components
         self.svd_solver = svd_solver
-        
         self._sk_pca = PCA(n_components, svd_solver=svd_solver, **kwargs)
         
-    def fit(self, X_train, y_train=None):
+    def fit(self, X_train):
+        """
+        Fit the PCA model with training data.
+
+        Parameters
+        ----------
+        X_train : numpy.ndarray of shape (n_samples, n_features)
+            The training data.
+            
+        Returns
+        -------
+        self
+            The fitted model.
+        """
         self._sk_pca.fit(X_train)
-        
+
         # assigning attributes here means less typing for the user
         self.scores = self._sk_pca.transform(X_train)
         self.explained_variance = self._sk_pca.explained_variance_
@@ -30,28 +96,30 @@ class PCA_Model:
             self.loadings = self._sk_pca.components_ / self.dataset.weights
         else:
             self.loadings = self._sk_pca.components_
+            
+        return self
 
     def plot(self, PC_x=1, PC_y=2, width=9, height=8, annotate=False):
         """
-        Scatter plot of principal components
+        Scatter plot of selected principal components.
 
         Parameters
         ----------
         PC_x : int, optional
-            PC x axis, by default 1
+            PC x axis, by default 1.
 
         PC_y : int, optional
-            PC y axis, by default 2
+            PC y axis, by default 2.
 
-        width : int, optional
-            plot width in inches, by default 8
+        width : int or float, optional
+            plot width in inches, by default 8.
 
-        height : int, optional
-            plot height in inches, by default 7
+        height : int or float, optional
+            plot height in inches, by default 7.
             
         annotate : bool, optional
             label data points with sample name,
-            by default False
+            by default False.
 
         Returns
         -------
@@ -82,7 +150,7 @@ class PCA_Model:
         plt.legend(frameon=True, fancybox=True, facecolor="white")
         plt.xlabel(f"PC {PC_x} ({expl_var[PC_x-1]} % of variance)")
         plt.ylabel(f"PC {PC_y} ({expl_var[PC_y-1]} % of variance)")
-        
+
         if annotate:
             for i, point in pc_df.iterrows():
                 ax.text(point[f"PC {PC_x}"], point[f"PC {PC_y}"],
@@ -98,17 +166,17 @@ class PCA_Model:
         Parameters
         ----------
         PC : int, optional
-            principal component, by default 1
+            principal component, by default 1.
 
         color_range : int, optional
             color_scale ranges from - color_range to + color_range
-            centered at 0
+            centered at 0.
 
-        width : int, optional
-            plot width in inches, by default 9
+        width : int or float, optional
+            plot width in inches, by default 9.
 
-        height : int, optional
-            plot height in inches, by default 10
+        height : int or float, optional
+            plot height in inches, by default 10.
 
         Returns
         -------
@@ -149,6 +217,16 @@ class PCA_Model:
         """
         Plots the explained variance ratio per principal component
         and cumulatively.
+        
+        Parameters
+        ----------
+        width : int or float, optional
+            Width of the plot in inches,
+            by default 9.
+            
+        height : int or float, optional
+            Height of the plot in inches,
+            by default 8.
 
         Returns
         -------
