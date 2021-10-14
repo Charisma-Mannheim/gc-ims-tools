@@ -78,7 +78,7 @@ class PLS_DA:
     >>> model.predict(X_test, y_test)
     >>> model.plot()
     """
-    def __init__(self, dataset, n_components=10, scale=True, **kwargs):
+    def __init__(self, dataset, n_components=2, scale=True, **kwargs):
         self.dataset = dataset
         self.n_components = n_components
         self.scale = scale
@@ -138,9 +138,9 @@ class PLS_DA:
         self.coefficients = self._sk_pls.coef_
 
         if hasattr(self.dataset, "weights"):
-            self.x_loadings = self._sk_pls.x_loadings_
+            self.x_loadings = self._sk_pls.x_loadings_ / self.dataset.weights[:, None]
         else:
-            self.x_loadings = self._sk_pls.x_loadings_ / self.weights[:, None]
+            self.x_loadings = self._sk_pls.x_loadings_
 
         return self
 
