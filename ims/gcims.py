@@ -101,7 +101,7 @@ class Spectrum:
         Returns
         -------
         ims.Spectrum
-            deepcopy of self
+            deepcopy of self.
 
         Example
         -------
@@ -241,7 +241,7 @@ class Spectrum:
         Returns
         -------
         ims.Spectrum
-        
+
         Example
         -------
         >>> import ims
@@ -255,9 +255,13 @@ class Spectrum:
             drift_time = np.array(f['drift_time'])
             name = str(f.attrs['name'])
             time = datetime.strptime(f.attrs['time'], "%Y-%m-%dT%H:%M:%S")
-        return cls(name, values, ret_time, drift_time, time)
+            drift_time_label = str(f.attrs["drift_time_label"])
 
-    def to_hdf5(self, path=os.getcwd()):
+        spectrum = cls(name, values, ret_time, drift_time, time)
+        spectrum._drift_time_label = drift_time_label
+        return spectrum
+
+    def to_hdf5(self, path=None):
         """
         Exports spectrum as hdf5 file.
         Useful to save preprocessed spectra, especially for larger datasets.
@@ -276,13 +280,17 @@ class Spectrum:
         >>> sample.to_hdf5()
         >>> sample = ims.Spectrum.read_hdf5("sample.hdf5")
         """
+        if path is None:
+            path = os.getcwd()
+        
         with h5py.File(f'{path}/{self.name}.hdf5', 'w-') as f:
             f.create_dataset('values', data=self.values)
             f.create_dataset('ret_time', data=self.ret_time)
             f.create_dataset('drift_time', data=self.drift_time)
-
             f.attrs['name'] = self.name
-            f.attrs['time'] = datetime.strftime(self.time, "%Y-%m-%dT%H:%M:%S")
+            f.attrs['time'] = datetime.strftime(self.time,
+                                                "%Y-%m-%dT%H:%M:%S")
+            f.attrs['drift_time_label'] = self._drift_time_label
 
     def tophat(self, size=15):
         """
@@ -580,7 +588,7 @@ class Spectrum:
 
         return fig, ax
 
-    def export_plot(self, path=os.getcwd(), dpi=300,
+    def export_plot(self, path=None, dpi=300,
                     file_format='jpg', **kwargs):
         """
         Saves the figure as image file. See the docs for
@@ -603,11 +611,14 @@ class Spectrum:
         >>> sample = ims.Spectrum.read_mea("sample.mea")
         >>> sample.export_plot()
         """
+        if path is None:
+            path = os.getcwd()
+
         fig, _ = self.plot(**kwargs)
         fig.savefig(f'{path}/{self.name}.{file_format}', dpi=dpi,
-                    bbox_inches="tight", pad_inches=0.5)
+                    bbox_inches="tight", pad_inches=0.2)
 
-    def export_image(self, path=os.getcwd(), file_format='jpeg'):
+    def export_image(self, path=None, file_format='jpeg'):
         """
         Exports spectrum as grayscale image (Not a plot!).
 
@@ -628,5 +639,8 @@ class Spectrum:
         >>> sample = ims.Spectrum.read_mea("sample.mea")
         >>> sample.export_image()
         """
+        if path is None:
+            path = os.getcwd()
+
         imageio.imwrite(uri=f'{path}/{self.name}.{file_format}',
                         im=self.values)

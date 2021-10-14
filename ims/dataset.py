@@ -3,6 +3,7 @@ import numpy as np
 import os
 from glob import glob
 from copy import deepcopy
+from datetime import datetime
 import h5py
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
@@ -268,11 +269,11 @@ class Dataset:
     @classmethod
     def read_hdf5(cls, path):
         """
-        Reads hdf5 files exported by the to_hdf5 method.
+        Reads hdf5 files exported by the Dataset.to_hdf5 method.
         Convenient way to store preprocessed spectra.
         Especially useful for larger datasets as preprocessing
         requires more time.
-        Preferred to csv because of very fast read and write speeds.
+        Preferred to csv because of faster read and write speeds.
 
         Parameters
         ----------
@@ -290,54 +291,80 @@ class Dataset:
         >>> sample.to_hdf5("IMS_data_hdf5")
         >>> sample = ims.Dataset.read_hdf5("IMS_data_hdf5")
         """
-        name = os.path.split(path)[1]
-        data_paths = glob(f"{path}/data/*.hdf5")
-        data = [Spectrum.read_hdf5(i) for i in data_paths]
+        with h5py.File(path, "r") as f:
+            labels = [i.decode() for i in f["dataset"]["labels"]]
+            samples = [i.decode() for i in f["dataset"]["samples"]]
+            files = [i.decode() for i in f["dataset"]["files"]]
+            preprocessing = [i.decode() for i in f["dataset"]["preprocessing"]]
 
-        with h5py.File(f"{path}/labels.hdf5", "r") as f:
-            samples = f["samples"]
-            files = f["files"]
-            labels = f["labels"]
+            data = []
+            for key in f.keys():
+                if key == "dataset":
+                    continue
+                values = np.array(f[key]["values"])
+                ret_time = np.array(f[key]["ret_time"])
+                drift_time = np.array(f[key]["drift_time"])
+                name = str(f[key].attrs["name"])
+                time = datetime.strptime(f[key].attrs["time"],
+                                        "%Y-%m-%dT%H:%M:%S")
+                drift_time_label = str(f[key].attrs["drift_time_label"])
+                spectrum = Spectrum(name, values, ret_time, drift_time, time)
+                spectrum._drift_time_label = drift_time_label
+                data.append(spectrum)
 
-            samples = [i.decode() for i in samples]
-            files = [i.decode() for i in files]
-            labels = [i.decode() for i in labels]
+            name = os.path.split("Test.hdf5")[1]
+            name = name.split('.')[0]
 
-        return cls(data, name, files, samples, labels)
+        dataset = cls(data, name, files, samples, labels)
+        dataset.preprocessing = preprocessing
+        return dataset
 
-    def to_hdf5(self, folder_name=None):
+    def to_hdf5(self, name=None, path=None):
         """
-        Exports all spectra as hdf5 files.
-        Creates a new folder with a data folder that contains
-        one hdf5 file per sample (from ims.Spectrum.to_hdf5 method).
-        Labels, sample and file names are saved to a separate labels.hdf5 file.
-        Use ims.Dataset.read_hdf5 to read the dataset into memory.
+        Exports the dataset as hdf5 file.
+        It contains one group per spectrum and one with labels etc.
+        Use ims.Dataset.read_hdf5 to read the file and construct a dataset.
 
         Parameters
         ----------
-        folder_name : str, optional
-            Name of new directory. If not set uses the dataset name
-            with _hdf5 added, the default is None.
+        name : str, optional
+            Name of the hdf5 file. File extension is not needed.
+            If not set, uses the dataset name attribute,
+            by default None.
+            
+        path : str, otional
+            Path to save the file. If not set uses the current working
+            directory, by default None.
 
         Example
         -------
         >>> import ims
         >>> ds = ims.Dataset.read_mea("IMS_data")
-        >>> ds.to_hdf5("IMS_data_hdf5")
-        >>> ds = ims.Dataset.read_hdf5("IMS_data_hdf5")
+        >>> ds.to_hdf5()
+        >>> ds = ims.Dataset.read_hdf5("IMS_data.hdf5")
         """
-        if folder_name is None:
-            folder_name = f"{self.name}_hdf5"
+        if name is None:
+            name = self.name
+ 
+        if path is None:
+            path = os.getcwd()
 
-        os.mkdir(folder_name)
-        path = os.path.normpath(f"{folder_name}/data")
-        os.mkdir(path)
+        with h5py.File(f"{path}/{name}.hdf5", "w-") as f:
+            data = f.create_group("dataset")
+            data.create_dataset("labels", data=self.labels)
+            data.create_dataset("samples", data=self.samples)
+            data.create_dataset("files", data=self.files)
+            data.create_dataset("preprocessing", data=self.preprocessing)
 
-        [Spectrum.to_hdf5(i, path=path) for i in self.data]
-        with h5py.File(f"{folder_name}/labels.hdf5", "w-") as f:
-            f.create_dataset("samples", data=self.samples)
-            f.create_dataset("labels", data=self.labels)
-            f.create_dataset("files", data=self.files)
+            for sample in self:
+                grp = f.create_group(sample.name)
+                grp.attrs["name"] = sample.name
+                grp.create_dataset("values", data=sample.values)
+                grp.create_dataset("ret_time", data=sample.ret_time)
+                grp.create_dataset("drift_time", data=sample.drift_time)
+                grp.attrs["time"] = datetime.strftime(sample.time,
+                                                    "%Y-%m-%dT%H:%M:%S")
+                grp.attrs["drift_time_label"] = sample._drift_time_label
 
     def select(self, label=None, sample=None):
         """
@@ -604,11 +631,14 @@ class Dataset:
         Example
         -------
         >>> import ims
+        >>> from sklearn.metrics import accuracy_score
         >>> ds = ims.Dataset.read_mea("IMS_data")
         >>> model = ims.PLS_DA(ds)
+        >>> accuracy = []
         >>> for X_train, X_test, y_train, y_test in ds.kfold_split():
         >>>     model.fit(X_train, y_train)
-        >>>     y_pred = model.predict(X_test, y_test)
+        >>>     y_pred = model.predict(X_test)
+        >>>     accuracy.append(accuracy_score(y_test, y_pred))
         """
         if stratify:
             kf = StratifiedKFold(n_splits=n_splits, shuffle=shuffle,
@@ -637,11 +667,14 @@ class Dataset:
         Example
         -------
         >>> import ims
+        >>> from sklearn.metrics import accuracy_score
         >>> ds = ims.Dataset.read_mea("IMS_data")
         >>> model = ims.PLS_DA(ds)
+        >>> accuracy = []
         >>> for X_train, X_test, y_train, y_test in ds.leave_one_out():
         >>>     model.fit(X_train, y_train)
         >>>     y_pred = model.predict(X_test, y_test)
+        >>>     accuracy.append(accuracy_score(y_test, y_pred))
         """
         loo = LeaveOneOut()
         for train_index, test_index in loo.split(self):
@@ -699,7 +732,7 @@ class Dataset:
         Parameters
         ----------
         size : int, optional
-            Size of structuring element, by default 15
+            Size of structuring element, by default 15.
 
         Returns
         -------
@@ -872,7 +905,7 @@ class Dataset:
         (4082, 1005)
         """
         self.data = [Spectrum.cut_dt(i, start, stop) for i in self.data]
-        self.preprocessing.append(f'cut_dt({start, stop})')
+        self.preprocessing.append(f'cut_dt({start}, {stop})')
         return self
 
     def cut_rt(self, start, stop=None):
@@ -907,7 +940,7 @@ class Dataset:
         (2857, 3150)
         """
         self.data = [Spectrum.cut_rt(i, start, stop) for i in self.data]
-        self.preprocessing.append(f'cut_rt({start, stop})')
+        self.preprocessing.append(f'cut_rt({start}, {stop})')
         return self
 
     def export_plots(self, folder_name=None, file_format='jpg', **kwargs):
@@ -1057,4 +1090,5 @@ class Dataset:
             j.values = X[i, :].reshape(b, c)
 
         self.weights = weights
+        self.preprocessing.append(f"scaling({method})")
         return self
