@@ -107,9 +107,9 @@ class PLSR:
         self.coefficients = self._sk_pls.coef_
 
         if hasattr(self.dataset, "weights"):
-            self.x_loadings = self._sk_pls.x_loadings_
+            self.x_loadings = self._sk_pls.x_loadings_ / self.dataset.weights[:, None]
         else:
-            self.x_loadings = self._sk_pls.x_loadings_ / self.weights[:, None]
+            self.x_loadings = self._sk_pls.x_loadings_
 
         self.y_pred_train = self._sk_pls.predict(X_train)
         self.y_train = y_train
