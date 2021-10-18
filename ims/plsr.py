@@ -192,7 +192,7 @@ class PLSR:
         self.vip_scores = vips
         return vips
 
-    def plot(self, width=9, height=8):
+    def plot(self, width=9, height=8, annotate=False, test_only=True):
         """
         Plots predicted vs actual values and shows regression line.
         Recommended to predict with test data first.
@@ -204,31 +204,49 @@ class PLSR:
         height : int or float, optional
             Height of the plot in inches,
             by default 8.
+            
+        annotate : bool, optional
+            If True annotates plot with sample names,
+            by default False.
+            
+        test_only : bool, optional
+            Ignored if annotate is set to False.
+            If True and only annotates test data,
+            by default True.
 
         Returns
         -------
         matplotlib.pyplot.axes
         """        
-        z = np.polyfit(self.y_train, self.y_pred_train, 1)
-
         _, ax = plt.subplots(figsize=(width, height))
-        plt.scatter(self.y_pred_train, self.y_train)
+        plt.scatter(self.y_pred_train, self.y_train, label="Train data")
+        if annotate and not test_only:
+            for i in range(len(self.y_train)):
+                plt.annotate(
+                    self.dataset[self.dataset.train_index][i].name,
+                    (self.y_pred_train[i], self.y_train[i]),
+                    xycoords="data"
+                )
 
         if hasattr(self, "y_pred_test"):
-            plt.scatter(self.y_pred_test, self.y_test, c="tab:orange")
-            y = self.y_test
-            label = f"RMSE: {self.rmse}"
-        else:
-            y = self.y_train
-            label = None
-
-        plt.plot(
-            np.polyval(z, y),
-            y,
-            label=label,
-            c="tab:orange",
-            linewidth=1
-            )
+            z = np.polyfit(self.y_test, self.y_pred_test, 1)
+            plt.scatter(self.y_pred_test, self.y_test,
+                        c="tab:orange", label="Test data")
+            plt.plot(
+                np.polyval(z, self.y_test),
+                self.y_test,
+                label=f"RMSE: {self.rmse}",
+                c="tab:orange",
+                linewidth=1
+                )
+            
+            if annotate:
+                for i in range(len(self.y_test)):
+                    plt.annotate(
+                        self.dataset[self.dataset.test_index][i].name,
+                        (self.y_pred_test[i], self.y_test[i]),
+                        xycoords="data"
+                    )
 
         plt.xlabel("Predicted")
         plt.ylabel("Actual")

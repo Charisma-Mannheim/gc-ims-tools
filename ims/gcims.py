@@ -13,6 +13,7 @@ from skimage.morphology import white_tophat, disk
 from zipfile import ZipFile
 import imageio
 
+
 class Spectrum:
     """
     Represents one GCIMS-Spectrum with the data matrix,

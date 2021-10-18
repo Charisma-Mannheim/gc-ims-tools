@@ -590,6 +590,11 @@ class Dataset:
         s = ShuffleSplit(n_splits=1, test_size=test_size,
                          random_state=random_state)
         train, test = next(s.split(self.data))
+
+        # set attributes for PLS_DA.plot()
+        self.train_index = train
+        self.test_index = test
+
         X_train, y_train = self[train].get_xy()
         X_test, y_test = self[test].get_xy()
         return X_train, X_test, y_train, y_test

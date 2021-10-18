@@ -170,10 +170,16 @@ class PLS_DA:
         if y_test is not None:
             self.y_test = y_test
             self.accuracy = accuracy_score(y_test, y_pred)
-            self.precision = precision_score(y_test, y_pred,
-                                             average="weighted")
-            self.recall = recall_score(y_test, y_pred,
-                                       average="weighted")
+            self.precision = precision_score(
+                y_test, y_pred,
+                average="weighted",
+                labels=np.unique(y_pred)
+                )
+            self.recall = recall_score(
+                y_test, y_pred,
+                average="weighted",
+                labels=np.unique(y_pred)
+                )
 
         return np.array(y_pred)
     
@@ -224,7 +230,7 @@ class PLS_DA:
 
         self.vip_scores = vips
         return vips
-            
+
     def plot(self, x_comp=1, y_comp=2, width=9, height=8,
              annotate=False):
         """
@@ -237,7 +243,7 @@ class PLS_DA:
 
         y_comp : int, optional
             Component y axis, by default 2.
-            
+
         width : int or float, optional
             Width of the plot in inches,
             by default 9.
@@ -258,8 +264,9 @@ class PLS_DA:
 
         df = pd.DataFrame(self.x_scores, columns=cols)
         df["Group"] = self.y_train
-        # df["Sample"] = self.dataset.samples
-        
+        if hasattr(self.dataset, "train_index"):
+            df["Sample"] = self.dataset[self.dataset.train_index].samples
+
         plt.figure(figsize=(width, height))
         ax = sns.scatterplot(
             x=f"PLS Component {x_comp}",
@@ -270,14 +277,17 @@ class PLS_DA:
             s=50
             )
         plt.legend(frameon=True, fancybox=True, facecolor="white")
-        
-        # if annotate:
-        #     for _, row in df.iterrows():
-        #         plt.annotate(
-        #             row["Sample"],
-        #             xy=(row[f"PLS Component {x_comp}"], row[f"PLS Component {y_comp}"]),
-        #             xycoords="data"
-        #         )
+
+        if annotate:
+            if hasattr(self.dataset, "train_index"):
+                for _, row in df.iterrows():
+                    plt.annotate(
+                        row["Sample"],
+                        xy=(row[f"PLS Component {x_comp}"], row[f"PLS Component {y_comp}"]),
+                        xycoords="data"
+                    )
+            else:
+                raise ValueError("Sample names not available!")
 
         return ax
     
