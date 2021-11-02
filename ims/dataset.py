@@ -691,6 +691,18 @@ class Dataset:
         -------
         tuple
             (X_train, X_test, y_train, y_test) per iteration
+            
+        Example
+        -------
+        >>> import ims
+        >>> from sklearn.metrics import accuracy_score
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> model = ims.PLS_DA(ds)
+        >>> accuracy = []
+        >>> for X_train, X_test, y_train, y_test in ds.shuffle_split():
+        >>>     model.fit(X_train, y_train)
+        >>>     y_pred = model.predict(X_test)
+        >>>     accuracy.append(accuracy_score(y_test, y_pred))
         """        
         rs = ShuffleSplit(
             n_splits=n_splits,
@@ -707,7 +719,8 @@ class Dataset:
     def bootstrap(self, n_bootstraps=5, n_samples=None, random_state=None):
         """
         Iteratively resamples dataset with replacement. Samples can
-        be included multiple times or not at all.
+        be included multiple times or not at all in the training data.
+        Uses all samples that are not present in the training data as test data.
 
         Parameters
         ----------
@@ -716,7 +729,7 @@ class Dataset:
             
         n_samples : int, optional
             Number of samples to draw per iteration. Is set to
-            the lenghth of the dataset id None,
+            the lenghth of the dataset if None,
             by default None.
 
         random_state : int, optional
@@ -727,6 +740,18 @@ class Dataset:
         -------
         tuple
             (X_train, X_test, y_train, y_test) per iteration
+            
+        Example
+        -------
+        >>> import ims
+        >>> from sklearn.metrics import accuracy_score
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> model = ims.PLS_DA(ds)
+        >>> accuracy = []
+        >>> for X_train, X_test, y_train, y_test in ds.bootstrap():
+        >>>     model.fit(X_train, y_train)
+        >>>     y_pred = model.predict(X_test)
+        >>>     accuracy.append(accuracy_score(y_test, y_pred))
         """
         for _ in range(n_bootstraps):
             train_data, train_labels = resample(
