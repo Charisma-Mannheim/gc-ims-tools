@@ -760,8 +760,13 @@ class Dataset:
                 n_samples=n_samples,
                 random_state=random_state
                 )
-            test_data = [item for item in self.data if item not in train_data]
-            test_labels = [item for item in self.labels if item not in train_labels]
+
+            test_data = []
+            test_labels = []
+            for i, j in enumerate(self.data):
+                if j not in train_data:
+                    test_data.append(j)
+                    test_labels.append(self.labels[i])
             X_train, y_train = Dataset(train_data, labels=train_labels).get_xy()
             X_test, y_test = Dataset(test_data, labels=test_labels).get_xy()
             yield X_train, X_test, y_train, y_test
