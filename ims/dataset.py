@@ -67,7 +67,7 @@ class Dataset:
     >>> print(ds)
     Dataset: IMS_data, 58 Spectra
     """
-    def __init__(self, data, name=None, files=[], samples=[], labels=[]):
+    def __init__(self, data, name=None, files=None, samples=None, labels=None):
         self.data = data
         self.name = name
         self.files = files
@@ -628,7 +628,7 @@ class Dataset:
             by default True
 
         random_state : int, optional
-            When shuffle is True random_state affects the order of the indice.
+            When shuffle is True random_state affects the order of the indices.
             Pass an int for reproducible splits,
             by default None
 
@@ -1070,7 +1070,8 @@ class Dataset:
             New directory to save the images to.
 
         file_format : str, optional
-        See matplotlib savefig docs for information about supported formats,
+            See matplotlib savefig docs for information
+            about supported formats,
             by default 'jpeg'
             
         Example
@@ -1081,23 +1082,15 @@ class Dataset:
         """
         if folder_name is None:
             folder_name = self.name.join("_plots")
-        group_names = np.unique(self.labels)
-        sample_names = np.unique(self.samples)
-        sample_indices = self.sample_indices
+
         os.mkdir(folder_name)
-        for label in group_names:
-            os.mkdir(f'{folder_name}/{label}')
 
-        for i in sample_names:
-            indices = sample_indices[i]
-            for j in indices:
-                label = self.labels[j]
-                Spectrum.export_plot(
-                    self.data[j], path=f'{folder_name}/{label}',
-                    file_format=file_format, **kwargs
-                    )
+        for i in self.data:
+            i.export_plot(path=folder_name, file_format=file_format,
+                            **kwargs)
 
-    def export_images(self, folder_name, file_format='jpeg'):
+
+    def export_images(self, folder_name=None, file_format="jpeg"):
         """
         Exports all spectra as greyscale images (Not plots!).
 
@@ -1117,21 +1110,13 @@ class Dataset:
         >>> ds = ims.Dataset.read_mea("IMS_data")
         >>> ds.export_images("IMS_data_images")
         """
-        group_names = np.unique(self.labels)
-        sample_names = np.unique(self.samples)
-        sample_indices = self.sample_indices
-        os.mkdir(folder_name)
-        for group in group_names:
-            os.mkdir(f'{folder_name}/{group}')
+        if folder_name is None:
+            folder_name = self.name.join("_images")
 
-        for i in sample_names:
-            indices = sample_indices[i]
-            for j in indices:
-                label = self.labels[j]
-                Spectrum.export_image(
-                    self.data[j], path=f'{folder_name}/{label}',
-                    file_format=file_format
-                )
+        os.mkdir(folder_name)
+
+        for i in self.data:
+            i.export_image(path=folder_name, file_format=file_format)
 
     def get_xy(self, flatten=True):
         """
