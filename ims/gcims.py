@@ -66,8 +66,10 @@ class Spectrum:
         values = self.values + other.values
         ret_time = self.ret_time + other.ret_time
         drift_time = self.drift_time + other.drift_time
-        return Spectrum(self.name, values, ret_time, drift_time,
-                        self.time)
+        x =  Spectrum(self.name, values, ret_time, drift_time,
+                      self.time)
+        x._drift_time_label = self._drift_time_label
+        return x
 
     def __radd__(self, other):
         if other == 0:
@@ -80,8 +82,10 @@ class Spectrum:
             values = self.values / other
             ret_time = self.ret_time / other
             drift_time = self.drift_time / other
-            return Spectrum(self.name, values, ret_time,
-                            drift_time, self.time)
+            x = Spectrum(self.name, values, ret_time,
+                         drift_time, self.time)
+            x._drift_time_label = self._drift_time_label
+            return x
         else:
             raise NotImplementedError()
 
