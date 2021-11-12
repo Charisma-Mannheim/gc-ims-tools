@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.ticker import MaxNLocator, AutoMinorLocator
-from matplotlib.colors import CenteredNorm
 from sklearn.decomposition import PCA
 
 
@@ -196,7 +195,6 @@ class PCA_Model:
             origin="lower",
             aspect="auto",
             cmap="RdBu_r",
-            norm=CenteredNorm(0),
             vmin=(-color_range),
             vmax=color_range,
             extent=(min(drift_time), max(drift_time),
@@ -217,13 +215,13 @@ class PCA_Model:
         """
         Plots the explained variance ratio per principal component
         and cumulatively.
-        
+
         Parameters
         ----------
         width : int or float, optional
             Width of the plot in inches,
             by default 9.
-            
+
         height : int or float, optional
             Height of the plot in inches,
             by default 8.

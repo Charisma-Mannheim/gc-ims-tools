@@ -7,6 +7,7 @@ from datetime import datetime
 import h5py
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
+from sklearn.utils import resample
 from sklearn.model_selection import (ShuffleSplit,
     KFold, StratifiedKFold, LeaveOneOut)
 
@@ -50,6 +51,14 @@ class Dataset:
     weights : numpy.ndarray of shape (n_samples, n_features)
         Stores the weights from scaling when the method is called.
         Needed to correct the loadings in PCA automatically.
+        
+    train_index : list
+        Keeps the indices from train_test_split method.
+        Used for plot annotations in PLS_DA and PLSR classes.
+        
+    test_index : list
+        Keeps the indices from train_test_split method.
+        Used for plot annotations in PLS_DA and PLSR classes.
 
     Example    
     -------
@@ -58,7 +67,7 @@ class Dataset:
     >>> print(ds)
     Dataset: IMS_data, 58 Spectra
     """
-    def __init__(self, data, name, files, samples, labels):
+    def __init__(self, data, name=None, files=None, samples=None, labels=None):
         self.data = data
         self.name = name
         self.files = files
@@ -619,7 +628,7 @@ class Dataset:
             by default True
 
         random_state : int, optional
-            When shuffle is True random_state affects the order of the indice.
+            When shuffle is True random_state affects the order of the indices.
             Pass an int for reproducible splits,
             by default None
 
@@ -658,6 +667,110 @@ class Dataset:
             X_test, y_test = test_data.get_xy()
             yield X_train, X_test, y_train, y_test
             
+    def shuffle_split(self, n_splits=5, test_size=0.2, random_state=None):
+        """
+        Shuffled splits for montecarlo cross-validation. Randomly selects
+        a fraction of the dataset, without replacements, per split
+        (sklearn.model_selection.ShuffleSplit).
+
+        Parameters
+        ----------
+        n_splits : int, optional
+            Number of re-shuffling and splitting iterations,
+            by default 10
+
+        test_size : float, optional
+            Proportion of the dataset to include in the test split,
+            by default 0.2
+
+        random_state : int, optional
+            Controls randomness. Pass an int for reproducible output,
+            by default None
+
+        Yields
+        -------
+        tuple
+            (X_train, X_test, y_train, y_test) per iteration
+            
+        Example
+        -------
+        >>> import ims
+        >>> from sklearn.metrics import accuracy_score
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> model = ims.PLS_DA(ds)
+        >>> accuracy = []
+        >>> for X_train, X_test, y_train, y_test in ds.shuffle_split():
+        >>>     model.fit(X_train, y_train)
+        >>>     y_pred = model.predict(X_test)
+        >>>     accuracy.append(accuracy_score(y_test, y_pred))
+        """        
+        rs = ShuffleSplit(
+            n_splits=n_splits,
+            test_size=test_size,
+            random_state=random_state
+            )
+        for train_index, test_index in rs.split(self, self.labels):
+            train_data = self[train_index]
+            test_data = self[test_index]
+            X_train, y_train = train_data.get_xy()
+            X_test, y_test = test_data.get_xy()
+            yield X_train, X_test, y_train, y_test
+
+    def bootstrap(self, n_bootstraps=5, n_samples=None, random_state=None):
+        """
+        Iteratively resamples dataset with replacement. Samples can
+        be included multiple times or not at all in the training data.
+        Uses all samples that are not present in the training data as test data.
+
+        Parameters
+        ----------
+        n_bootstraps : int, optional
+            Number of iterations, by default 5.
+            
+        n_samples : int, optional
+            Number of samples to draw per iteration. Is set to
+            the lenghth of the dataset if None,
+            by default None.
+
+        random_state : int, optional
+            Controls randomness, pass an int for reproducible output,
+            by default None.
+
+        Yields
+        -------
+        tuple
+            (X_train, X_test, y_train, y_test) per iteration
+            
+        Example
+        -------
+        >>> import ims
+        >>> from sklearn.metrics import accuracy_score
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> model = ims.PLS_DA(ds)
+        >>> accuracy = []
+        >>> for X_train, X_test, y_train, y_test in ds.bootstrap():
+        >>>     model.fit(X_train, y_train)
+        >>>     y_pred = model.predict(X_test)
+        >>>     accuracy.append(accuracy_score(y_test, y_pred))
+        """
+        for _ in range(n_bootstraps):
+            train_data, train_labels = resample(
+                self.data,
+                self.labels,
+                n_samples=n_samples,
+                random_state=random_state
+                )
+
+            test_data = []
+            test_labels = []
+            for i, j in enumerate(self.data):
+                if j not in train_data:
+                    test_data.append(j)
+                    test_labels.append(self.labels[i])
+            X_train, y_train = Dataset(train_data, labels=train_labels).get_xy()
+            X_test, y_test = Dataset(test_data, labels=test_labels).get_xy()
+            yield X_train, X_test, y_train, y_test
+
     def leave_one_out(self):
         """
         Leave-One-Out cross-validator.
@@ -962,7 +1075,8 @@ class Dataset:
             New directory to save the images to.
 
         file_format : str, optional
-        See matplotlib savefig docs for information about supported formats,
+            See matplotlib savefig docs for information
+            about supported formats,
             by default 'jpeg'
             
         Example
@@ -973,23 +1087,15 @@ class Dataset:
         """
         if folder_name is None:
             folder_name = self.name.join("_plots")
-        group_names = np.unique(self.labels)
-        sample_names = np.unique(self.samples)
-        sample_indices = self.sample_indices
+
         os.mkdir(folder_name)
-        for label in group_names:
-            os.mkdir(f'{folder_name}/{label}')
 
-        for i in sample_names:
-            indices = sample_indices[i]
-            for j in indices:
-                label = self.labels[j]
-                Spectrum.export_plot(
-                    self.data[j], path=f'{folder_name}/{label}',
-                    file_format=file_format, **kwargs
-                    )
+        for i in self.data:
+            i.export_plot(path=folder_name, file_format=file_format,
+                            **kwargs)
 
-    def export_images(self, folder_name, file_format='jpeg'):
+
+    def export_images(self, folder_name=None, file_format="jpeg"):
         """
         Exports all spectra as greyscale images (Not plots!).
 
@@ -1009,21 +1115,13 @@ class Dataset:
         >>> ds = ims.Dataset.read_mea("IMS_data")
         >>> ds.export_images("IMS_data_images")
         """
-        group_names = np.unique(self.labels)
-        sample_names = np.unique(self.samples)
-        sample_indices = self.sample_indices
-        os.mkdir(folder_name)
-        for group in group_names:
-            os.mkdir(f'{folder_name}/{group}')
+        if folder_name is None:
+            folder_name = self.name.join("_images")
 
-        for i in sample_names:
-            indices = sample_indices[i]
-            for j in indices:
-                label = self.labels[j]
-                Spectrum.export_image(
-                    self.data[j], path=f'{folder_name}/{label}',
-                    file_format=file_format
-                )
+        os.mkdir(folder_name)
+
+        for i in self.data:
+            i.export_image(path=folder_name, file_format=file_format)
 
     def get_xy(self, flatten=True):
         """
