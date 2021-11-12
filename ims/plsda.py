@@ -264,6 +264,7 @@ class PLS_DA:
 
         df = pd.DataFrame(self.x_scores, columns=cols)
         df["Group"] = self.y_train
+        df["Sample"] = self.dataset.samples
         if hasattr(self.dataset, "train_index"):
             df["Sample"] = self.dataset[self.dataset.train_index].samples
 
@@ -279,15 +280,12 @@ class PLS_DA:
         plt.legend(frameon=True, fancybox=True, facecolor="white")
 
         if annotate:
-            if hasattr(self.dataset, "train_index"):
-                for _, row in df.iterrows():
-                    plt.annotate(
-                        row["Sample"],
-                        xy=(row[f"PLS Component {x_comp}"], row[f"PLS Component {y_comp}"]),
-                        xycoords="data"
-                    )
-            else:
-                raise ValueError("Sample names not available!")
+            for _, row in df.iterrows():
+                plt.annotate(
+                    row["Sample"],
+                    xy=(row[f"PLS Component {x_comp}"], row[f"PLS Component {y_comp}"]),
+                    xycoords="data"
+                )
 
         return ax
     
