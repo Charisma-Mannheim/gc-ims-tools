@@ -1,5 +1,5 @@
 """
-Module for chemometrics on GC-IMS data
+Module for chemometrics with GC-IMS data
 ======================================
 
 Documentation is available via docstrings in classes and functions.
@@ -14,6 +14,10 @@ Provides:
 * Scripted statistical workflows with prebuilt plots
 for common algorithms.
 """
+__version__ = "0.1.0"
+__author__ = "Joscha Christmann"
+__credits__ = "Competency Center for Chemometrics Mannheim"
+
 from ims.gcims import Spectrum
 from ims.dataset import Dataset
 from ims.pca import PCA_Model
