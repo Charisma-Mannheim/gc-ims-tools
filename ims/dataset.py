@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from sklearn.utils import resample
 from sklearn.model_selection import (ShuffleSplit,
-    KFold, StratifiedKFold, LeaveOneOut)
+    KFold, StratifiedKFold, LeaveOneOut, StratifiedShuffleSplit)
 
 
 class Dataset:
@@ -553,7 +553,7 @@ class Dataset:
                 result.append(self.select(sample=sample))
             return result
         
-    def plot(self, index=0):
+    def plot(self, index=0, **kwargs):
         """
         Plots the spectrum of selected index and adds the label to the title.
 
@@ -566,11 +566,11 @@ class Dataset:
         -------
         matplotlib.axes._subplots.AxesSubplot
         """
-        ax = self[index].plot()
+        ax = self[index].plot(**kwargs)
         plt.title(f"{self[index].name}; {self.labels[index]}")
         return ax
 
-    def train_test_split(self, test_size=0.2, random_state=None):
+    def train_test_split(self, test_size=0.2, stratify=False, random_state=None):
         """
         Splits the dataset in train and test sets.
 
@@ -580,6 +580,11 @@ class Dataset:
             Proportion of the dataset to be used for validation.
             Should be between 0.0 and 1.0,
             by default 0.2
+            
+        stratify : bool, optional
+            Wheter to stratify output or not.
+            Preserves the percentage of samples from each class in each split,
+            by default False.
 
         random_state : int, optional
             Controls the randomness. Pass an int for reproducible output,
@@ -595,12 +600,24 @@ class Dataset:
         >>> import ims
         >>> ds = ims.Dataset.read_mea("IMS_Data")
         >>> X_train, X_test, y_train, y_test = ds.train_test_split()
-        """        
-        s = ShuffleSplit(n_splits=1, test_size=test_size,
-                         random_state=random_state)
-        train, test = next(s.split(self.data))
+        """
+        
+        if stratify:
+            s = StratifiedShuffleSplit(
+                n_splits=1,
+                test_size=test_size,
+                random_state=random_state
+                )
+            train, test = next(s.split(self.data, y=self.labels))
+        else:
+            s = ShuffleSplit(
+                n_splits=1,
+                test_size=test_size,
+                random_state=random_state
+                )
+            train, test = next(s.split(self.data))
 
-        # set attributes for PLS_DA.plot()
+        # set attributes for annotations of plots with sample names
         self.train_index = train
         self.test_index = test
 
@@ -621,21 +638,21 @@ class Dataset:
         ----------
         n_splits : int, optional
             Number of folds. Must be at least 2,
-            by default 5
+            by default 5.
 
         shuffle : bool, optional
             Whether to shuffle the data before splitting,
-            by default True
+            by default True.
 
         random_state : int, optional
             When shuffle is True random_state affects the order of the indices.
             Pass an int for reproducible splits,
-            by default None
+            by default None.
 
         stratify : bool, optional
             Wheter to stratify output or not.
-            Preserves the percentage of samples from each class in each split.
-            By default False
+            Preserves the percentage of samples from each class in each split,
+            by default False.
 
         Yields
         ------
@@ -677,15 +694,15 @@ class Dataset:
         ----------
         n_splits : int, optional
             Number of re-shuffling and splitting iterations,
-            by default 10
+            by default 5.
 
         test_size : float, optional
             Proportion of the dataset to include in the test split,
-            by default 0.2
+            by default 0.2.
 
         random_state : int, optional
             Controls randomness. Pass an int for reproducible output,
-            by default None
+            by default None.
 
         Yields
         -------
