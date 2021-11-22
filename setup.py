@@ -30,6 +30,6 @@ setuptools.setup(
         "License :: OSI Approved :: BSD License",
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
-        "Intended Audience :: Science/Researchers"
+        "Intended Audience :: Science/Research"
     ]
 )
