@@ -264,9 +264,10 @@ class PLS_DA:
 
         df = pd.DataFrame(self.x_scores, columns=cols)
         df["Group"] = self.y_train
-        df["Sample"] = self.dataset.samples
         if hasattr(self.dataset, "train_index"):
             df["Sample"] = self.dataset[self.dataset.train_index].samples
+        else:
+            df["Sample"] = self.dataset.samples
 
         plt.figure(figsize=(width, height))
         ax = sns.scatterplot(
@@ -275,7 +276,6 @@ class PLS_DA:
             data=df,
             hue="Group",
             style="Group",
-            s=50
             )
         plt.legend(frameon=True, fancybox=True, facecolor="white")
 

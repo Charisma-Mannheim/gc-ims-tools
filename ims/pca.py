@@ -143,7 +143,6 @@ class PCA_Model:
             data=pc_df,
             hue="Label",
             style="Label",
-            s=100
         )
 
         plt.legend(frameon=True, fancybox=True, facecolor="white")
@@ -187,6 +186,10 @@ class PCA_Model:
 
         loading_pc = self.loadings[PC-1, :].reshape(len(ret_time),
                                                     len(drift_time))
+        
+        expl_var = []
+        for i in range(1, self.n_components + 1):
+            expl_var.append(round(self.explained_variance_ratio[i-1] * 100, 1))
 
         _, ax = plt.subplots(figsize=(width, height))
 
@@ -208,7 +211,7 @@ class PCA_Model:
         
         plt.xlabel(self.dataset[0]._drift_time_label)
         plt.ylabel("Retention Time [s]")
-        plt.title(f"PCA Loadings of PC {PC}")
+        plt.title(f"PCA Loadings of PC {PC} ({expl_var[PC-1]} % of variance)")
         return ax
 
     def scree_plot(self, width=9, height=8):
