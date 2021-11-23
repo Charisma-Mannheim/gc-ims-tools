@@ -462,14 +462,12 @@ class Dataset:
             raise ValueError("Must give either label or sample value.")
 
         if label is not None:
-            name = label
             indices = []
             for i, j in enumerate(self.labels):
                 if j != label:
                     indices.append(i)
 
         if sample is not None:
-            name = sample
             indices = []
             for i, j in enumerate(self.samples):
                 if j != sample:
@@ -487,7 +485,7 @@ class Dataset:
 
         return Dataset(
             data=result,
-            name=name,
+            name=self.name,
             files=files,
             samples=samples,
             labels=labels,
