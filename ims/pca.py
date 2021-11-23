@@ -204,7 +204,7 @@ class PCA_Model:
                     min(ret_time), max(ret_time))
             )
 
-        plt.colorbar()
+        plt.colorbar().set_label("PCA Loadings")
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())

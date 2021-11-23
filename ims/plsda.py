@@ -129,9 +129,9 @@ class PLS_DA:
         self.y_train = y_train
         y_binary = self._create_binary_labels(y_train)
         self._sk_pls.fit(X_train, y_binary)
-        # self.x_scores, self.y_scores = self._sk_pls.transform(X_train, y_train)
-        self.x_scores = self._sk_pls.x_scores_
-        self.y_scores = self._sk_pls.y_scores_
+        self.x_scores, self.y_scores = self._sk_pls.transform(X_train, y_binary)
+        # self.x_scores = self._sk_pls.x_scores_
+        # self.y_scores = self._sk_pls.y_scores_
         self.x_weights = self._sk_pls.x_weights_
         self.y_weights = self._sk_pls.y_weights_
         self.y_loadings = self._sk_pls.y_loadings_
@@ -335,7 +335,7 @@ class PLS_DA:
                     min(ret_time), max(ret_time))
             )
 
-        plt.colorbar(label="Loadings")
+        plt.colorbar(label="PLS Loadings")
         plt.title(f"PLS-DA loadings of component {component}")
         plt.xlabel(self.dataset[0]._drift_time_label)
         plt.ylabel("Retention Time [s]")
@@ -391,7 +391,7 @@ class PLS_DA:
                     min(ret_time), max(ret_time))
             )
 
-        plt.colorbar(label="Coefficients")
+        plt.colorbar(label="PLS Coefficients")
         plt.title(f"PLS-DA coefficients of {group_name}")
         plt.xlabel(self.dataset[0]._drift_time_label)
         plt.ylabel("Retention Time [s]")

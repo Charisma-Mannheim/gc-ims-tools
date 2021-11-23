@@ -298,7 +298,7 @@ class PLSR:
                     min(ret_time), max(ret_time))
             )
 
-        plt.colorbar(label="Loadings")
+        plt.colorbar(label="PLS Loadings")
         plt.title(f"PLS loadings of component {component}")
         plt.xlabel(self.dataset[0]._drift_time_label)
         plt.ylabel("Retention Time [s]")
@@ -341,7 +341,7 @@ class PLSR:
                     min(ret_time), max(ret_time))
             )
 
-        plt.colorbar(label="Coefficients")
+        plt.colorbar(label="PLS Coefficients")
         plt.title("PLS Coefficients")
         plt.xlabel(self.dataset[0]._drift_time_label)
         plt.ylabel("Retention Time [s]")
