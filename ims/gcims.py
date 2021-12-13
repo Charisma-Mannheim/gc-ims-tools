@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 from datetime import datetime
+from time import ctime
 from skimage.morphology import white_tophat, disk
 from zipfile import ZipFile
 import imageio
@@ -21,8 +22,7 @@ class Spectrum:
     Sample or file name and timestamp are included unique identifiers.
     
     This class contains all methods that can be applied on a per spectrum basis,
-    like I/O, plotting and some preprocessing tools. Methods that return ims.Spectrum
-    change the instance inplace. Use the copy method.
+    like I/O, plotting and some preprocessing tools. Methods that return a Spectrum change the instance inplace. Use the copy method.
 
     Use one of the read_... methods as constructor.
 
@@ -105,7 +105,7 @@ class Spectrum:
 
         Returns
         -------
-        ims.Spectrum
+        Spectrum
             deepcopy of self.
 
         Example
@@ -130,7 +130,7 @@ class Spectrum:
 
         Returns
         -------
-        ims.Spectrum
+        Spectrum
 
         Example
         -------
@@ -176,7 +176,7 @@ class Spectrum:
 
         Returns
         -------
-        ims.Spectrum
+        Spectrum
 
         Example
         -------
@@ -217,7 +217,7 @@ class Spectrum:
             elif "Chunk trigger repetition" in key:
                 chunk_trigger_repetition = int(value)
             elif "Timestamp" in key:
-                time = datetime.strptime(value, '"%Y-%m-%dT%H:%M:%S"')
+                timestamp = datetime.strptime(value, '"%Y-%m-%dT%H:%M:%S"')
 
         data = np.array(data)
         data = data.reshape(chunks_count, chunk_sample_count)
@@ -227,7 +227,44 @@ class Spectrum:
 
         drift_time = np.arange(chunk_sample_count) / chunk_sample_rate
 
-        return cls(name, data, ret_time, drift_time, time)
+        return cls(name, data, ret_time, drift_time, timestamp)
+
+    @classmethod
+    def read_csv(cls, path):
+        """
+        Reads generic csv files. The first row must be
+        the drift time values and the first column must be
+        the retention time values. Values inbetween are the
+        intensity matrix.
+        Uses the time when the file was created as timestamp.
+
+        Parameters
+        ----------
+        path : str
+            Absolute or relative file path.
+
+        Returns
+        -------
+        Spectrum
+        
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_csv("sample.csv")
+        >>> print(sample)
+        GC-IMS Spectrum: sample
+        """
+        name = os.path.split(path)[1]
+        name = name.split('.')[0]
+        df = pd.read_csv(path)
+        values = df.values
+        ret_time = df.index
+        drift_time= df.columns
+        timestamp = os.path.getctime(path)
+        timestamp = ctime(timestamp)
+        timestamp = datetime.strptime(timestamp,
+                                      "%a %b  %d %H:%M:%S %Y")
+        return cls(name, values, ret_time, drift_time, timestamp)
 
     @classmethod
     def read_hdf5(cls, path):
@@ -245,7 +282,7 @@ class Spectrum:
 
         Returns
         -------
-        ims.Spectrum
+        Spectrum
 
         Example
         -------
@@ -310,7 +347,7 @@ class Spectrum:
 
         Returns
         -------
-        ims.Spectrum
+        Spectrum
         """
         self.values = white_tophat(self.values, disk(size))
         return self
@@ -323,7 +360,7 @@ class Spectrum:
 
         Returns
         -------
-        ims.Spectrum
+        Spectrum
         """
         fl = self.values[0, :]
         self.values = self.values - fl
@@ -340,7 +377,7 @@ class Spectrum:
 
         Returns
         -------
-        ims.Spectrum
+        Spectrum
             RIP relative drift time coordinate
             otherwise unchanged.
         """
@@ -359,7 +396,7 @@ class Spectrum:
 
         Returns
         -------
-        ims.Spectrum
+        Spectrum
             With scaled values.
         """
         m = np.max(self.values)
@@ -379,7 +416,7 @@ class Spectrum:
 
         Returns
         -------
-        ims.Spectrum
+        Spectrum
             Resampled values.
             
         Example
@@ -419,7 +456,7 @@ class Spectrum:
 
         Returns
         -------
-        ims.Spectrum
+        Spectrum
             Downsampled data matrix.
 
         Example
@@ -474,7 +511,7 @@ class Spectrum:
 
         Returns
         -------
-        ims.Spectrum
+        Spectrum
             New drift time range.
 
         Example
@@ -514,7 +551,7 @@ class Spectrum:
 
         Returns
         -------
-        ims.Spectrum
+        Spectrum
             New retention time range.
 
         Example
