@@ -120,8 +120,8 @@ class Dataset:
 
         Returns
         -------
-        ims.Dataset
-            deepcopy of self
+        Dataset
+            deepcopy of self.
 
         Example
         -------
@@ -215,7 +215,7 @@ class Dataset:
 
         Returns
         -------
-        ims.Dataset
+        Dataset
 
         Example
         -------
@@ -260,7 +260,7 @@ class Dataset:
 
         Returns
         -------
-        ims.Dataset
+        Dataset
 
         Example
         -------
@@ -273,6 +273,53 @@ class Dataset:
             path, subfolders
         )
         data = [Spectrum.read_zip(i) for i in paths]
+        return cls(data, name, files, samples, labels)
+    
+    @classmethod
+    def read_csv(cls, path, subfolders=False):
+        """
+        Reads generic csv files. The first row must be
+        the drift time values and the first column must be
+        the retention time values. Values inbetween are the
+        intensity matrix.
+        Uses the time when the file was created as timestamp.
+        
+        If subfolders=True expects the following folder structure
+        for each label and sample:
+
+        * Data
+            * Group A
+                * Sample A
+                    * file a
+                    * file b
+                * Sample B
+                    * file a
+                    * file b
+
+        Labels can then be auto-generated from directory names.
+        Otherwise labels and sample names need to be added from other sources
+        for all methods to work.
+
+        Parameters
+        ----------
+        path : str
+            Absolute or relative file path.
+
+        Returns
+        -------
+        Dataset
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_csv("IMS_data", subfolders=True)
+        >>> print(ds)
+        Dataset: IMS_data, 58 Spectra
+        """
+        paths, name, files, samples, labels = Dataset._measurements(
+            path, subfolders
+        )
+        data = [Spectrum.read_csv(i) for i in paths]
         return cls(data, name, files, samples, labels)
 
     @classmethod
@@ -291,7 +338,7 @@ class Dataset:
 
         Returns
         -------
-        ims.Dataset
+        Dataset
 
         Example
         -------
@@ -509,6 +556,11 @@ class Dataset:
         label : various
             Classification or regression label is added to the label attribute.
             Necessary because labels are not stored in ims.Spectrum class.
+
+        Returns
+        -------
+        Dataset
+            With Spectrum added.
 
         Example
         -------
@@ -883,7 +935,7 @@ class Dataset:
 
         Returns
         -------
-        ims.Dataset
+        Dataset
         """
         self.data = [Spectrum.sub_first_row(i) for i in self.data]
         self.preprocessing.append('sub_first_row')
@@ -896,7 +948,7 @@ class Dataset:
 
         Returns
         -------
-        ims.Dataset
+        Dataset
             With RIP relative spectra.
         """
         dt_riprel = []
@@ -932,7 +984,7 @@ class Dataset:
 
         Returns
         -------
-        ims.Dataset
+        Dataset
             With scaled values.
         """
         self.data = [Spectrum.rip_scaling(i) for i in self.data]
@@ -952,7 +1004,7 @@ class Dataset:
 
         Returns
         -------
-        ims.Dataset
+        Dataset
             Resampled values.
             
         Example
@@ -972,7 +1024,7 @@ class Dataset:
     def binning(self, n):
         """
         Downsamples each spectrum by binning the array with factor n.
-        Similar to ims.Spectrum.resampling but works on both dimensions
+        Similar to Spectrum.resampling but works on both dimensions
         simultaneously.
         If the dimensions are not divisible by the binning factor
         shortens it by the remainder at the long end.
@@ -986,7 +1038,7 @@ class Dataset:
 
         Returns
         -------
-        ims.Spectrum
+        Dataset
             Downsampled data matrix.
 
         Example
@@ -1024,7 +1076,7 @@ class Dataset:
 
         Returns
         -------
-        ims.Dataset
+        Dataset
             New drift time range.
 
         Example
@@ -1059,7 +1111,7 @@ class Dataset:
 
         Returns
         -------
-        ims.Dataset
+        Dataset
             New retention time range.
 
         Example
@@ -1180,7 +1232,7 @@ class Dataset:
 
         Returns
         -------
-        ims.Dataset
+        Dataset
 
         Raises
         ------
