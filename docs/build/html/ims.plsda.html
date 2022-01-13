@@ -1,0 +1,578 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PLS_DA &#8212; gc-ims-tools 0.1.0 documentation</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet">
+  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/blank.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="HCA" href="ims.hca.html" />
+    <link rel="prev" title="PLSR" href="ims.plsr.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="index.html">
+<p class="title">gc-ims-tools</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="install.html">
+  Install
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="ims.gcims.html">
+  Spectrum
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="ims.dataset.html">
+  Dataset
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="ims.pca.html">
+  PCA_Model
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="ims.plsr.html">
+  PLSR
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="current reference internal nav-link" href="#">
+  PLS_DA
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="ims.hca.html">
+  HCA
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ims.gcims.html">Spectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ims.dataset.html">Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ims.pca.html">PCA_Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ims.plsr.html">PLSR</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PLS_DA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ims.hca.html">HCA</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ims.plsr.html"
+                        title="previous chapter">PLSR</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ims.hca.html"
+                        title="next chapter">HCA</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ims.plsda.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+
+<nav id="bd-toc-nav">
+    
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <div class="section" id="module-ims.plsda">
+<span id="pls-da"></span><h1>PLS_DA<a class="headerlink" href="#module-ims.plsda" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ims.plsda.</span></span><span class="sig-name descname"><span class="pre">PLS_DA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>PLS-DA classifier built using the scikit-learn PLSRegression implementation.
+Provides prebuilt plots and feature selection via variable importance in projection (VIP)
+scores.</p>
+<p>See the scikit-learn documentation for more details:
+<a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.PLSRegression.html">https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.PLSRegression.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<em>Dataset</em>) – Needed for the retention and drift time coordinates in the plots.</p></li>
+<li><p><strong>n_components</strong> (<em>int, optional</em>) – Number of components to keep, by default 2.</p></li>
+<li><p><strong>scale</strong> (<em>bool, optional</em>) – Wheather to scale X and y, by default True.</p></li>
+<li><p><strong>kwargs</strong> (<em>optional</em>) – Additional key word arguments are passed on to the scikit-learn PLSRegression.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.x_scores">
+<span class="sig-name descname"><span class="pre">x_scores</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.x_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>X scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.ndarray of shape (n_samples, n_components)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.y_scores">
+<span class="sig-name descname"><span class="pre">y_scores</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.y_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>y scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.ndarray of shape (n_samples, n_components)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.x_weights">
+<span class="sig-name descname"><span class="pre">x_weights</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.x_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>The left singular vectors of the cross-covariance matrices of each iteration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.ndarray of shape (n_features, n_components)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.y_weights">
+<span class="sig-name descname"><span class="pre">y_weights</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.y_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>The right singular vectors of the cross-covariance matrices of each iteration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.ndarray of shape (n_targets, n_components)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.x_loadings">
+<span class="sig-name descname"><span class="pre">x_loadings</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.x_loadings" title="Permalink to this definition">¶</a></dt>
+<dd><p>The loadings of X. When scaling was applied on the dataset,
+corrects the loadings using the weights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.ndarray of shape (n_features, n_components)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.y_loadings">
+<span class="sig-name descname"><span class="pre">y_loadings</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.y_loadings" title="Permalink to this definition">¶</a></dt>
+<dd><p>The loadings of y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.ndarray of shape (n_targes, n_components)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.coefficients">
+<span class="sig-name descname"><span class="pre">coefficients</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.coefficients" title="Permalink to this definition">¶</a></dt>
+<dd><p>The coefficients of the linear model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.ndarray of shape (n_features, n_targets)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.y_pred_train">
+<span class="sig-name descname"><span class="pre">y_pred_train</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.y_pred_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the predicted values from the training data for the plot method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.accuracy">
+<span class="sig-name descname"><span class="pre">accuracy</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>If y_test is set in predict method, calculates accuracy internally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.precision">
+<span class="sig-name descname"><span class="pre">precision</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>If y_test is set in predict method, calculates precision internally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.recall">
+<span class="sig-name descname"><span class="pre">recall</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.recall" title="Permalink to this definition">¶</a></dt>
+<dd><p>If y_test is set in predict method, calculates recall internally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">PLS_DA</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.calc_vip_scores">
+<span class="sig-name descname"><span class="pre">calc_vip_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.calc_vip_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.calc_vip_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates variable importance in projection (VIP) scores.
+Setting a threshold results in less cluttered plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>threshold</strong> (<em>int or float, optional</em>) – If set keeps only VIP scores greater than threshold
+and sets all other to zero, by default None.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray of shape (n_features,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits the model with training data.
+Converts the labels into a binary matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_train</strong> (<em>numpy.ndarray of targets (n_samples, n_features)</em>) – Training vectors with features.</p></li>
+<li><p><strong>y_train</strong> (<em>numpy.ndarray of shape (n_samples,)</em>) – True class labels for training data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Fitted model.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots PLS components as scatter plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_comp</strong> (<em>int, optional</em>) – Component x axis, by default 1.</p></li>
+<li><p><strong>y_comp</strong> (<em>int, optional</em>) – Component y axis, by default 2.</p></li>
+<li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
+by default 9.</p></li>
+<li><p><strong>height</strong> (<em>int or float, optional</em>) – Height of the plot in inches,
+by default 8.</p></li>
+<li><p><strong>annotate</strong> (<em>bool, optional</em>) – If True adds sample names to markers,
+by default False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib.pyplot.axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.plot_coefficients">
+<span class="sig-name descname"><span class="pre">plot_coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.plot_coefficients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.plot_coefficients" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots PLS coefficients of selected group as image
+with retention and drift time axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group</strong> (<em>int or str, optional</em>) – Index or name of group, by default 0.</p></li>
+<li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
+by default 9.</p></li>
+<li><p><strong>height</strong> (<em>int or float, optional</em>) – Height of the plot in inches,
+by default 10.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib.pyplot.axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.plot_loadings">
+<span class="sig-name descname"><span class="pre">plot_loadings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.plot_loadings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.plot_loadings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots PLS x loadings as image with retention and drift
+time coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>component</strong> (<em>int, optional</em>) – Component to plot, by default 1.</p></li>
+<li><p><strong>color_range</strong> (<em>float, optional</em>) – Minimum and Maximum to adjust to different scaling methods,
+by default 0.02.</p></li>
+<li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
+by default 9.</p></li>
+<li><p><strong>height</strong> (<em>int or float, optional</em>) – Height of the plot in inches,
+by default 10.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib.pyplot.axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.plot_vip_scores">
+<span class="sig-name descname"><span class="pre">plot_vip_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.plot_vip_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.plot_vip_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots VIP scores as image with retention and drift time axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
+by default 9.</p></li>
+<li><p><strong>height</strong> (<em>int or float, optional</em>) – Height of the plot in inches,
+by default 10.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib.pyplot.axes</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If VIP scores have not been calculated prior.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts class labels for test data. Converts back from binary
+labels matrix to a list of class names. If y_test is set also calculates
+accuracy, precision and recall and stores them as attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_test</strong> (<em>numpy.ndarray of shape (n_samples, n_features)</em>) – Feature vectors of test dataset.</p></li>
+<li><p><strong>y_test</strong> (<em>numpy.ndarray of shape (n_samples,), optional</em>) – True labels for test dataset. If set calculates error metrics,
+by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Predicted class labels.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray of shape (n_samples,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.score">
+<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates accuracy score for predicted data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_test</strong> (<em>numpy.ndarray of shape (n_samples, n_features)</em>) – Feature vectors of the test data.</p></li>
+<li><p><strong>y_test</strong> (<em>numpy.ndarray of shape (n_samples,)</em>) – True classification labels.</p></li>
+<li><p><strong>sample_weight</strong> (<em>array-like of shape (n_samples,), optional</em>) – Sample weights, by default None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>score</strong> – Mean accuracy score.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+              </div>
+              
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022, Joscha Christmann.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

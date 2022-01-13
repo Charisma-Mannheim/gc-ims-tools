@@ -1,0 +1,7 @@
+Spectrum
+========
+
+.. automodule:: ims.gcims
+   :members:
+   :undoc-members:
+   :show-inheritance:
