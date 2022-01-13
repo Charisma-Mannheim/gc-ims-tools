@@ -1,0 +1,7 @@
+PCA_Model
+=========
+
+.. automodule:: ims.pca
+   :members:
+   :undoc-members:
+   :show-inheritance:
