@@ -905,7 +905,7 @@ class Dataset:
         self.data = means
         self.samples = list(u_samples)
         self.labels = labels
-        self.preprocessing.append('mean')
+        self.preprocessing.append('mean()')
         return self
 
     def tophat(self, size=15):
@@ -927,7 +927,7 @@ class Dataset:
         self.preprocessing.append('tophat')
         return self
 
-    def sub_first_row(self):
+    def sub_first_rows(self, n=1):
         """
         Subtracts first row from every row in spectrum.
         Effective and simple baseline correction
@@ -937,7 +937,7 @@ class Dataset:
         -------
         Dataset
         """
-        self.data = [Spectrum.sub_first_row(i) for i in self.data]
+        self.data = [Spectrum.sub_first_rows(i, n) for i in self.data]
         self.preprocessing.append('sub_first_row')
         return self
 
@@ -973,7 +973,7 @@ class Dataset:
             i.drift_time = new_dt
             i._drift_time_label = "Drift Time RIP relative"
         
-        self.preprocessing.append("interp_riprel")
+        self.preprocessing.append("interp_riprel()")
         return self
 
     def rip_scaling(self):
@@ -1220,15 +1220,19 @@ class Dataset:
 
         return (X, y)
 
-    def scaling(self, method="pareto"):
+    def scaling(self, method="pareto", mean_centering=True):
         """
-        Scales features according to selected method.
+        Scales and mean centeres features according to selected method.
 
         Parameters
         ----------
         method : str, optional
             "pareto", "auto" or "var" are valid,
             by default "pareto".
+            
+        mean_centering : bool, optional
+            If true center the data before scaling,
+            by default True.
 
         Returns
         -------
@@ -1255,7 +1259,11 @@ class Dataset:
 
         weights = np.nan_to_num(weights, posinf=0, neginf=0)
 
-        X = X * weights
+        if mean_centering:
+            X = (X - np.mean(X, 0)) * weights
+        else:
+            X = X * weights
+
         for i, j in enumerate(self.data):
             j.values = X[i, :].reshape(b, c)
 

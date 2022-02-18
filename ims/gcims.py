@@ -352,9 +352,9 @@ class Spectrum:
         self.values = white_tophat(self.values, disk(size))
         return self
 
-    def sub_first_row(self):
+    def sub_first_rows(self, n=1):
         """
-        Subtracts first row from every row in spectrum.
+        Subtracts first n rows from every row in spectrum.
         Effective and simple baseline correction
         if RIP tailing is a concern but can hide small peaks.
 
@@ -362,9 +362,9 @@ class Spectrum:
         -------
         Spectrum
         """
-        fl = self.values[0, :]
+        fl = self.values[0:n-1, :].mean(axis=0)
         self.values = self.values - fl
-        self.values[self.values < 0] = 0
+        # self.values[self.values < 0] = 0
         return self
 
     def riprel(self):
@@ -392,7 +392,7 @@ class Spectrum:
         """
         Scales values relative to global maximum.
         Can be useful to directly compare spectra from
-        instruments with different sensitivity. 
+        instruments with different sensitivity.
 
         Returns
         -------
@@ -418,7 +418,7 @@ class Spectrum:
         -------
         Spectrum
             Resampled values.
-            
+
         Example
         -------
         >>> import ims
