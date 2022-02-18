@@ -1,3 +1,4 @@
+import ims
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -7,7 +8,6 @@ import seaborn as sns
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.metrics import (accuracy_score, precision_score,
                              recall_score)
-
 
 class PLS_DA:
     """
@@ -78,12 +78,11 @@ class PLS_DA:
     >>> model.predict(X_test, y_test)
     >>> model.plot()
     """
-    def __init__(self, dataset, n_components=2, scale=True, **kwargs):
+    def __init__(self, dataset, n_components=2, **kwargs):
         self.dataset = dataset
         self.n_components = n_components
-        self.scale = scale
         self._sk_pls = PLSRegression(n_components=n_components,
-                                     scale=scale, **kwargs)
+                                     scale=False, **kwargs)
 
     @staticmethod
     def _create_binary_labels(y):
@@ -130,18 +129,17 @@ class PLS_DA:
         y_binary = self._create_binary_labels(y_train)
         self._sk_pls.fit(X_train, y_binary)
         self.x_scores, self.y_scores = self._sk_pls.transform(X_train, y_binary)
-        # self.x_scores = self._sk_pls.x_scores_
-        # self.y_scores = self._sk_pls.y_scores_
         self.x_weights = self._sk_pls.x_weights_
         self.y_weights = self._sk_pls.y_weights_
         self.y_loadings = self._sk_pls.y_loadings_
         self.coefficients = self._sk_pls.coef_
 
-        if hasattr(self.dataset, "weights"):
-            self.x_loadings = self._sk_pls.x_loadings_ / self.dataset.weights[:, None]
-        else:
-            self.x_loadings = self._sk_pls.x_loadings_
-
+        # if hasattr(self.dataset, "weights"):
+        #     self.x_loadings = self._sk_pls.x_loadings_ / self.dataset.weights[:, None]
+        # else:
+        #     self.x_loadings = self._sk_pls.x_loadings_
+            
+        self.vip_scores = ims.utils.vip_scores(self.x_weights, self.x_scores, self.y_loadings)
         return self
 
     def predict(self, X_test, y_test=None):
@@ -205,31 +203,6 @@ class PLS_DA:
         """
         y_pred = self.predict(X_test)
         return accuracy_score(y_test, y_pred, sample_weight=sample_weight)
-
-    def calc_vip_scores(self, threshold=None):
-        """
-        Calculates variable importance in projection (VIP) scores.
-        Setting a threshold results in less cluttered plots.
-
-        Parameters
-        ----------
-        threshold : int or float, optional
-            If set keeps only VIP scores greater than threshold
-            and sets all other to zero, by default None.
-
-        Returns
-        -------
-        numpy.ndarray of shape (n_features,)
-        """
-        vips = _vip_scores(self.x_weights, self.x_scores, self.y_loadings)
-        if threshold is not None:
-            vip_array = np.zeros_like(vips)
-            i = np.where(vips > threshold)
-            vip_array[i] = vips[i]
-            vips = vip_array
-
-        self.vip_scores = vips
-        return vips
 
     def plot(self, x_comp=1, y_comp=2, width=9, height=8,
              annotate=False):
@@ -399,7 +372,7 @@ class PLS_DA:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
     
-    def plot_vip_scores(self, width=9, height=10):
+    def plot_vip_scores(self, threshold=None, width=9, height=10):
         """
         Plots VIP scores as image with retention and drift time axis.
         
@@ -416,16 +389,17 @@ class PLS_DA:
         Returns
         -------
         matplotlib.pyplot.axes
-
-        Raises
-        ------
-        ValueError
-            If VIP scores have not been calculated prior.
         """        
         if not hasattr(self, "vip_scores"):
-            raise ValueError("Must calculate VIP scores first.")
+            raise ValueError("Must fit data first.")
         
-        vip_matrix = self.vip_scores.reshape(self.dataset[0].values.shape)
+        if threshold is None:
+            vip_matrix = self.vip_scores.reshape(self.dataset[0].values.shape)
+        else:
+            vips = np.zeros_like(self.vip_scores)
+            i = np.where(self.vip_scores > threshold)
+            vips[i] = self.vip_scores[i]
+            vip_matrix = vips.reshape(self.dataset[0].values.shape)
 
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
@@ -448,31 +422,3 @@ class PLS_DA:
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
-
-
-def _vip_scores(xw, xs, yl):
-    """
-    Calculates variable importance in projection (VIP) scores
-    from scikit-learn PLSRegression x_weights_, x_scores_, and y_loadings_.
-
-    Parameters
-    ----------
-    xw : numpy.ndarray of shape (n_features, n_components)
-        x_weights_
-
-    xs : numpy.ndarray of shape (n_samples, n_components)
-        x_scores_
-
-    yl : numpy.ndarray of shape (n_targes, n_components)
-        y_loadings_
-
-    Returns
-    -------
-    numpy.ndarray of shape (n_features,)
-        Vector of VIP scores.
-    """
-    W0 = xw / np.sqrt(np.sum(xw**2, 0))
-    p, _ = xw.shape
-    sum_sq = np.sum(xs**2, 0) * np.sum(yl**2, 0)
-    vips = np.sqrt(p * np.sum(sum_sq * (W0**2), 1) / np.sum(sum_sq))
-    return vips

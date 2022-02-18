@@ -24,3 +24,4 @@ from ims.pca import PCA_Model
 from ims.plsr import PLSR
 from ims.plsda import PLS_DA
 from ims.hca import HCA
+import ims.utils

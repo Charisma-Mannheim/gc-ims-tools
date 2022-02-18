@@ -1,10 +1,10 @@
+import ims
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 from matplotlib.colors import CenteredNorm
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.metrics import mean_squared_error, r2_score
-from ims.plsda import _vip_scores
 
 
 class PLSR:
@@ -76,11 +76,10 @@ class PLSR:
     >>> model.predict(X_test, y_test)
     >>> model.plot()
     """
-    def __init__(self, dataset, n_components=2, scale=True, **kwargs):
+    def __init__(self, dataset, n_components=2, **kwargs):
         self.dataset = dataset
         self.n_components = n_components
-        self.scale = scale
-        self._sk_pls = PLSRegression(n_components=n_components, scale=scale, **kwargs)
+        self._sk_pls = PLSRegression(n_components=n_components, scale=False, **kwargs)
 
     def fit(self, X_train, y_train):
         """
@@ -113,6 +112,17 @@ class PLSR:
 
         self.y_pred_train = self._sk_pls.predict(X_train)
         self.y_train = y_train
+        
+        self.vip_scores = ims.utils.vip_scores(
+            self.x_weights,
+            self.x_scores,
+            self.y_loadings
+            )
+        self.selectivity_ratio = ims.utils.selectivity_ratio(
+            X_train,
+            self.coefficients
+            )
+        
         return self
 
     def predict(self, X_test, y_test=None):
@@ -166,31 +176,6 @@ class PLSR:
         y_pred = self.predict(X_test)
         return r2_score(y_test, y_pred, sample_weight=sample_weight)
 
-    def calc_vip_scores(self, threshold=None):
-        """
-        Calculates variable importance in projection (VIP) scores.
-        Setting a threshold results in less cluttered plots.
-
-        Parameters
-        ----------
-        threshold : int or float, optional
-            If set keeps only VIP scores greater than threshold
-            and sets all other to zero, by default None.
-
-        Returns
-        -------
-        numpy.ndarray of shape (n_features,)
-        """
-        vips = _vip_scores(self.x_weights, self.x_scores, self.y_loadings)
-
-        if threshold is not None:
-            vip_array = np.zeros_like(vips)
-            i = np.where(vips > threshold)
-            vip_array[i] = vips[i]
-            vips = vip_array
-
-        self.vip_scores = vips
-        return vips
 
     def plot(self, width=9, height=8, annotate=False, test_only=True):
         """
@@ -349,7 +334,7 @@ class PLSR:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
     
-    def plot_vip_scores(self, width=9, height=10):
+    def plot_vip_scores(self, threshold=None, width=9, height=10):
         """
         Plots VIP scores as image with retention and drift time axis.
 
@@ -373,9 +358,15 @@ class PLSR:
             If VIP scores have not been calculated prior.
         """        
         if not hasattr(self, "vip_scores"):
-            raise ValueError("Must calculate VIP scores first.")
-        
-        vip_matrix = self.vip_scores.reshape(self.dataset[0].values.shape)
+            raise ValueError("Must fit data first.")
+
+        if threshold is None:
+            vip_matrix = self.vip_scores.reshape(self.dataset[0].values.shape)
+        else:
+            vips = np.zeros_like(self.vip_scores)
+            i = np.where(self.vip_scores > threshold)
+            vips[i] = self.vip_scores[i]
+            vip_matrix = vips.reshape(self.dataset[0].values.shape)
 
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
@@ -393,6 +384,57 @@ class PLSR:
 
         plt.colorbar(label="VIP scores")
         plt.title(f"PLS VIP scores")
+        plt.xlabel(self.dataset[0]._drift_time_label)
+        plt.ylabel("Retention Time [s]")
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
+        return ax
+    
+    def plot_selectivity_ratio(self, threshold=None, width=9, height=10):
+        """
+        Plots VIP scores as image with retention and drift time axis.
+        
+        Parameters
+        ----------
+        width : int or float, optional
+            Width of the plot in inches,
+            by default 9.
+
+        height : int or float, optional
+            Height of the plot in inches,
+            by default 10.
+
+        Returns
+        -------
+        matplotlib.pyplot.axes
+        """
+        if not hasattr(self, "selectivity_ratio"):
+            raise ValueError("Must fit data first.")
+        
+        if threshold is None:
+            sr_matrix = self.vip_scores.reshape(self.dataset[0].values.shape)
+        else:
+            sratio = np.zeros_like(self.vip_scores)
+            i = np.where(self.vip_scores > threshold)
+            sratio[i] = self.vip_scores[i]
+            sr_matrix = sratio.reshape(self.dataset[0].values.shape)
+
+        ret_time = self.dataset[0].ret_time
+        drift_time = self.dataset[0].drift_time
+
+        _, ax = plt.subplots(figsize=(width, height))
+
+        plt.imshow(
+            sr_matrix,
+            cmap="RdBu_r",
+            origin="lower",
+            aspect="auto",
+            extent=(min(drift_time), max(drift_time),
+                    min(ret_time), max(ret_time))
+            )
+
+        plt.colorbar(label="Selectivity Ratio")
+        plt.title(f"PLS Selectivity Ratio")
         plt.xlabel(self.dataset[0]._drift_time_label)
         plt.ylabel("Retention Time [s]")
         ax.xaxis.set_minor_locator(AutoMinorLocator())
