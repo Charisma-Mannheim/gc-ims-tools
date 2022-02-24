@@ -26,9 +26,6 @@ class PLS_DA:
     n_components : int, optional
         Number of components to keep, by default 2.
 
-    scale : bool, optional
-        Wheather to scale X and y, by default True.
-
     kwargs : optional
         Additional key word arguments are passed on to the scikit-learn PLSRegression.
 
@@ -133,12 +130,6 @@ class PLS_DA:
         self.y_weights = self._sk_pls.y_weights_
         self.y_loadings = self._sk_pls.y_loadings_
         self.coefficients = self._sk_pls.coef_
-
-        # if hasattr(self.dataset, "weights"):
-        #     self.x_loadings = self._sk_pls.x_loadings_ / self.dataset.weights[:, None]
-        # else:
-        #     self.x_loadings = self._sk_pls.x_loadings_
-            
         self.vip_scores = ims.utils.vip_scores(self.x_weights, self.x_scores, self.y_loadings)
         return self
 

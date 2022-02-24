@@ -991,7 +991,7 @@ class Dataset:
         self.preprocessing.append('rip_scaling')
         return self
     
-    def resample(self, n):
+    def resample(self, n=2):
         """
         Resamples each spectrum by calculating means of every n rows.
         If the length of the retention time is not divisible by n
@@ -999,8 +999,9 @@ class Dataset:
 
         Parameters
         ----------
-        n : int
-            Number of rows to mean.
+        n : int, optional
+            Number of rows to mean,
+            by default 2.
 
         Returns
         -------
@@ -1021,7 +1022,7 @@ class Dataset:
         self.preprocessing.append(f'resample({n})')
         return self
     
-    def binning(self, n):
+    def binning(self, n=2):
         """
         Downsamples each spectrum by binning the array with factor n.
         Similar to Spectrum.resampling but works on both dimensions
@@ -1033,8 +1034,8 @@ class Dataset:
 
         Parameters
         ----------
-        n : int
-            Binning factor.
+        n : int, optional
+            Binning factor, by default 2.
 
         Returns
         -------
