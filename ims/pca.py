@@ -70,7 +70,7 @@ class PCA_Model:
             self.n_components = n_components
         self.svd_solver = svd_solver
         self._sk_pca = PCA(n_components, svd_solver=svd_solver, **kwargs)
-        
+
     def fit(self, X_train):
         """
         Fit the PCA model with training data.
@@ -86,19 +86,12 @@ class PCA_Model:
             The fitted model.
         """
         self._sk_pca.fit(X_train)
-
-        # assigning attributes here means less typing for the user
         self.scores = self._sk_pca.transform(X_train)
         self.explained_variance = self._sk_pca.explained_variance_
         self.explained_variance_ratio = self._sk_pca.explained_variance_ratio_
         self.singular_values = self._sk_pca.singular_values_
         self.mean = self._sk_pca.mean_
-
-        if hasattr(self.dataset, "weights"):
-            self.loadings = self._sk_pca.components_ / self.dataset.weights
-        else:
-            self.loadings = self._sk_pca.components_
-            
+        self.loadings = self._sk_pca.components_
         return self
 
     def plot(self, PC_x=1, PC_y=2, width=9, height=8, annotate=False):

@@ -403,7 +403,7 @@ class Spectrum:
         self.values = self.values / m
         return self
 
-    def resample(self, n):
+    def resample(self, n=2):
         """
         Resamples spectrum by calculating means of every n rows.
         If the length of the retention time is not divisible by n
@@ -411,8 +411,9 @@ class Spectrum:
 
         Parameters
         ----------
-        n : int
-            Number of rows to mean.
+        n : int, optional
+            Number of rows to mean,
+            by default 2.
 
         Returns
         -------
@@ -439,7 +440,7 @@ class Spectrum:
         self.ret_time = self.ret_time[::n]
         return self
 
-    def binning(self, n):
+    def binning(self, n=2):
         """
         Downsamples spectrum by binning the array with factor n.
         Similar to ims.Spectrum.resampling but works on both dimensions
@@ -451,8 +452,8 @@ class Spectrum:
 
         Parameters
         ----------
-        n : int
-            Binning factor.
+        n : int, optional
+            Binning factor, by default 2.
 
         Returns
         -------
