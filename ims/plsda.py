@@ -127,6 +127,7 @@ class PLS_DA:
         self._sk_pls.fit(X_train, y_binary)
         self.x_scores, self.y_scores = self._sk_pls.transform(X_train, y_binary)
         self.x_weights = self._sk_pls.x_weights_
+        self.x_loadings = self._sk_pls.x_loadings_
         self.y_weights = self._sk_pls.y_weights_
         self.y_loadings = self._sk_pls.y_loadings_
         self.coefficients = self._sk_pls.coef_
