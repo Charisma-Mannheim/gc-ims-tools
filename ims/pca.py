@@ -21,7 +21,7 @@ class PCA_Model:
         coordinates.
 
     n_components : int or float, optional
-        Number of components to keep. If not set all components are kept,
+        Number of components to keep. If None all components are kept,
         by default None.
 
     svd_solver : str, optional
@@ -64,7 +64,10 @@ class PCA_Model:
     """
     def __init__(self, dataset, n_components=None, svd_solver="auto", **kwargs):
         self.dataset = dataset
-        self.n_components = n_components
+        if n_components is None:
+            self.n_components = len(self.dataset)
+        else:
+            self.n_components = n_components
         self.svd_solver = svd_solver
         self._sk_pca = PCA(n_components, svd_solver=svd_solver, **kwargs)
         
