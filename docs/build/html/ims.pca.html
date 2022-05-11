@@ -4,29 +4,30 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>PCA_Model &#8212; gc-ims-tools 0.1.0 documentation</title>
     
-  <link href="_static/css/theme.css" rel="stylesheet">
-  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
-
+    <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  
     
-  <link rel="stylesheet"
-    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-
+    <link rel="stylesheet"
+      href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
     
       
-
+  
     
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/css/blank.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/pydata-sphinx-theme.css" />
     
-  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
-
+    <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -136,6 +137,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items">
 <h3><a href="index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
@@ -149,12 +151,16 @@
 <li class="toctree-l1"><a class="reference internal" href="ims.hca.html">HCA</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="ims.dataset.html"
-                        title="previous chapter">Dataset</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="ims.plsr.html"
-                        title="next chapter">PLSR</a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="ims.dataset.html"
+                          title="previous chapter">Dataset</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="ims.plsr.html"
+                          title="next chapter">PLSR</a></p>
+  </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -172,6 +178,9 @@
     </div>
 </div>
 <script>$('#searchbox').show(0);</script>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -204,7 +213,7 @@
               
               <div>
                 
-  <div class="section" id="module-ims.pca">
+  <section id="module-ims.pca">
 <span id="pca-model"></span><h1>PCA_Model<a class="headerlink" href="#module-ims.pca" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model">
@@ -219,7 +228,7 @@ and provides prebuilt plots for GC-IMS datasets.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataset</strong> (<em>ims.Dataset</em>) – The dataset is needed for the retention and drift time
 coordinates.</p></li>
-<li><p><strong>n_components</strong> (<em>int or float, optional</em>) – Number of components to keep. If not set all components are kept,
+<li><p><strong>n_components</strong> (<em>int or float, optional</em>) – Number of components to keep. If None all components are kept,
 by default None.</p></li>
 <li><p><strong>svd_solver</strong> (<em>str, optional</em>) – “auto”, “full”, “arpack” or “randomised” are valid,
 by default “auto”.</p></li>
@@ -336,11 +345,8 @@ applied on the dataset.</p>
 by default False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>matplotlib.pyplot.axes</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
 </dd></dl>
@@ -360,11 +366,8 @@ centered at 0.</p></li>
 <li><p><strong>height</strong> (<em>int or float, optional</em>) – plot height in inches, by default 10.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>matplotlib.pyplot.axes</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
 </dd></dl>
@@ -383,18 +386,15 @@ by default 9.</p></li>
 by default 8.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>matplotlib.pyplot.axes</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
 </dd></dl>
 
 </dd></dl>
 
-</div>
+</section>
 
 
               </div>
@@ -406,8 +406,8 @@ by default 8.</p></li>
       </div>
     </div>
   
-  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
-<footer class="footer mt-5 mt-md-0">
+    <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -418,7 +418,7 @@ by default 8.</p></li>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     
