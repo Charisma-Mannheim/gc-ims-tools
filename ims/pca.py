@@ -128,8 +128,13 @@ class PCA_Model:
             data=self.scores,
             columns=[f"PC {x}" for x in range(1, self.n_components + 1)]
         )
-        pc_df['Sample'] = self.dataset.samples
-        pc_df['Label'] = self.dataset.labels
+        
+        if hasattr(self.dataset, "train_index"):
+            pc_df["Sample"] = self.dataset[self.dataset.train_index].samples
+            pc_df['Label'] = self.dataset[self.dataset.train_index].labels
+        else:
+            pc_df["Sample"] = self.dataset.samples
+            pc_df['Label'] = self.dataset.labels
 
         _, ax = plt.subplots(figsize=(width, height))
         sns.scatterplot(
