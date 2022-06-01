@@ -173,6 +173,23 @@ class PLS_DA:
 
         return np.array(y_pred)
     
+    def transform(self, X, y=None):
+        """
+        Apply the dimensionality reduction.
+
+        Parameters
+        ----------
+        X : numpy.ndarray of shape (n_samples, n_features)
+            Feature matrix.
+        y : numpy.ndarray of shape (n_samples, n_targtets), optional
+            Dependend variables, by default None
+
+        Returns
+        -------
+        X_scores
+        """
+        return self._sk_pls.transform(X, y)
+    
     def score(self, X_test, y_test, sample_weight=None):
         """
         Calculates accuracy score for predicted data.
