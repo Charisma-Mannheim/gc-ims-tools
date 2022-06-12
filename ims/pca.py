@@ -125,8 +125,13 @@ class PCA_Model:
             data=self.scores,
             columns=[f"PC {x}" for x in range(1, self.n_components + 1)]
         )
-        pc_df['Sample'] = self.dataset.samples
-        pc_df['Label'] = self.dataset.labels
+        
+        if hasattr(self.dataset, "train_index"):
+            pc_df["Sample"] = self.dataset[self.dataset.train_index].samples
+            pc_df['Label'] = self.dataset[self.dataset.train_index].labels
+        else:
+            pc_df["Sample"] = self.dataset.samples
+            pc_df['Label'] = self.dataset.labels
 
         _, ax = plt.subplots(figsize=(width, height))
         sns.scatterplot(
@@ -197,14 +202,14 @@ class PCA_Model:
                     min(ret_time), max(ret_time))
             )
 
-        plt.colorbar().set_label("PCA Loadings")
+        plt.colorbar().set_label("PCA loadings")
 
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         
         plt.xlabel(self.dataset[0]._drift_time_label)
-        plt.ylabel("Retention Time [s]")
-        plt.title(f"PCA Loadings of PC {PC} ({expl_var[PC-1]} % of variance)")
+        plt.ylabel("Retention time [s]")
+        plt.title(f"PCA loadings of PC {PC} ({expl_var[PC-1]} % of variance)")
         return ax
 
     def scree_plot(self, width=9, height=8):
@@ -235,7 +240,7 @@ class PCA_Model:
             axis.set_major_locator(MaxNLocator(integer=True))
         
         plt.xticks(x)
-        plt.xlabel("Principal Component")
+        plt.xlabel("Principal component")
         plt.ylabel("Explainded variance ratio [%]")
         
         ax.plot(x, np.cumsum(y) * 100, label="cumulative")

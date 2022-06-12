@@ -299,10 +299,10 @@ class PLS_DA:
                     min(ret_time), max(ret_time))
             )
 
-        plt.colorbar(label="PLS Loadings")
+        plt.colorbar(label="PLS-DA loadings")
         plt.title(f"PLS-DA loadings of component {component}")
         plt.xlabel(self.dataset[0]._drift_time_label)
-        plt.ylabel("Retention Time [s]")
+        plt.ylabel("Retention time [s]")
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
@@ -355,10 +355,10 @@ class PLS_DA:
                     min(ret_time), max(ret_time))
             )
 
-        plt.colorbar(label="PLS Coefficients")
+        plt.colorbar(label="PLS-DA coefficients")
         plt.title(f"PLS-DA coefficients of {group_name}")
         plt.xlabel(self.dataset[0]._drift_time_label)
-        plt.ylabel("Retention Time [s]")
+        plt.ylabel("Retention time [s]")
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
@@ -407,9 +407,9 @@ class PLS_DA:
             )
 
         plt.colorbar(label="VIP scores")
-        plt.title(f"PLS VIP scores")
+        plt.title(f"PLS-DA VIP scores")
         plt.xlabel(self.dataset[0]._drift_time_label)
-        plt.ylabel("Retention Time [s]")
+        plt.ylabel("Retention time [s]")
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax

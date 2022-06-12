@@ -272,10 +272,10 @@ class PLSR:
                     min(ret_time), max(ret_time))
             )
 
-        plt.colorbar(label="PLS Loadings")
+        plt.colorbar(label="PLS loadings")
         plt.title(f"PLS loadings of component {component}")
         plt.xlabel(self.dataset[0]._drift_time_label)
-        plt.ylabel("Retention Time [s]")
+        plt.ylabel("Retention time [s]")
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
@@ -315,10 +315,10 @@ class PLSR:
                     min(ret_time), max(ret_time))
             )
 
-        plt.colorbar(label="PLS Coefficients")
-        plt.title("PLS Coefficients")
+        plt.colorbar(label="PLS coefficients")
+        plt.title("PLS coefficients")
         plt.xlabel(self.dataset[0]._drift_time_label)
-        plt.ylabel("Retention Time [s]")
+        plt.ylabel("Retention time [s]")
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
@@ -374,7 +374,7 @@ class PLSR:
         plt.colorbar(label="VIP scores")
         plt.title(f"PLS VIP scores")
         plt.xlabel(self.dataset[0]._drift_time_label)
-        plt.ylabel("Retention Time [s]")
+        plt.ylabel("Retention time [s]")
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
@@ -422,10 +422,10 @@ class PLSR:
                     min(ret_time), max(ret_time))
             )
 
-        plt.colorbar(label="Selectivity Ratio")
-        plt.title(f"PLS Selectivity Ratio")
+        plt.colorbar(label="Selectivity ratio")
+        plt.title(f"PLS selectivity ratio")
         plt.xlabel(self.dataset[0]._drift_time_label)
-        plt.ylabel("Retention Time [s]")
+        plt.ylabel("Retention time [s]")
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax

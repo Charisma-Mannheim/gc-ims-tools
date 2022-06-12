@@ -971,7 +971,7 @@ class Dataset:
             i.values[:, :len(new_dt)]
             i.values = f(new_dt)
             i.drift_time = new_dt
-            i._drift_time_label = "Drift Time RIP relative"
+            i._drift_time_label = "Drift time RIP relative"
         
         self.preprocessing.append("interp_riprel()")
         return self

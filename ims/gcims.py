@@ -56,7 +56,7 @@ class Spectrum:
         self.ret_time = ret_time
         self.drift_time = drift_time
         self.time = time
-        self._drift_time_label = 'Drift Time [ms]'
+        self._drift_time_label = 'Drift time [ms]'
         
     def __repr__(self):
         return f"GC-IMS Spectrum: {self.name}"
@@ -385,7 +385,7 @@ class Spectrum:
         rip_ms = self.drift_time[rip_index]
         dt_riprel = self.drift_time / rip_ms
         self.drift_time = dt_riprel
-        self._drift_time_label = 'Drift Time RIP relative'
+        self._drift_time_label = 'Drift time RIP relative'
         return self
 
     def rip_scaling(self):
@@ -627,7 +627,7 @@ class Spectrum:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
 
         plt.xlabel(self._drift_time_label)
-        plt.ylabel("Retention Time [s]")
+        plt.ylabel("Retention time [s]")
 
         return fig, ax
 
