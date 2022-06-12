@@ -4,29 +4,30 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Dataset &#8212; gc-ims-tools 0.1.0 documentation</title>
     
-  <link href="_static/css/theme.css" rel="stylesheet">
-  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
-
+    <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  
     
-  <link rel="stylesheet"
-    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-
+    <link rel="stylesheet"
+      href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
     
       
-
+  
     
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/css/blank.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/pydata-sphinx-theme.css" />
     
-  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
-
+    <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -136,6 +137,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items">
 <h3><a href="index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
@@ -149,12 +151,16 @@
 <li class="toctree-l1"><a class="reference internal" href="ims.hca.html">HCA</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="ims.gcims.html"
-                        title="previous chapter">Spectrum</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="ims.pca.html"
-                        title="next chapter">PCA_Model</a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="ims.gcims.html"
+                          title="previous chapter">Spectrum</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="ims.pca.html"
+                          title="next chapter">PCA_Model</a></p>
+  </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -172,6 +178,9 @@
     </div>
 </div>
 <script>$('#searchbox').show(0);</script>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -204,7 +213,7 @@
               
               <div>
                 
-  <div class="section" id="module-ims.dataset">
+  <section id="module-ims.dataset">
 <span id="dataset"></span><h1>Dataset<a class="headerlink" href="#module-ims.dataset" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="ims.dataset.Dataset">
@@ -318,7 +327,7 @@ Necessary because labels are not stored in ims.Spectrum class.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.binning">
-<span class="sig-name descname"><span class="pre">binning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.binning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.binning" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">binning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.binning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.binning" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downsamples each spectrum by binning the array with factor n.
 Similar to Spectrum.resampling but works on both dimensions
 simultaneously.
@@ -328,7 +337,7 @@ Very effective data reduction because a factor n=2 already
 reduces the number of features to a quarter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – Binning factor.</p>
+<dd class="field-odd"><p><strong>n</strong> (<em>int, optional</em>) – Binning factor, by default 2.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Downsampled data matrix.</p>
@@ -695,11 +704,8 @@ Sample names are used for mean spectra and file names are no longer needed.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>int, optional</em>) – Index of spectrum to plot, by default 0</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>matplotlib.axes._subplots.AxesSubplot</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>matplotlib.axes._subplots.AxesSubplot</p>
 </dd>
 </dl>
 </dd></dl>
@@ -751,11 +757,8 @@ for all methods to work.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -779,11 +782,8 @@ Preferred to csv because of faster read and write speeds.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -844,11 +844,8 @@ for all methods to work.</p>
 by default False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -905,11 +902,8 @@ for all methods to work.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -923,13 +917,14 @@ for all methods to work.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.resample">
-<span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.resample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.resample" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.resample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.resample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resamples each spectrum by calculating means of every n rows.
 If the length of the retention time is not divisible by n
 it and the data matrix get cropped by the remainder at the long end.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – Number of rows to mean.</p>
+<dd class="field-odd"><p><strong>n</strong> (<em>int, optional</em>) – Number of rows to mean,
+by default 2.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Resampled values.</p>
@@ -984,21 +979,22 @@ Useful to select or remove specific samples or files.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.scaling">
-<span class="sig-name descname"><span class="pre">scaling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pareto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.scaling" title="Permalink to this definition">¶</a></dt>
-<dd><p>Scales features according to selected method.</p>
+<span class="sig-name descname"><span class="pre">scaling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pareto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_centering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.scaling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scales and mean centeres features according to selected method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>method</strong> (<em>str, optional</em>) – “pareto”, “auto” or “var” are valid,
-by default “pareto”.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str, optional</em>) – “pareto”, “auto” or “var” are valid,
+by default “pareto”.</p></li>
+<li><p><strong>mean_centering</strong> (<em>bool, optional</em>) – If true center the data before scaling,
+by default True.</p></li>
+</ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If scaling method is not supported.</p>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If scaling method is not supported.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1066,17 +1062,14 @@ by default None.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ims.dataset.Dataset.sub_first_row">
-<span class="sig-name descname"><span class="pre">sub_first_row</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.sub_first_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.sub_first_row" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ims.dataset.Dataset.sub_first_rows">
+<span class="sig-name descname"><span class="pre">sub_first_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.sub_first_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.sub_first_rows" title="Permalink to this definition">¶</a></dt>
 <dd><p>Subtracts first row from every row in spectrum.
 Effective and simple baseline correction
 if RIP tailing is a concern but can hide small peaks.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1117,11 +1110,8 @@ Size parameter is the diameter of the circular structuring element.
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>size</strong> (<em>int, optional</em>) – Size of structuring element, by default 15.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>ims.Dataset</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>ims.Dataset</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1160,7 +1150,7 @@ by default 1</p></li>
 
 </dd></dl>
 
-</div>
+</section>
 
 
               </div>
@@ -1172,8 +1162,8 @@ by default 1</p></li>
       </div>
     </div>
   
-  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
-<footer class="footer mt-5 mt-md-0">
+    <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -1184,7 +1174,7 @@ by default 1</p></li>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

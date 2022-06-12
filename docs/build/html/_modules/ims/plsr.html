@@ -7,26 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ims.plsr &#8212; gc-ims-tools 0.1.0 documentation</title>
     
-  <link href="../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
-
+    <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  
     
-  <link rel="stylesheet"
-    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-
+    <link rel="stylesheet"
+      href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
     
       
-
+  
     
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/blank.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/pydata-sphinx-theme.css" />
     
-  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
-
+    <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
@@ -134,6 +134,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items">
 <h3><a href="../../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
@@ -157,6 +158,9 @@
     </div>
 </div>
 <script>$('#searchbox').show(0);</script>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -176,13 +180,13 @@
               <div>
                 
   <h1>Source code for ims.plsr</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span> <span class="nn">ims</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">AutoMinorLocator</span>
 <span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">CenteredNorm</span>
 <span class="kn">from</span> <span class="nn">sklearn.cross_decomposition</span> <span class="kn">import</span> <span class="n">PLSRegression</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
-<span class="kn">from</span> <span class="nn">ims.plsda</span> <span class="kn">import</span> <span class="n">_vip_scores</span>
 
 
 <div class="viewcode-block" id="PLSR"><a class="viewcode-back" href="../../ims.plsr.html#ims.plsr.PLSR">[docs]</a><span class="k">class</span> <span class="nc">PLSR</span><span class="p">:</span>
@@ -196,14 +200,11 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    dataset : Dataset</span>
+<span class="sd">    dataset : ims.Dataset</span>
 <span class="sd">        Needed for the retention and drift time coordinates in the plots.</span>
 
 <span class="sd">    n_components : int, optional</span>
 <span class="sd">        Number of components to keep, by default 2.</span>
-
-<span class="sd">    scale : bool, optional</span>
-<span class="sd">        Wheather to scale X and y, by default True.</span>
 
 <span class="sd">    kwargs : optional</span>
 <span class="sd">        Additional key word arguments are passed on to the scikit-learn PLSRegression.</span>
@@ -254,11 +255,10 @@
 <span class="sd">    &gt;&gt;&gt; model.predict(X_test, y_test)</span>
 <span class="sd">    &gt;&gt;&gt; model.plot()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pls</span> <span class="o">=</span> <span class="n">PLSRegression</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pls</span> <span class="o">=</span> <span class="n">PLSRegression</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PLSR.fit"><a class="viewcode-back" href="../../ims.plsr.html#ims.plsr.PLSR.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -280,17 +280,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pls</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x_scores</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pls</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pls</span><span class="o">.</span><span class="n">x_weights_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_loadings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pls</span><span class="o">.</span><span class="n">x_loadings_</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pls</span><span class="o">.</span><span class="n">y_weights_</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_loadings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pls</span><span class="o">.</span><span class="n">y_loadings_</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pls</span><span class="o">.</span><span class="n">coef_</span>
-
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;weights&quot;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">x_loadings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pls</span><span class="o">.</span><span class="n">x_loadings_</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">weights</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">x_loadings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pls</span><span class="o">.</span><span class="n">x_loadings_</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">y_pred_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pls</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span> <span class="o">=</span> <span class="n">y_train</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vip_scores</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">vip_scores</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_weights</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_scores</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_loadings</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectivity_ratio</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">selectivity_ratio</span><span class="p">(</span>
+            <span class="n">X_train</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coefficients</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="PLSR.predict"><a class="viewcode-back" href="../../ims.plsr.html#ims.plsr.PLSR.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -344,31 +348,6 @@
         <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PLSR.calc_vip_scores"><a class="viewcode-back" href="../../ims.plsr.html#ims.plsr.PLSR.calc_vip_scores">[docs]</a>    <span class="k">def</span> <span class="nf">calc_vip_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates variable importance in projection (VIP) scores.</span>
-<span class="sd">        Setting a threshold results in less cluttered plots.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        threshold : int or float, optional</span>
-<span class="sd">            If set keeps only VIP scores greater than threshold</span>
-<span class="sd">            and sets all other to zero, by default None.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray of shape (n_features,)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">vips</span> <span class="o">=</span> <span class="n">_vip_scores</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_scores</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_loadings</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">vip_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">vips</span><span class="p">)</span>
-            <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">vips</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)</span>
-            <span class="n">vip_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">vips</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">vips</span> <span class="o">=</span> <span class="n">vip_array</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">vip_scores</span> <span class="o">=</span> <span class="n">vips</span>
-        <span class="k">return</span> <span class="n">vips</span></div>
 
 <div class="viewcode-block" id="PLSR.plot"><a class="viewcode-back" href="../../ims.plsr.html#ims.plsr.PLSR.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">test_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -527,7 +506,7 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">AutoMinorLocator</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">ax</span></div>
     
-<div class="viewcode-block" id="PLSR.plot_vip_scores"><a class="viewcode-back" href="../../ims.plsr.html#ims.plsr.PLSR.plot_vip_scores">[docs]</a>    <span class="k">def</span> <span class="nf">plot_vip_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<div class="viewcode-block" id="PLSR.plot_vip_scores"><a class="viewcode-back" href="../../ims.plsr.html#ims.plsr.PLSR.plot_vip_scores">[docs]</a>    <span class="k">def</span> <span class="nf">plot_vip_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plots VIP scores as image with retention and drift time axis.</span>
 
@@ -551,9 +530,15 @@
 <span class="sd">            If VIP scores have not been calculated prior.</span>
 <span class="sd">        &quot;&quot;&quot;</span>        
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;vip_scores&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must calculate VIP scores first.&quot;</span><span class="p">)</span>
-        
-        <span class="n">vip_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vip_scores</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must fit data first.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vip_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vip_scores</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vips</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vip_scores</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vip_scores</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)</span>
+            <span class="n">vips</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vip_scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">vip_matrix</span> <span class="o">=</span> <span class="n">vips</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
         <span class="n">ret_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ret_time</span>
         <span class="n">drift_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">drift_time</span>
@@ -575,6 +560,57 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Retention Time [s]&quot;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">AutoMinorLocator</span><span class="p">())</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">AutoMinorLocator</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">ax</span></div>
+    
+<div class="viewcode-block" id="PLSR.plot_selectivity_ratio"><a class="viewcode-back" href="../../ims.plsr.html#ims.plsr.PLSR.plot_selectivity_ratio">[docs]</a>    <span class="k">def</span> <span class="nf">plot_selectivity_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots VIP scores as image with retention and drift time axis.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        width : int or float, optional</span>
+<span class="sd">            Width of the plot in inches,</span>
+<span class="sd">            by default 9.</span>
+
+<span class="sd">        height : int or float, optional</span>
+<span class="sd">            Height of the plot in inches,</span>
+<span class="sd">            by default 10.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.pyplot.axes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;selectivity_ratio&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must fit data first.&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sr_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vip_scores</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vip_scores</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vip_scores</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)</span>
+            <span class="n">sratio</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vip_scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">sr_matrix</span> <span class="o">=</span> <span class="n">sratio</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="n">ret_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ret_time</span>
+        <span class="n">drift_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">drift_time</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+            <span class="n">sr_matrix</span><span class="p">,</span>
+            <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdBu_r&quot;</span><span class="p">,</span>
+            <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+            <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+            <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">drift_time</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">drift_time</span><span class="p">),</span>
+                    <span class="nb">min</span><span class="p">(</span><span class="n">ret_time</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ret_time</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Selectivity Ratio&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PLS Selectivity Ratio&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_drift_time_label</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Retention Time [s]&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">AutoMinorLocator</span><span class="p">())</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">AutoMinorLocator</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">ax</span></div></div>
 </pre></div>
 
@@ -587,8 +623,8 @@
       </div>
     </div>
   
-  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
-<footer class="footer mt-5 mt-md-0">
+    <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -599,7 +635,7 @@
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

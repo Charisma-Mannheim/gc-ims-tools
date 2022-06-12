@@ -127,6 +127,7 @@ class PLS_DA:
         self._sk_pls.fit(X_train, y_binary)
         self.x_scores, self.y_scores = self._sk_pls.transform(X_train, y_binary)
         self.x_weights = self._sk_pls.x_weights_
+        self.x_loadings = self._sk_pls.x_loadings_
         self.y_weights = self._sk_pls.y_weights_
         self.y_loadings = self._sk_pls.y_loadings_
         self.coefficients = self._sk_pls.coef_
@@ -171,6 +172,23 @@ class PLS_DA:
                 )
 
         return np.array(y_pred)
+    
+    def transform(self, X, y=None):
+        """
+        Apply the dimensionality reduction.
+
+        Parameters
+        ----------
+        X : numpy.ndarray of shape (n_samples, n_features)
+            Feature matrix.
+        y : numpy.ndarray of shape (n_samples, n_targtets), optional
+            Dependend variables, by default None
+
+        Returns
+        -------
+        X_scores
+        """
+        return self._sk_pls.transform(X, y)
     
     def score(self, X_test, y_test, sample_weight=None):
         """

@@ -7,26 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ims.pca &#8212; gc-ims-tools 0.1.0 documentation</title>
     
-  <link href="../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
-
+    <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  
     
-  <link rel="stylesheet"
-    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-
+    <link rel="stylesheet"
+      href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
     
       
-
+  
     
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/blank.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/pydata-sphinx-theme.css" />
     
-  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
-
+    <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
@@ -134,6 +134,7 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items">
 <h3><a href="../../index.html">Table of Contents</a></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
@@ -157,6 +158,9 @@
     </div>
 </div>
 <script>$('#searchbox').show(0);</script>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -199,7 +203,7 @@
 <span class="sd">        coordinates.</span>
 
 <span class="sd">    n_components : int or float, optional</span>
-<span class="sd">        Number of components to keep. If not set all components are kept,</span>
+<span class="sd">        Number of components to keep. If None all components are kept,</span>
 <span class="sd">        by default None.</span>
 
 <span class="sd">    svd_solver : str, optional</span>
@@ -242,10 +246,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">svd_solver</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span>
+        <span class="k">if</span> <span class="n">n_components</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">svd_solver</span> <span class="o">=</span> <span class="n">svd_solver</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="p">,</span> <span class="n">svd_solver</span><span class="o">=</span><span class="n">svd_solver</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        
+
 <div class="viewcode-block" id="PCA_Model.fit"><a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit the PCA model with training data.</span>
@@ -261,19 +268,12 @@
 <span class="sd">            The fitted model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
-
-        <span class="c1"># assigning attributes here means less typing for the user</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pca</span><span class="o">.</span><span class="n">explained_variance_</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pca</span><span class="o">.</span><span class="n">explained_variance_ratio_</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">singular_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pca</span><span class="o">.</span><span class="n">singular_values_</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pca</span><span class="o">.</span><span class="n">mean_</span>
-
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;weights&quot;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loadings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pca</span><span class="o">.</span><span class="n">components_</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">weights</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loadings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pca</span><span class="o">.</span><span class="n">components_</span>
-            
+        <span class="bp">self</span><span class="o">.</span><span class="n">loadings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pca</span><span class="o">.</span><span class="n">components_</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="PCA_Model.plot"><a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">PC_x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">PC_y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -439,8 +439,8 @@
       </div>
     </div>
   
-  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
-<footer class="footer mt-5 mt-md-0">
+    <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -451,7 +451,7 @@
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     
