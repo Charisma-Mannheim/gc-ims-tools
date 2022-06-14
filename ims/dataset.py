@@ -1162,35 +1162,6 @@ class Dataset:
             i.export_plot(path=folder_name, file_format=file_format,
                             **kwargs)
 
-
-    def export_images(self, folder_name=None, file_format="jpeg"):
-        """
-        Exports all spectra as greyscale images (Not plots!).
-
-        Parameters
-        ----------
-        folder_name : str, optional
-            New directory to save the images
-
-        file_format : str, optional
-            See imageio docs for supported formats:
-            https://imageio.readthedocs.io/en/stable/formats.html,
-            by default 'jpeg'
-        
-        Example
-        -------
-        >>> import ims
-        >>> ds = ims.Dataset.read_mea("IMS_data")
-        >>> ds.export_images("IMS_data_images")
-        """
-        if folder_name is None:
-            folder_name = self.name.join("_images")
-
-        os.mkdir(folder_name)
-
-        for i in self.data:
-            i.export_image(path=folder_name, file_format=file_format)
-
     def get_xy(self, flatten=True):
         """
         Returns features (X) and labels (y) as numpy arrays.

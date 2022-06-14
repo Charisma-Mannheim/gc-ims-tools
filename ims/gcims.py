@@ -12,7 +12,6 @@ from datetime import datetime
 from time import ctime
 from skimage.morphology import white_tophat, disk
 from zipfile import ZipFile
-import imageio
 
 
 class Spectrum:
@@ -660,30 +659,3 @@ class Spectrum:
         fig, _ = self.plot(**kwargs)
         fig.savefig(f'{path}/{self.name}.{file_format}', dpi=dpi,
                     bbox_inches="tight", pad_inches=0.2)
-
-    def export_image(self, path=None, file_format='jpeg'):
-        """
-        Exports spectrum as grayscale image (Not a plot!).
-
-        Parameters
-        ----------
-        path : str, optional
-            Directory to save the image,
-            by default current working directory.
-
-        file_format : str, optional
-            See imageio docs for supported formats:
-            https://imageio.readthedocs.io/en/stable/formats.html,
-            by default 'jpg'.
-
-        Example
-        -------
-        >>> import ims
-        >>> sample = ims.Spectrum.read_mea("sample.mea")
-        >>> sample.export_image()
-        """
-        if path is None:
-            path = os.getcwd()
-
-        imageio.imwrite(uri=f'{path}/{self.name}.{file_format}',
-                        im=self.values)
