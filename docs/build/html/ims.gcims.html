@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Spectrum &#8212; gc-ims-tools 0.1.0 documentation</title>
+    <title>Spectrum &#8212; gc-ims-tools 0.1.2 documentation</title>
     
     <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -365,29 +365,6 @@ by default None.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="o">.</span><span class="n">cut_rt</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="go">(2857, 3150)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ims.gcims.Spectrum.export_image">
-<span class="sig-name descname"><span class="pre">export_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jpeg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.export_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.export_image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exports spectrum as grayscale image (Not a plot!).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str, optional</em>) – Directory to save the image,
-by default current working directory.</p></li>
-<li><p><strong>file_format</strong> (<em>str, optional</em>) – See imageio docs for supported formats:
-<a class="reference external" href="https://imageio.readthedocs.io/en/stable/formats.html">https://imageio.readthedocs.io/en/stable/formats.html</a>,
-by default ‘jpg’.</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="o">.</span><span class="n">export_image</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd></dl>

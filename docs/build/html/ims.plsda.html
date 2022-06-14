@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>PLS_DA &#8212; gc-ims-tools 0.1.0 documentation</title>
+    <title>PLS_DA &#8212; gc-ims-tools 0.1.2 documentation</title>
     
     <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -512,6 +512,23 @@ by default None</p></li>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the dimensionality reduction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>numpy.ndarray of shape (n_samples, n_features)</em>) – Feature matrix.</p></li>
+<li><p><strong>y</strong> (<em>numpy.ndarray of shape (n_samples, n_targtets), optional</em>) – Dependend variables, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>X_scores</p>
 </dd>
 </dl>
 </dd></dl>
