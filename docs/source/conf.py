@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath('../../ims/'))
 import ims
 
 project = 'gc-ims-tools'
-copyright = '2022, Joscha Christmann'
+copyright = '2022, Competency Center for Chemometrics Mannheim'
 author = 'Joscha Christmann'
 
 # The full version, including alpha/beta/rc tags
