@@ -13,6 +13,11 @@ The aim is to implement common data specific routines to fully utilize the exist
 
 Detailed documentation can be found at: https://charisma-mannheim.github.io/gc-ims-tools/build/html/index.html
 
+## Example dataset
+
+An example GC-IMS dataset on the classification of olive oils by geographical origin can be found at:
+https://drive.google.com/drive/folders/1eGrDJYuVYGjIfraSyU_9pI1jhNbnxLpf?usp=sharing
+
 
 ## Citation
 
