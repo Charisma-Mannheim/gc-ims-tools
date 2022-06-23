@@ -1,11 +1,13 @@
 Install
 =======
 *gc-ims-tools* requires Python 3.8+ and can be installed with pip:
-::
+
+:: 
+    
     pip install gc-ims-tools
 
 
-*gc-ims-tools* depends on:
+It depends on:
 
     * numpy
     * pandas

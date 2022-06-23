@@ -23,7 +23,6 @@ class Dataset:
     at a time such as alignments and calculating means. Most operations
     are done inplace for memory efficiency.
 
-    Use one of the read_... methods as constructor.
 
     Parameters
     ----------

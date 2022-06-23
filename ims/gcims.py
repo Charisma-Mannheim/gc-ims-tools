@@ -23,7 +23,6 @@ class Spectrum:
     This class contains all methods that can be applied on a per spectrum basis,
     like I/O, plotting and some preprocessing tools. Methods that return a Spectrum change the instance inplace. Use the copy method.
 
-    Use one of the read_... methods as constructor.
 
     Parameters
     ----------
