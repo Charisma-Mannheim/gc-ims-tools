@@ -16,7 +16,7 @@ Detailed documentation can be found at: https://charisma-mannheim.github.io/gc-i
 ## Example dataset
 
 An example GC-IMS dataset on the classification of olive oils by geographical origin can be found at:
-https://drive.google.com/drive/folders/1eGrDJYuVYGjIfraSyU_9pI1jhNbnxLpf?usp=sharing
+https://data.mendeley.com/datasets/fr9t5fkkvz/2
 
 
 ## Citation
