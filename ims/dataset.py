@@ -129,6 +129,18 @@ class Dataset:
         >>> new_variable = ds.copy()
         """        
         return deepcopy(self)
+    
+    @property
+    def timestamps(self):
+        """
+        Property of timestamps when each spectrum in dataset was recorded.
+
+        Returns
+        -------
+        list
+            List of Python datetime objects.
+        """        
+        return [spectrum.time for spectrum in self]
 
     @property
     def sample_indices(self):
