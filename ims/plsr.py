@@ -1,10 +1,12 @@
 import ims
 import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 from matplotlib.colors import CenteredNorm
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.metrics import mean_squared_error, r2_score
+from ims.utils import vip_scores
 
 
 class PLSR:
@@ -53,12 +55,6 @@ class PLSR:
  
     y_pred_train : numpy.ndarray
         Stores the predicted values from the training data for the plot method.
-        
-    rmse : float
-        If y_test is set in predict method calculates root mean squared error.
-        
-    r2_score : float
-        If y_test is set in predict method calculates R^2 score.
 
     Example
     -------
@@ -76,7 +72,9 @@ class PLSR:
     def __init__(self, dataset, n_components=2, **kwargs):
         self.dataset = dataset
         self.n_components = n_components
-        self._sk_pls = PLSRegression(n_components=n_components, scale=False, **kwargs)
+        self.pls = PLSRegression(n_components=n_components, scale=False, **kwargs)
+        self._fitted = False
+        self._validated = False
 
     def fit(self, X_train, y_train):
         """
@@ -95,14 +93,14 @@ class PLSR:
         self
             Fitted model.
         """
-        self._sk_pls.fit(X_train, y_train)
-        self.x_scores, self.y_scores = self._sk_pls.transform(X_train, y_train)
-        self.x_weights = self._sk_pls.x_weights_
-        self.x_loadings = self._sk_pls.x_loadings_
-        self.y_weights = self._sk_pls.y_weights_
-        self.y_loadings = self._sk_pls.y_loadings_
-        self.coefficients = self._sk_pls.coef_
-        self.y_pred_train = self._sk_pls.predict(X_train)
+        self.pls.fit(X_train, y_train)
+        self.x_scores, self.y_scores = self.pls.transform(X_train, y_train)
+        self.x_weights = self.pls.x_weights_
+        self.x_loadings = self.pls.x_loadings_
+        self.y_weights = self.pls.y_weights_
+        self.y_loadings = self.pls.y_loadings_
+        self.coefficients = self.pls.coef_
+        self.y_pred_train = self.pls.predict(X_train).flatten()
         self.y_train = y_train
         self.vip_scores = ims.utils.vip_scores(
             self.x_weights,
@@ -113,21 +111,21 @@ class PLSR:
             X_train,
             self.coefficients
             )
+        self._fitted = True
         return self
 
     def predict(self, X_test, y_test=None):
         """
         Predicts responses for features of the test data.
-        If y_test is set calculates root mean squared error and
-        R^2 score.
 
         Parameters
         ----------
         X_test : numpy.ndarray of shape (n_samples, n_features)
             Features of test data.
-
-        y_test : numpy.ndarray of shape (n_samples, n_targets), optional
-            Target vector of response variables. If set calculates error metrics,
+            
+        y_train : numpy.ndarray of shape (n_samples, n_targets), optional
+            True labels for test data.
+            If set allows automatic plotting of validation data,
             by default None.
 
         Returns
@@ -135,14 +133,17 @@ class PLSR:
         numpy.ndarray of shape (n_samples, n_targets)
             Predicted responses for test data.
         """
-        y_pred = self._sk_pls.predict(X_test)
+        y_pred = self.pls.predict(X_test)
+        self.y_pred = y_pred
+        self.y_test = y_test
         if y_test is not None:
-            self.rmse = round(mean_squared_error(y_test, y_pred, squared=False), 2)
-            self.r2_score = round(r2_score(y_pred, y_test), 2)
-            self.y_pred_test = y_pred
-            self.y_test = y_test
+            self.rmse = round(
+                mean_squared_error(y_test, self.y_pred, squared=False),
+                2
+                )
+        self._validated = True
         return y_pred
-    
+
     def score(self, X_test, y_test, sample_weight=None):
         """
         Calculates R^2 score score for predicted data.
@@ -165,8 +166,7 @@ class PLSR:
         """
         y_pred = self.predict(X_test)
         return r2_score(y_test, y_pred, sample_weight=sample_weight)
-    
-    
+
     def transform(self, X, y=None):
         """
         Apply the dimensionality reduction.
@@ -182,71 +182,60 @@ class PLSR:
         -------
         X_scores
         """
-        return self._sk_pls.transform(X, y)
+        return self.pls.transform(X, y)
 
-
-    def plot(self, width=9, height=8, annotate=False, test_only=True):
+    def plot(self, annotate=False):
         """
         Plots predicted vs actual values and shows regression line.
         Recommended to predict with test data first.
 
-        width : int or float, optional
-            Width of the plot in inches,
-            by default 9.
-
-        height : int or float, optional
-            Height of the plot in inches,
-            by default 8.
-            
         annotate : bool, optional
             If True annotates plot with sample names,
             by default False.
-            
-        test_only : bool, optional
-            Ignored if annotate is set to False.
-            If True and only annotates test data,
-            by default True.
 
         Returns
         -------
         matplotlib.pyplot.axes
-        """        
-        _, ax = plt.subplots(figsize=(width, height))
-        plt.scatter(self.y_pred_train, self.y_train, label="Train data")
-        if annotate and not test_only:
-            for i in range(len(self.y_train)):
-                plt.annotate(
-                    self.dataset[self.dataset.train_index][i].name,
-                    (self.y_pred_train[i], self.y_train[i]),
-                    xycoords="data"
-                )
+        """
+        if not self._fitted:
+            raise ValueError(
+                "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
+            )
 
-        if hasattr(self, "y_pred_test"):
-            z = np.polyfit(self.y_test, self.y_pred_test, 1)
-            plt.scatter(self.y_pred_test, self.y_test,
-                        c="tab:orange", label="Test data")
-            plt.plot(
-                np.polyval(z, self.y_test),
-                self.y_test,
-                label=f"RMSE: {self.rmse}",
-                c="tab:orange",
-                linewidth=1
-                )
-            
-            if annotate:
-                for i in range(len(self.y_test)):
-                    plt.annotate(
-                        self.dataset[self.dataset.test_index][i].name,
-                        (self.y_pred_test[i], self.y_test[i]),
-                        xycoords="data"
-                    )
+        if self._validated and hasattr(self, "y_test"):
+            ax = sns.scatterplot(x=self.y_train, y=self.y_pred_train,
+                                 label="Training")
+            sns.scatterplot(ax=ax, x=self.y_test, y=self.y_pred.flatten(),
+                            label=f"Validation: RMSE {self.rmse}")
+        else:
+            ax = sns.scatterplot(x=self.y_train, y=self.y_pred_train, label="Training")
 
-        plt.xlabel("Predicted")
-        plt.ylabel("Actual")
-        plt.legend(frameon=True, fancybox=True, facecolor="white")
+        z = np.polyfit(self.y_train, self.y_pred_train, 1)
+        sns.lineplot(ax=ax, x=np.polyval(z, self.y_train), y=self.y_train,
+                     c="tab:blue", label="Trend line")
+
+        z = np.polyfit(self.y_train, self.y_train, 1)
+        sns.lineplot(ax=ax, x=np.polyval(z, self.y_train), y=self.y_train,
+                     c="tab:red", linestyle=":", label="Perfect fit")
+        
+        if annotate:
+            if hasattr(self.dataset, "train_index"):
+                sample_names = self.dataset[self.dataset.train_index].samples
+                X = self.y_train
+                Y = self.y_pred_train
+            if self._validated and hasattr(self, "y_test"):
+                sample_names = sample_names + self.dataset[self.dataset.test_index].samples
+                X = np.concatenate((X, self.y_test))
+                Y = np.concatenate((Y, self.y_pred.flatten()))
+            for x, y, sample in zip(X, Y, sample_names):
+                plt.text(x, y, sample)
+
+        plt.xlabel("Observed response")
+        plt.ylabel("Predicted response")
+        plt.legend()
         return ax
 
-    def plot_loadings(self, component=1, color_range=0.01, width=9, height=10):
+    def plot_loadings(self, component=1, color_range=0.01, width=8, height=8):
         """
         Plots PLS x loadings as image with retention and drift
         time coordinates.
@@ -262,16 +251,21 @@ class PLSR:
  
         width : int or float, optional
             Width of the plot in inches,
-            by default 9.
+            by default 8.
 
         height : int or float, optional
             Height of the plot in inches,
-            by default 10.
+            by default 8.
 
         Returns
         -------
         matplotlib.pyplot.axes
         """
+        if not self._fitted:
+            raise ValueError(
+                "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
+            )
+        
         loadings = self.x_loadings[:, component-1].\
             reshape(self.dataset[0].shape)
             
@@ -299,7 +293,7 @@ class PLSR:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
     
-    def plot_coefficients(self, width=9, height=10):
+    def plot_coefficients(self, width=8, height=8):
         """
         Plots PLS coefficients as image with retention and drift time axis.
 
@@ -307,16 +301,21 @@ class PLSR:
         ----------
         width : int or float, optional
             Width of the plot in inches,
-            by default 9.
+            by default 8.
 
         height : int or float, optional
             Height of the plot in inches,
-            by default 10.
+            by default 8.
 
         Returns
         -------
         matplotlib.pyplot.axes
         """
+        if not self._fitted:
+            raise ValueError(
+                "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
+            )
+        
         coef = self.coefficients.reshape(self.dataset[0].values.shape)
 
         ret_time = self.dataset[0].ret_time
@@ -342,19 +341,24 @@ class PLSR:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
     
-    def plot_vip_scores(self, threshold=None, width=9, height=10):
+    def plot_vip_scores(self, threshold=None, width=8, height=8):
         """
         Plots VIP scores as image with retention and drift time axis.
 
         Parameters
         ----------
+        threshold : int
+            Only plots VIP scores above threshold if set.
+            Values below are displayed as 0,
+            by default None.
+
         width : int or float, optional
             Width of the plot in inches,
-            by default 9.
+            by default 8.
 
         height : int or float, optional
             Height of the plot in inches,
-            by default 10.
+            by default 8.
 
         Returns
         -------
@@ -365,8 +369,10 @@ class PLSR:
         ValueError
             If VIP scores have not been calculated prior.
         """        
-        if not hasattr(self, "vip_scores"):
-            raise ValueError("Must fit data first.")
+        if not self._fitted:
+            raise ValueError(
+                "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
+            )
 
         if threshold is None:
             vip_matrix = self.vip_scores.reshape(self.dataset[0].values.shape)
@@ -398,26 +404,33 @@ class PLSR:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
     
-    def plot_selectivity_ratio(self, threshold=None, width=9, height=10):
+    def plot_selectivity_ratio(self, threshold=None, width=8, height=8):
         """
         Plots VIP scores as image with retention and drift time axis.
         
         Parameters
         ----------
+        threshold : int
+            Only plots VIP scores above threshold if set.
+            Values below are displayed as 0,
+            by default None.
+        
         width : int or float, optional
             Width of the plot in inches,
-            by default 9.
+            by default 8.
 
         height : int or float, optional
             Height of the plot in inches,
-            by default 10.
+            by default 8.
 
         Returns
         -------
         matplotlib.pyplot.axes
         """
-        if not hasattr(self, "selectivity_ratio"):
-            raise ValueError("Must fit data first.")
+        if not self._fitted:
+            raise ValueError(
+                "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
+            )
         
         if threshold is None:
             sr_matrix = self.vip_scores.reshape(self.dataset[0].values.shape)
