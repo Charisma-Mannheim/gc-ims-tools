@@ -73,7 +73,7 @@ class HCA:
         self.R = dendrogram(self.linkage_matrix, no_plot=True)
         self.labels = self.clustering.labels_
 
-    def plot_dendrogram(self, width=9, height=10,
+    def plot_dendrogram(self, width=8, height=8,
                         orientation="right", **kwargs):
         """
         Plots clustering results as dendrogram.
@@ -81,10 +81,10 @@ class HCA:
         Parameters
         ----------
         width : int, optional
-            Width of the figure in inches, by default 9
+            Width of the figure in inches, by default 8
 
         height : int, optional
-            Width of the figure in inches, by default 10
+            Width of the figure in inches, by default 8
 
         orientation : str, optional
             Root position of the clustering tree, by default "right"
@@ -100,8 +100,7 @@ class HCA:
         _, ax = plt.subplots(figsize=(width, height))
 
         if self.dataset is not None:
-            labels = [f"{i[0]}; {i[1]}" for i in zip(self.dataset.labels,
-                                                     self.dataset.samples)]
+            labels = self.dataset.labels
         else:
             labels = self.R["leaves"]
 
