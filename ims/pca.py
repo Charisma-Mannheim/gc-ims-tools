@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.ticker import MaxNLocator, AutoMinorLocator
 from sklearn.decomposition import PCA
+from scipy.stats import f
 
 
 class PCA_Model:
@@ -92,9 +93,20 @@ class PCA_Model:
         self.singular_values = self._sk_pca.singular_values_
         self.mean = self._sk_pca.mean_
         self.loadings = self._sk_pca.components_
+        self.residuals = X_train - self.scores @ self.loadings
+        self.Q = np.sum(self.residuals**2, axis=1)
+        self.Tsq = np.sum((self.scores/np.std(self.scores, axis=0))**2, axis=1)
+        self.Tsq_conf = f.ppf(
+            q=0.95,
+            dfn=self.n_components,
+            dfd=self.scores.shape[0])\
+                *self.n_components\
+                *(self.scores.shape[0]-1)\
+                /(self.scores.shape[0]-self.n_components)
+        self.Q_conf = np.quantile(self.Q, q=0.95)
         return self
 
-    def plot(self, PC_x=1, PC_y=2, width=9, height=8, annotate=False):
+    def plot(self, PC_x=1, PC_y=2, annotate=False):
         """
         Scatter plot of selected principal components.
 
@@ -105,12 +117,6 @@ class PCA_Model:
 
         PC_y : int, optional
             PC y axis, by default 2.
-
-        width : int or float, optional
-            plot width in inches, by default 8.
-
-        height : int or float, optional
-            plot height in inches, by default 7.
             
         annotate : bool, optional
             label data points with sample name,
@@ -136,8 +142,7 @@ class PCA_Model:
             pc_df["Sample"] = self.dataset.samples
             pc_df['Label'] = self.dataset.labels
 
-        _, ax = plt.subplots(figsize=(width, height))
-        sns.scatterplot(
+        ax = sns.scatterplot(
             ax=ax,
             x=f"PC {PC_x}",
             y=f"PC {PC_y}",
@@ -146,7 +151,7 @@ class PCA_Model:
             style="Label",
         )
 
-        plt.legend(frameon=True, fancybox=True, facecolor="white")
+        plt.legend()
         plt.xlabel(f"PC {PC_x} ({expl_var[PC_x-1]} % of variance)")
         plt.ylabel(f"PC {PC_y} ({expl_var[PC_y-1]} % of variance)")
 
@@ -215,20 +220,10 @@ class PCA_Model:
         plt.title(f"PCA loadings of PC {PC} ({expl_var[PC-1]} % of variance)")
         return ax
 
-    def scree_plot(self, width=9, height=8):
+    def scree_plot(self):
         """
         Plots the explained variance ratio per principal component
         and cumulatively.
-
-        Parameters
-        ----------
-        width : int or float, optional
-            Width of the plot in inches,
-            by default 9.
-
-        height : int or float, optional
-            Height of the plot in inches,
-            by default 8.
 
         Returns
         -------
@@ -237,17 +232,52 @@ class PCA_Model:
         x = [*range(1, self.n_components + 1)]
         y = self.explained_variance_ratio
 
-        _, ax = plt.subplots(figsize=(width, height))
-        
+        _, ax = plt.subplots()
+
         for axis in [ax.xaxis, ax.yaxis]:
             axis.set_major_locator(MaxNLocator(integer=True))
-        
+
         plt.xticks(x)
         plt.xlabel("Principal component")
         plt.ylabel("Explainded variance ratio [%]")
-        
+
         ax.plot(x, np.cumsum(y) * 100, label="cumulative")
         ax.plot(x, y * 100, label="per PC")
-        
-        plt.legend(frameon=True, fancybox=True, facecolor="white")
+
+        plt.legend()
+        return ax
+
+    def Tsq_Q_plot(self, annotate=False):
+        """
+        Plots T square values and Q residuals with 95 % confidence limits
+        for outlier detection.
+        Q confidence limit is determined empirically,
+        the T square limit is calculated using the f distribution.
+
+        Parameters
+        ----------
+        annotate : bool, optional
+            Annotates markers with sample names when True,
+            by default False.
+
+        Returns
+        -------
+        matplotlib.pyplot.axes
+        """        
+        ax = sns.scatterplot(
+            x=self.Q,
+            y=self.Tsq,
+            style=self.dataset.labels,
+            hue=self.dataset.labels
+            )
+
+        ax.axhline(self.Tsq_conf, c="tab:red", linestyle=":")
+        ax.axvline(self.Q_conf, c="tab:red", linestyle=":")
+        ax.set_xlabel("Q")
+        ax.set_ylabel("$T^2$", rotation=0, labelpad=15)
+
+        if annotate:
+            for x, y, sample in zip(self.Q, self.Tsq, self.dataset.samples):
+                plt.text(x, y, sample)
+
         return ax
