@@ -1,13 +1,13 @@
 import ims
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 from matplotlib.colors import CenteredNorm
 import seaborn as sns
 from sklearn.cross_decomposition import PLSRegression
-from sklearn.metrics import (accuracy_score, precision_score,
-                             recall_score)
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.metrics import accuracy_score
+
 
 class PLS_DA:
     """
@@ -52,18 +52,12 @@ class PLS_DA:
 
     coefficients : numpy.ndarray of shape (n_features, n_targets)
         The coefficients of the linear model.
+        
+    vip_scores : numpy.ndarray of shape (n_features,)
+        Variable importance in projection (VIP) scores.
  
     y_pred_train : numpy.ndarray
         Stores the predicted values from the training data for the plot method.
-        
-    accuracy : float
-        If y_test is set in predict method, calculates accuracy internally.
-        
-    precision : float
-        If y_test is set in predict method, calculates precision internally.
-
-    recall : float
-        If y_test is set in predict method, calculates recall internally.
 
     Example
     -------
@@ -78,30 +72,11 @@ class PLS_DA:
     def __init__(self, dataset, n_components=2, **kwargs):
         self.dataset = dataset
         self.n_components = n_components
-        self._sk_pls = PLSRegression(n_components=n_components,
-                                     scale=False, **kwargs)
-
-    @staticmethod
-    def _create_binary_labels(y):
-        """Creates a binary label matrix with one column per group."""
-        groups = np.unique(y)
-        y_binary = np.zeros((len(y), len(groups)))
-        for i, j in enumerate(groups):
-            col = [j in label for label in y]
-            y_binary[:, i] = col
-        return y_binary
-
-    @staticmethod
-    def _reverse_binary_labels(y, groups):
-        """
-        Returns a list of class labels from a binary label matrix
-        and a tuple of unique groups.
-        """
-        y_reversed = []
-        for label in y:
-            i = np.argmax(label)
-            y_reversed.append(groups[i])
-        return y_reversed
+        self.pls = PLSRegression(n_components=n_components,
+                                 scale=False, **kwargs)
+        self._binarizer = LabelBinarizer()
+        self._fitted = False
+        self._validated = False
 
     def fit(self, X_train, y_train):
         """
@@ -123,18 +98,20 @@ class PLS_DA:
         """
         self.groups = np.unique(y_train)
         self.y_train = y_train
-        y_binary = self._create_binary_labels(y_train)
-        self._sk_pls.fit(X_train, y_binary)
-        self.x_scores, self.y_scores = self._sk_pls.transform(X_train, y_binary)
-        self.x_weights = self._sk_pls.x_weights_
-        self.x_loadings = self._sk_pls.x_loadings_
-        self.y_weights = self._sk_pls.y_weights_
-        self.y_loadings = self._sk_pls.y_loadings_
-        self.coefficients = self._sk_pls.coef_
-        self.vip_scores = ims.utils.vip_scores(self.x_weights, self.x_scores, self.y_loadings)
+        y_binary = self._binarizer.fit_transform(y_train)
+        self.pls.fit(X_train, y_binary)
+        self.x_scores, self.y_scores = self.pls.transform(X_train, y_binary)
+        self.x_weights = self.pls.x_weights_
+        self.x_loadings = self.pls.x_loadings_
+        self.y_weights = self.pls.y_weights_
+        self.y_loadings = self.pls.y_loadings_
+        self.coefficients = self.pls.coef_
+        self.vip_scores = ims.utils.vip_scores(self.x_weights, self.x_scores,
+                                               self.y_loadings)
+        self._fitted = True
         return self
 
-    def predict(self, X_test, y_test=None):
+    def predict(self, X_test):
         """
         Predicts class labels for test data. Converts back from binary
         labels matrix to a list of class names. If y_test is set also calculates
@@ -145,34 +122,17 @@ class PLS_DA:
         X_test : numpy.ndarray of shape (n_samples, n_features)
             Feature vectors of test dataset.
 
-        y_test : numpy.ndarray of shape (n_samples,), optional
-            True labels for test dataset. If set calculates error metrics,
-            by default None
-
         Returns
         -------
         numpy.ndarray of shape (n_samples,)
             Predicted class labels.
-        """        
-        y_pred_binary = self._sk_pls.predict(X_test)
-        y_pred = self._reverse_binary_labels(y_pred_binary, self.groups)
+        """
+        y_pred = self.pls.predict(X_test)
+        y_pred = self._binarizer.inverse_transform(y_pred)
+        self.x_scores_pred = self.pls.transform(X_test)
+        self._validated = True
+        return y_pred
 
-        if y_test is not None:
-            self.y_test = y_test
-            self.accuracy = accuracy_score(y_test, y_pred)
-            self.precision = precision_score(
-                y_test, y_pred,
-                average="weighted",
-                labels=np.unique(y_pred)
-                )
-            self.recall = recall_score(
-                y_test, y_pred,
-                average="weighted",
-                labels=np.unique(y_pred)
-                )
-
-        return np.array(y_pred)
-    
     def transform(self, X, y=None):
         """
         Apply the dimensionality reduction.
@@ -181,14 +141,16 @@ class PLS_DA:
         ----------
         X : numpy.ndarray of shape (n_samples, n_features)
             Feature matrix.
+
         y : numpy.ndarray of shape (n_samples, n_targtets), optional
             Dependend variables, by default None
 
         Returns
         -------
-        X_scores
+        tuple
+            X_scores
         """
-        return self._sk_pls.transform(X, y)
+        return self.pls.transform(X, y)
     
     def score(self, X_test, y_test, sample_weight=None):
         """
@@ -213,8 +175,7 @@ class PLS_DA:
         y_pred = self.predict(X_test)
         return accuracy_score(y_test, y_pred, sample_weight=sample_weight)
 
-    def plot(self, x_comp=1, y_comp=2, width=9, height=8,
-             annotate=False):
+    def plot(self, x_comp=1, y_comp=2, annotate=False):
         """
         Plots PLS components as scatter plot.
 
@@ -226,14 +187,6 @@ class PLS_DA:
         y_comp : int, optional
             Component y axis, by default 2.
 
-        width : int or float, optional
-            Width of the plot in inches,
-            by default 9.
-
-        height : int or float, optional
-            Height of the plot in inches,
-            by default 8.
-
         annotate : bool, optional
             If True adds sample names to markers,
             by default False.
@@ -242,37 +195,48 @@ class PLS_DA:
         -------
         matplotlib.pyplot.axes
         """
-        cols = [f"PLS Component {i}" for i in range(1, self.n_components + 1)]
-
-        df = pd.DataFrame(self.x_scores, columns=cols)
-        df["Group"] = self.y_train
-        if hasattr(self.dataset, "train_index"):
-            df["Sample"] = self.dataset[self.dataset.train_index].samples
-        else:
-            df["Sample"] = self.dataset.samples
-
-        plt.figure(figsize=(width, height))
-        ax = sns.scatterplot(
-            x=f"PLS Component {x_comp}",
-            y=f"PLS Component {y_comp}",
-            data=df,
-            hue="Group",
-            style="Group",
+        if not self._fitted:
+            raise ValueError(
+                "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
             )
-        plt.legend(frameon=True, fancybox=True, facecolor="white")
+
+        if self._validated:
+            X = np.concatenate((self.x_scores[:, x_comp-1],
+                                self.x_scores_pred[:, x_comp-1]))
+            Y = np.concatenate((self.x_scores[:, y_comp-1],
+                                self.x_scores_pred[:, y_comp-1]))
+            hue = list(self.y_train)\
+                + self.dataset[self.dataset.test_index].labels
+            style = ["Training"] * len(self.y_train)\
+                + ["Validation"] * len(self.dataset.test_index)
+            if hasattr(self.dataset, "train_index"):
+                sample_names = self.dataset[self.dataset.train_index].samples\
+                    + self.dataset[self.dataset.test_index].samples
+            else:
+                sample_names = self.dataset.samples
+
+        else:
+            X = self.x_scores[:, x_comp-1]
+            Y = self.x_scores[:, y_comp-1]
+            hue = self.y_train
+            style = self.y_train
+            sample_names = self.y_train
+
+        ax = sns.scatterplot(x=X, y=Y, hue=hue, style=style)
+
+        ax.legend()
+
+        plt.xlabel(f"Latent variable {x_comp}")
+        plt.ylabel(f"Latent variable {y_comp}")
 
         if annotate:
-            for _, row in df.iterrows():
-                plt.annotate(
-                    row["Sample"],
-                    xy=(row[f"PLS Component {x_comp}"], row[f"PLS Component {y_comp}"]),
-                    xycoords="data"
-                )
+            for x, y, name in zip(X, Y, sample_names):
+                ax.text(x, y, name)
 
         return ax
-    
+
     def plot_loadings(self, component=1, color_range=0.02,
-                      width=9, height=10):
+                      width=8, height=8):
         """
         Plots PLS x loadings as image with retention and drift
         time coordinates.
@@ -288,16 +252,21 @@ class PLS_DA:
             
         width : int or float, optional
             Width of the plot in inches,
-            by default 9.
+            by default 8.
 
         height : int or float, optional
             Height of the plot in inches,
-            by default 10.
+            by default 8.
 
         Returns
         -------
         matplotlib.pyplot.axes
-        """        
+        """
+        if not self._fitted:
+            raise ValueError(
+                "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
+            )
+
         loadings = self.x_loadings[:, component-1].\
             reshape(self.dataset[0].shape)
             
@@ -325,7 +294,7 @@ class PLS_DA:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
 
-    def plot_coefficients(self, group=0, width=9, height=10):
+    def plot_coefficients(self, group=0, width=8, height=8):
         """
         Plots PLS coefficients of selected group as image
         with retention and drift time axis.
@@ -337,16 +306,21 @@ class PLS_DA:
 
         width : int or float, optional
             Width of the plot in inches,
-            by default 9.
+            by default 8.
 
         height : int or float, optional
             Height of the plot in inches,
-            by default 10.
+            by default 8.
 
         Returns
         -------
         matplotlib.pyplot.axes
         """
+        if not self._fitted:
+            raise ValueError(
+                "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
+            )
+
         if isinstance(group, str):
             group_index = self.groups.index(group)
             group_name = group
@@ -355,7 +329,7 @@ class PLS_DA:
             group_index = group
             group_name = self.groups[group]
 
-        coef = self._sk_pls.coef_[:, group_index].\
+        coef = self.pls.coef_[:, group_index].\
             reshape(self.dataset[0].values.shape)
 
         ret_time = self.dataset[0].ret_time
@@ -381,27 +355,33 @@ class PLS_DA:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
     
-    def plot_vip_scores(self, threshold=None, width=9, height=10):
+    def plot_vip_scores(self, threshold=None, width=8, height=8):
         """
         Plots VIP scores as image with retention and drift time axis.
         
         Parameters
         ----------
+        threshold : int
+            Only plots VIP scores above threshold if set.
+            Values below are displayed as 0,
+            by default None.
+
         width : int or float, optional
             Width of the plot in inches,
-            by default 9.
+            by default 8.
 
         height : int or float, optional
             Height of the plot in inches,
-            by default 10.
+            by default 8.
 
         Returns
         -------
         matplotlib.pyplot.axes
-        """        
-        if not hasattr(self, "vip_scores"):
-            raise ValueError("Must fit data first.")
-        
+        """
+        if not self._fitted:
+            raise ValueError(
+                "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
+            )
         if threshold is None:
             vip_matrix = self.vip_scores.reshape(self.dataset[0].values.shape)
         else:
@@ -414,7 +394,7 @@ class PLS_DA:
         drift_time = self.dataset[0].drift_time
 
         _, ax = plt.subplots(figsize=(width, height))
-
+        
         plt.imshow(
             vip_matrix,
             cmap="RdBu_r",
