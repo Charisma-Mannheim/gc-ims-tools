@@ -52,10 +52,10 @@ class PLS_DA:
 
     coefficients : numpy.ndarray of shape (n_features, n_targets)
         The coefficients of the linear model.
-        
+
     vip_scores : numpy.ndarray of shape (n_features,)
         Variable importance in projection (VIP) scores.
- 
+
     y_pred_train : numpy.ndarray
         Stores the predicted values from the training data for the plot method.
 
@@ -69,11 +69,11 @@ class PLS_DA:
     >>> model.predict(X_test, y_test)
     >>> model.plot()
     """
+
     def __init__(self, dataset, n_components=2, **kwargs):
         self.dataset = dataset
         self.n_components = n_components
-        self.pls = PLSRegression(n_components=n_components,
-                                 scale=False, **kwargs)
+        self.pls = PLSRegression(n_components=n_components, scale=False, **kwargs)
         self._binarizer = LabelBinarizer()
         self._fitted = False
         self._validated = False
@@ -106,8 +106,9 @@ class PLS_DA:
         self.y_weights = self.pls.y_weights_
         self.y_loadings = self.pls.y_loadings_
         self.coefficients = self.pls.coef_
-        self.vip_scores = ims.utils.vip_scores(self.x_weights, self.x_scores,
-                                               self.y_loadings)
+        self.vip_scores = ims.utils.vip_scores(
+            self.x_weights, self.x_scores, self.y_loadings
+        )
         self._fitted = True
         return self
 
@@ -151,7 +152,7 @@ class PLS_DA:
             X_scores
         """
         return self.pls.transform(X, y)
-    
+
     def score(self, X_test, y_test, sample_weight=None):
         """
         Calculates accuracy score for predicted data.
@@ -201,23 +202,27 @@ class PLS_DA:
             )
 
         if self._validated:
-            X = np.concatenate((self.x_scores[:, x_comp-1],
-                                self.x_scores_pred[:, x_comp-1]))
-            Y = np.concatenate((self.x_scores[:, y_comp-1],
-                                self.x_scores_pred[:, y_comp-1]))
-            hue = list(self.y_train)\
-                + self.dataset[self.dataset.test_index].labels
-            style = ["Training"] * len(self.y_train)\
-                + ["Validation"] * len(self.dataset.test_index)
+            X = np.concatenate(
+                (self.x_scores[:, x_comp - 1], self.x_scores_pred[:, x_comp - 1])
+            )
+            Y = np.concatenate(
+                (self.x_scores[:, y_comp - 1], self.x_scores_pred[:, y_comp - 1])
+            )
+            hue = list(self.y_train) + self.dataset[self.dataset.test_index].labels
+            style = ["Training"] * len(self.y_train) + ["Validation"] * len(
+                self.dataset.test_index
+            )
             if hasattr(self.dataset, "train_index"):
-                sample_names = self.dataset[self.dataset.train_index].samples\
+                sample_names = (
+                    self.dataset[self.dataset.train_index].samples
                     + self.dataset[self.dataset.test_index].samples
+                )
             else:
                 sample_names = self.dataset.samples
 
         else:
-            X = self.x_scores[:, x_comp-1]
-            Y = self.x_scores[:, y_comp-1]
+            X = self.x_scores[:, x_comp - 1]
+            Y = self.x_scores[:, y_comp - 1]
             hue = self.y_train
             style = self.y_train
             sample_names = self.y_train
@@ -235,8 +240,7 @@ class PLS_DA:
 
         return ax
 
-    def plot_loadings(self, component=1, color_range=0.02,
-                      width=8, height=8):
+    def plot_loadings(self, component=1, color_range=0.02, width=8, height=8):
         """
         Plots PLS x loadings as image with retention and drift
         time coordinates.
@@ -249,7 +253,7 @@ class PLS_DA:
         color_range : float, optional
             Minimum and Maximum to adjust to different scaling methods,
             by default 0.02.
-            
+
         width : int or float, optional
             Width of the plot in inches,
             by default 8.
@@ -267,9 +271,8 @@ class PLS_DA:
                 "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
             )
 
-        loadings = self.x_loadings[:, component-1].\
-            reshape(self.dataset[0].shape)
-            
+        loadings = self.x_loadings[:, component - 1].reshape(self.dataset[0].shape)
+
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
 
@@ -282,9 +285,8 @@ class PLS_DA:
             vmax=color_range,
             origin="lower",
             aspect="auto",
-            extent=(min(drift_time), max(drift_time),
-                    min(ret_time), max(ret_time))
-            )
+            extent=(min(drift_time), max(drift_time), min(ret_time), max(ret_time)),
+        )
 
         plt.colorbar(label="PLS-DA loadings")
         plt.title(f"PLS-DA loadings of component {component}")
@@ -329,23 +331,21 @@ class PLS_DA:
             group_index = group
             group_name = self.groups[group]
 
-        coef = self.pls.coef_[:, group_index].\
-            reshape(self.dataset[0].values.shape)
+        coef = self.pls.coef_[:, group_index].reshape(self.dataset[0].values.shape)
 
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
-        
+
         _, ax = plt.subplots(figsize=(width, height))
-        
+
         plt.imshow(
             coef,
             cmap="RdBu_r",
             norm=CenteredNorm(0),
             origin="lower",
             aspect="auto",
-            extent=(min(drift_time), max(drift_time),
-                    min(ret_time), max(ret_time))
-            )
+            extent=(min(drift_time), max(drift_time), min(ret_time), max(ret_time)),
+        )
 
         plt.colorbar(label="PLS-DA coefficients")
         plt.title(f"PLS-DA coefficients of {group_name}")
@@ -354,11 +354,11 @@ class PLS_DA:
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
-    
+
     def plot_vip_scores(self, threshold=None, width=8, height=8):
         """
         Plots VIP scores as image with retention and drift time axis.
-        
+
         Parameters
         ----------
         threshold : int
@@ -394,15 +394,14 @@ class PLS_DA:
         drift_time = self.dataset[0].drift_time
 
         _, ax = plt.subplots(figsize=(width, height))
-        
+
         plt.imshow(
             vip_matrix,
             cmap="RdBu_r",
             origin="lower",
             aspect="auto",
-            extent=(min(drift_time), max(drift_time),
-                    min(ret_time), max(ret_time))
-            )
+            extent=(min(drift_time), max(drift_time), min(ret_time), max(ret_time)),
+        )
 
         plt.colorbar(label="VIP scores")
         plt.title(f"PLS-DA VIP scores")

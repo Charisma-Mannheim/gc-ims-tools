@@ -8,8 +8,13 @@ import h5py
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from sklearn.utils import resample
-from sklearn.model_selection import (ShuffleSplit,
-    KFold, StratifiedKFold, LeaveOneOut, StratifiedShuffleSplit)
+from sklearn.model_selection import (
+    ShuffleSplit,
+    KFold,
+    StratifiedKFold,
+    LeaveOneOut,
+    StratifiedShuffleSplit,
+)
 
 
 class Dataset:
@@ -50,22 +55,23 @@ class Dataset:
     weights : numpy.ndarray of shape (n_samples, n_features)
         Stores the weights from scaling when the method is called.
         Needed to correct the loadings in PCA automatically.
-        
+
     train_index : list
         Keeps the indices from train_test_split method.
         Used for plot annotations in PLS_DA and PLSR classes.
-        
+
     test_index : list
         Keeps the indices from train_test_split method.
         Used for plot annotations in PLS_DA and PLSR classes.
 
-    Example    
+    Example
     -------
     >>> import ims
     >>> ds = ims.Dataset.read_mea("IMS_data")
     >>> print(ds)
     Dataset: IMS_data, 58 Spectra
     """
+
     def __init__(self, data, name=None, files=None, samples=None, labels=None):
         self.data = data
         self.name = name
@@ -75,30 +81,30 @@ class Dataset:
         self.preprocessing = []
 
     def __repr__(self):
-        return f'Dataset: {self.name}, {len(self)} Spectra'
+        return f"Dataset: {self.name}, {len(self)} Spectra"
 
     def __getitem__(self, key):
         if isinstance(key, int):
             return self.data[key]
-        
+
         if isinstance(key, slice):
             return Dataset(
                 self.data[key],
                 self.name,
                 self.files[key],
                 self.samples[key],
-                self.labels[key]
+                self.labels[key],
             )
-            
+
         if isinstance(key, list) or isinstance(key, np.ndarray):
             return Dataset(
                 [self.data[i] for i in key],
                 self.name,
                 [self.files[i] for i in key],
                 [self.samples[i] for i in key],
-                [self.labels[i] for i in key]
+                [self.labels[i] for i in key],
             )
-        
+
     def __delitem__(self, key):
         del self.data[key]
         del self.files[key]
@@ -110,7 +116,7 @@ class Dataset:
 
     def __iter__(self):
         return iter(self.data)
-    
+
     def __add__(self, other):
         """Concatenates two ims.Datasets instances"""
         ds = Dataset(
@@ -118,11 +124,11 @@ class Dataset:
             f"{self.name} {other.name}",
             self.files + other.files,
             self.samples + other.samples,
-            self.labels + other.labels
+            self.labels + other.labels,
         )
         ds.preprocessing = self.preprocessing + other.preprocessing
         return ds
-    
+
     def copy(self):
         """
         Uses deepcopy from the copy module in the standard library.
@@ -139,9 +145,9 @@ class Dataset:
         >>> import ims
         >>> ds = ims.Dataset.read_mea("IMS_data")
         >>> new_variable = ds.copy()
-        """        
+        """
         return deepcopy(self)
-    
+
     @property
     def timestamps(self):
         """
@@ -151,7 +157,7 @@ class Dataset:
         -------
         list
             List of Python datetime objects.
-        """        
+        """
         return [spectrum.time for spectrum in self]
 
     @property
@@ -186,7 +192,7 @@ class Dataset:
             files = []
             samples = []
             labels = []
-            paths = [os.path.normpath(i) for i in glob(f'{path}/*/*/*')]
+            paths = [os.path.normpath(i) for i in glob(f"{path}/*/*/*")]
             name = os.path.split(path)[1]
             for filedir in paths:
                 file_name = os.path.split(filedir)[1]
@@ -196,7 +202,7 @@ class Dataset:
                 label = filedir.split(os.sep)[-3]
                 labels.append(label)
         else:
-            paths = [os.path.normpath(i) for i in glob(f'{path}/*')]
+            paths = [os.path.normpath(i) for i in glob(f"{path}/*")]
             name = os.path.split(path)[1]
             files = [os.path.split(i)[1] for i in paths]
             samples = []
@@ -247,9 +253,7 @@ class Dataset:
         >>> print(ds)
         Dataset: IMS_data, 58 Spectra
         """
-        paths, name, files, samples, labels = Dataset._measurements(
-            path, subfolders
-        )
+        paths, name, files, samples, labels = Dataset._measurements(path, subfolders)
         data = [Spectrum.read_mea(i) for i in paths]
         return cls(data, name, files, samples, labels)
 
@@ -259,7 +263,7 @@ class Dataset:
         Reads zipped csv and json files from G.A.S Dortmund mea2zip converting tool.
         Present for backwards compatibility. Reading mea files is much faster and saves
         the manual extra step of converting.
-        
+
         If subfolders=True expects the following folder structure
         for each label and sample:
 
@@ -292,12 +296,10 @@ class Dataset:
         >>> print(ds)
         Dataset: IMS_data, 58 Spectra
         """
-        paths, name, files, samples, labels = Dataset._measurements(
-            path, subfolders
-        )
+        paths, name, files, samples, labels = Dataset._measurements(path, subfolders)
         data = [Spectrum.read_zip(i) for i in paths]
         return cls(data, name, files, samples, labels)
-    
+
     @classmethod
     def read_csv(cls, path, subfolders=False):
         """
@@ -306,7 +308,7 @@ class Dataset:
         the retention time values. Values inbetween are the
         intensity matrix.
         Uses the time when the file was created as timestamp.
-        
+
         If subfolders=True expects the following folder structure
         for each label and sample:
 
@@ -339,9 +341,7 @@ class Dataset:
         >>> print(ds)
         Dataset: IMS_data, 58 Spectra
         """
-        paths, name, files, samples, labels = Dataset._measurements(
-            path, subfolders
-        )
+        paths, name, files, samples, labels = Dataset._measurements(path, subfolders)
         data = [Spectrum.read_csv(i) for i in paths]
         return cls(data, name, files, samples, labels)
 
@@ -384,15 +384,14 @@ class Dataset:
                 ret_time = np.array(f[key]["ret_time"])
                 drift_time = np.array(f[key]["drift_time"])
                 name = str(f[key].attrs["name"])
-                time = datetime.strptime(f[key].attrs["time"],
-                                        "%Y-%m-%dT%H:%M:%S")
+                time = datetime.strptime(f[key].attrs["time"], "%Y-%m-%dT%H:%M:%S")
                 drift_time_label = str(f[key].attrs["drift_time_label"])
                 spectrum = Spectrum(name, values, ret_time, drift_time, time)
                 spectrum._drift_time_label = drift_time_label
                 data.append(spectrum)
 
             name = os.path.split("Test.hdf5")[1]
-            name = name.split('.')[0]
+            name = name.split(".")[0]
 
         dataset = cls(data, name, files, samples, labels)
         dataset.preprocessing = preprocessing
@@ -410,7 +409,7 @@ class Dataset:
             Name of the hdf5 file. File extension is not needed.
             If not set, uses the dataset name attribute,
             by default None.
-            
+
         path : str, otional
             Path to save the file. If not set uses the current working
             directory, by default None.
@@ -424,7 +423,7 @@ class Dataset:
         """
         if name is None:
             name = self.name
- 
+
         if path is None:
             path = os.getcwd()
 
@@ -441,8 +440,7 @@ class Dataset:
                 grp.create_dataset("values", data=sample.values)
                 grp.create_dataset("ret_time", data=sample.ret_time)
                 grp.create_dataset("drift_time", data=sample.drift_time)
-                grp.attrs["time"] = datetime.strftime(sample.time,
-                                                    "%Y-%m-%dT%H:%M:%S")
+                grp.attrs["time"] = datetime.strftime(sample.time, "%Y-%m-%dT%H:%M:%S")
                 grp.attrs["drift_time_label"] = sample._drift_time_label
 
     def select(self, label=None, sample=None):
@@ -467,11 +465,11 @@ class Dataset:
         -------
         >>> import ims
         >>> ds = ims.Dataset.read_mea("IMS_data")
-        >>> group_a = ds.select(label="GroupA") 
+        >>> group_a = ds.select(label="GroupA")
         """
         if label is None and sample is None:
             raise ValueError("Must give either label or sample value.")
-        
+
         if label is not None:
             name = label
             indices = []
@@ -503,7 +501,7 @@ class Dataset:
             samples=samples,
             labels=labels,
         )
-        
+
     def drop(self, label=None, sample=None):
         """
         Removes all spectra of specified label or sample from dataset.
@@ -560,7 +558,7 @@ class Dataset:
             samples=samples,
             labels=labels,
         )
-        
+
     def add_spectrum(self, spectrum, sample, label):
         """
         Adds a ims.Spectrum to the dataset.
@@ -614,7 +612,7 @@ class Dataset:
         """
         if key != "label" and key != "sample":
             raise ValueError('Only "label" or "sample" are valid keys!')
-            
+
         result = []
         if key == "label":
             for group in np.unique(self.labels):
@@ -625,7 +623,7 @@ class Dataset:
             for sample in np.unique(self.samples):
                 result.append(self.select(sample=sample))
             return result
-        
+
     def plot(self, index=0, **kwargs):
         """
         Plots the spectrum of selected index and adds the label to the title.
@@ -653,7 +651,7 @@ class Dataset:
             Proportion of the dataset to be used for validation.
             Should be between 0.0 and 1.0,
             by default 0.2
-            
+
         stratify : bool, optional
             Wheter to stratify output or not.
             Preserves the percentage of samples from each class in each split,
@@ -667,27 +665,21 @@ class Dataset:
         -------
         tuple of numpy.ndarray
             X_train, X_test, y_train, y_test
-            
+
         Example
         -------
         >>> import ims
         >>> ds = ims.Dataset.read_mea("IMS_Data")
         >>> X_train, X_test, y_train, y_test = ds.train_test_split()
         """
-        
+
         if stratify:
             s = StratifiedShuffleSplit(
-                n_splits=1,
-                test_size=test_size,
-                random_state=random_state
-                )
+                n_splits=1, test_size=test_size, random_state=random_state
+            )
             train, test = next(s.split(self.data, y=self.labels))
         else:
-            s = ShuffleSplit(
-                n_splits=1,
-                test_size=test_size,
-                random_state=random_state
-                )
+            s = ShuffleSplit(n_splits=1, test_size=test_size, random_state=random_state)
             train, test = next(s.split(self.data))
 
         # set attributes for annotations of plots with sample names
@@ -697,9 +689,8 @@ class Dataset:
         X_train, y_train = self[train].get_xy()
         X_test, y_test = self[test].get_xy()
         return X_train, X_test, y_train, y_test
-    
-    def kfold_split(self, n_splits=5, shuffle=True,
-                    random_state=None, stratify=False):
+
+    def kfold_split(self, n_splits=5, shuffle=True, random_state=None, stratify=False):
         """
         K-Folds cross-validator (sklearn.model_selection.KFold).
         Splits the dataset into k consecutive folds and provides
@@ -745,8 +736,9 @@ class Dataset:
         >>>     accuracy.append(accuracy_score(y_test, y_pred))
         """
         if stratify:
-            kf = StratifiedKFold(n_splits=n_splits, shuffle=shuffle,
-                                 random_state=random_state)
+            kf = StratifiedKFold(
+                n_splits=n_splits, shuffle=shuffle, random_state=random_state
+            )
         else:
             kf = KFold(n_splits, shuffle=shuffle, random_state=random_state)
 
@@ -756,7 +748,7 @@ class Dataset:
             X_train, y_train = train_data.get_xy()
             X_test, y_test = test_data.get_xy()
             yield X_train, X_test, y_train, y_test
-            
+
     def shuffle_split(self, n_splits=5, test_size=0.2, random_state=None):
         """
         Shuffled splits for montecarlo cross-validation. Randomly selects
@@ -781,7 +773,7 @@ class Dataset:
         -------
         tuple
             (X_train, X_test, y_train, y_test) per iteration
-            
+
         Example
         -------
         >>> import ims
@@ -793,12 +785,10 @@ class Dataset:
         >>>     model.fit(X_train, y_train)
         >>>     y_pred = model.predict(X_test)
         >>>     accuracy.append(accuracy_score(y_test, y_pred))
-        """        
+        """
         rs = ShuffleSplit(
-            n_splits=n_splits,
-            test_size=test_size,
-            random_state=random_state
-            )
+            n_splits=n_splits, test_size=test_size, random_state=random_state
+        )
         for train_index, test_index in rs.split(self, self.labels):
             train_data = self[train_index]
             test_data = self[test_index]
@@ -816,7 +806,7 @@ class Dataset:
         ----------
         n_bootstraps : int, optional
             Number of iterations, by default 5.
-            
+
         n_samples : int, optional
             Number of samples to draw per iteration. Is set to
             the lenghth of the dataset if None,
@@ -830,7 +820,7 @@ class Dataset:
         -------
         tuple
             (X_train, X_test, y_train, y_test) per iteration
-            
+
         Example
         -------
         >>> import ims
@@ -845,11 +835,8 @@ class Dataset:
         """
         for _ in range(n_bootstraps):
             train_data, train_labels = resample(
-                self.data,
-                self.labels,
-                n_samples=n_samples,
-                random_state=random_state
-                )
+                self.data, self.labels, n_samples=n_samples, random_state=random_state
+            )
 
             test_data = []
             test_labels = []
@@ -921,14 +908,14 @@ class Dataset:
         means = []
         for i in grouped_data:
             means.append(sum(i) / len(i))
-            
+
         for i, j in zip(means, u_samples):
             i.name = j
 
         self.data = means
         self.samples = list(u_samples)
         self.labels = labels
-        self.preprocessing.append('mean()')
+        self.preprocessing.append("mean()")
         return self
 
     def tophat(self, size=15):
@@ -947,7 +934,7 @@ class Dataset:
         ims.Dataset
         """
         self.data = [Spectrum.tophat(i, size) for i in self.data]
-        self.preprocessing.append('tophat')
+        self.preprocessing.append("tophat")
         return self
 
     def sub_first_rows(self, n=1):
@@ -961,7 +948,7 @@ class Dataset:
         Dataset
         """
         self.data = [Spectrum.sub_first_rows(i, n) for i in self.data]
-        self.preprocessing.append('sub_first_row')
+        self.preprocessing.append("sub_first_row")
         return self
 
     def interp_riprel(self):
@@ -978,24 +965,24 @@ class Dataset:
         interp_fn = []
         for i in self.data:
             dt = i.drift_time
-            rip = np.median(np.argmax(i.values, axis=1)).astype('int32')
+            rip = np.median(np.argmax(i.values, axis=1)).astype("int32")
             rip_ms = np.mean(dt[rip])
             riprel = dt / rip_ms
-            f = interp1d(riprel, i.values, axis=1, kind='cubic')
+            f = interp1d(riprel, i.values, axis=1, kind="cubic")
             dt_riprel.append(riprel)
             interp_fn.append(f)
 
         start = max([i[0] for i in dt_riprel])
         end = min([i[-1] for i in dt_riprel])
-        interv = np.median([(i[-1]-i[0]) / len(i) for i in dt_riprel])
+        interv = np.median([(i[-1] - i[0]) / len(i) for i in dt_riprel])
         new_dt = np.arange(start, end, interv)
 
         for i, f in zip(self.data, interp_fn):
-            i.values[:, :len(new_dt)]
+            i.values[:, : len(new_dt)]
             i.values = f(new_dt)
             i.drift_time = new_dt
             i._drift_time_label = "Drift time RIP relative"
-        
+
         self.preprocessing.append("interp_riprel()")
         return self
 
@@ -1003,7 +990,7 @@ class Dataset:
         """
         Scales values relative to global maximum.
         Can be useful to directly compare spectra from
-        instruments with different sensitivity. 
+        instruments with different sensitivity.
 
         Returns
         -------
@@ -1011,9 +998,9 @@ class Dataset:
             With scaled values.
         """
         self.data = [Spectrum.rip_scaling(i) for i in self.data]
-        self.preprocessing.append('rip_scaling')
+        self.preprocessing.append("rip_scaling")
         return self
-    
+
     def resample(self, n=2):
         """
         Resamples each spectrum by calculating means of every n rows.
@@ -1030,7 +1017,7 @@ class Dataset:
         -------
         Dataset
             Resampled values.
-            
+
         Example
         -------
         >>> import ims
@@ -1040,11 +1027,11 @@ class Dataset:
         >>> ds.resample(2)
         >>> print(ds[0].shape)
         (2041, 3150)
-        """   
+        """
         self.data = [Spectrum.resample(i, n) for i in self.data]
-        self.preprocessing.append(f'resample({n})')
+        self.preprocessing.append(f"resample({n})")
         return self
-    
+
     def binning(self, n=2):
         """
         Downsamples each spectrum by binning the array with factor n.
@@ -1052,7 +1039,7 @@ class Dataset:
         simultaneously.
         If the dimensions are not divisible by the binning factor
         shortens it by the remainder at the long end.
-        Very effective data reduction because a factor n=2 already 
+        Very effective data reduction because a factor n=2 already
         reduces the number of features to a quarter.
 
         Parameters
@@ -1076,7 +1063,7 @@ class Dataset:
         (2041, 1575)
         """
         self.data = [Spectrum.binning(i, n) for i in self.data]
-        self.preprocessing.append(f'binning({n})')
+        self.preprocessing.append(f"binning({n})")
         return self
 
     def cut_dt(self, start, stop=None):
@@ -1092,7 +1079,7 @@ class Dataset:
         ----------
         start : int or float
             Start value on drift time coordinate.
-        
+
         stop : int or float, optional
             Stop value on drift time coordinate.
             If None uses the end of the array,
@@ -1114,7 +1101,7 @@ class Dataset:
         (4082, 1005)
         """
         self.data = [Spectrum.cut_dt(i, start, stop) for i in self.data]
-        self.preprocessing.append(f'cut_dt({start}, {stop})')
+        self.preprocessing.append(f"cut_dt({start}, {stop})")
         return self
 
     def cut_rt(self, start, stop=None):
@@ -1149,10 +1136,10 @@ class Dataset:
         (2857, 3150)
         """
         self.data = [Spectrum.cut_rt(i, start, stop) for i in self.data]
-        self.preprocessing.append(f'cut_rt({start}, {stop})')
+        self.preprocessing.append(f"cut_rt({start}, {stop})")
         return self
 
-    def export_plots(self, folder_name=None, file_format='jpg', **kwargs):
+    def export_plots(self, folder_name=None, file_format="jpg", **kwargs):
         """
         Saves a figure per spectrum as image file. See the docs for
         matplotlib savefig function for supported file formats and kwargs
@@ -1169,7 +1156,7 @@ class Dataset:
             See matplotlib savefig docs for information
             about supported formats,
             by default 'jpeg'
-            
+
         Example
         -------
         >>> import ims
@@ -1182,8 +1169,7 @@ class Dataset:
         os.mkdir(folder_name)
 
         for i in self.data:
-            i.export_plot(path=folder_name, file_format=file_format,
-                            **kwargs)
+            i.export_plot(path=folder_name, file_format=file_format, **kwargs)
 
     def get_xy(self, flatten=True):
         """
@@ -1211,7 +1197,7 @@ class Dataset:
 
         if flatten:
             a, b, c = X.shape
-            X = X.reshape(a, b*c)
+            X = X.reshape(a, b * c)
 
         return (X, y)
 
@@ -1224,7 +1210,7 @@ class Dataset:
         method : str, optional
             "pareto", "auto" or "var" are valid,
             by default "pareto".
-            
+
         mean_centering : bool, optional
             If true center the data before scaling,
             by default True.
@@ -1241,7 +1227,7 @@ class Dataset:
         X = [i.values for i in self.data]
         X = np.stack(X)
         a, b, c = X.shape
-        X = X.reshape(a, b*c)
+        X = X.reshape(a, b * c)
 
         if method == "auto":
             weights = 1 / np.std(X, 0)
@@ -1250,7 +1236,7 @@ class Dataset:
         elif method == "var":
             weights = 1 / np.var(X, 0)
         else:
-            raise ValueError(f'{method} is not a supported method!')
+            raise ValueError(f"{method} is not a supported method!")
 
         weights = np.nan_to_num(weights, posinf=0, neginf=0)
 

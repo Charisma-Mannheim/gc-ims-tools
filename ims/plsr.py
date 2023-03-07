@@ -52,7 +52,7 @@ class PLSR:
 
     coefficients : numpy.ndarray of shape (n_features, n_targets)
         The coefficients of the linear model.
- 
+
     y_pred_train : numpy.ndarray
         Stores the predicted values from the training data for the plot method.
 
@@ -69,6 +69,7 @@ class PLSR:
     >>> model.predict(X_test, y_test)
     >>> model.plot()
     """
+
     def __init__(self, dataset, n_components=2, **kwargs):
         self.dataset = dataset
         self.n_components = n_components
@@ -103,14 +104,9 @@ class PLSR:
         self.y_pred_train = self.pls.predict(X_train).flatten()
         self.y_train = y_train
         self.vip_scores = ims.utils.vip_scores(
-            self.x_weights,
-            self.x_scores,
-            self.y_loadings
-            )
-        self.selectivity_ratio = ims.utils.selectivity_ratio(
-            X_train,
-            self.coefficients
-            )
+            self.x_weights, self.x_scores, self.y_loadings
+        )
+        self.selectivity_ratio = ims.utils.selectivity_ratio(X_train, self.coefficients)
         self._fitted = True
         return self
 
@@ -122,7 +118,7 @@ class PLSR:
         ----------
         X_test : numpy.ndarray of shape (n_samples, n_features)
             Features of test data.
-            
+
         y_train : numpy.ndarray of shape (n_samples, n_targets), optional
             True labels for test data.
             If set allows automatic plotting of validation data,
@@ -137,10 +133,7 @@ class PLSR:
         self.y_pred = y_pred
         self.y_test = y_test
         if y_test is not None:
-            self.rmse = round(
-                mean_squared_error(y_test, self.y_pred, squared=False),
-                2
-                )
+            self.rmse = round(mean_squared_error(y_test, self.y_pred, squared=False), 2)
         self._validated = True
         return y_pred
 
@@ -203,28 +196,44 @@ class PLSR:
             )
 
         if self._validated and hasattr(self, "y_test"):
-            ax = sns.scatterplot(x=self.y_train, y=self.y_pred_train,
-                                 label="Training")
-            sns.scatterplot(ax=ax, x=self.y_test, y=self.y_pred.flatten(),
-                            label=f"Validation: RMSE {self.rmse}")
+            ax = sns.scatterplot(x=self.y_train, y=self.y_pred_train, label="Training")
+            sns.scatterplot(
+                ax=ax,
+                x=self.y_test,
+                y=self.y_pred.flatten(),
+                label=f"Validation: RMSE {self.rmse}",
+            )
         else:
             ax = sns.scatterplot(x=self.y_train, y=self.y_pred_train, label="Training")
 
         z = np.polyfit(self.y_train, self.y_pred_train, 1)
-        sns.lineplot(ax=ax, x=np.polyval(z, self.y_train), y=self.y_train,
-                     c="tab:blue", label="Trend line")
+        sns.lineplot(
+            ax=ax,
+            x=np.polyval(z, self.y_train),
+            y=self.y_train,
+            c="tab:blue",
+            label="Trend line",
+        )
 
         z = np.polyfit(self.y_train, self.y_train, 1)
-        sns.lineplot(ax=ax, x=np.polyval(z, self.y_train), y=self.y_train,
-                     c="tab:red", linestyle=":", label="Perfect fit")
-        
+        sns.lineplot(
+            ax=ax,
+            x=np.polyval(z, self.y_train),
+            y=self.y_train,
+            c="tab:red",
+            linestyle=":",
+            label="Perfect fit",
+        )
+
         if annotate:
             if hasattr(self.dataset, "train_index"):
                 sample_names = self.dataset[self.dataset.train_index].samples
                 X = self.y_train
                 Y = self.y_pred_train
             if self._validated and hasattr(self, "y_test"):
-                sample_names = sample_names + self.dataset[self.dataset.test_index].samples
+                sample_names = (
+                    sample_names + self.dataset[self.dataset.test_index].samples
+                )
                 X = np.concatenate((X, self.y_test))
                 Y = np.concatenate((Y, self.y_pred.flatten()))
             for x, y, sample in zip(X, Y, sample_names):
@@ -248,7 +257,7 @@ class PLSR:
         color_range : float, optional
             Minimum and maximum to adjust to different scaling methods,
             by default 0.02.
- 
+
         width : int or float, optional
             Width of the plot in inches,
             by default 8.
@@ -265,10 +274,9 @@ class PLSR:
             raise ValueError(
                 "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
             )
-        
-        loadings = self.x_loadings[:, component-1].\
-            reshape(self.dataset[0].shape)
-            
+
+        loadings = self.x_loadings[:, component - 1].reshape(self.dataset[0].shape)
+
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
 
@@ -281,9 +289,8 @@ class PLSR:
             vmax=color_range,
             origin="lower",
             aspect="auto",
-            extent=(min(drift_time), max(drift_time),
-                    min(ret_time), max(ret_time))
-            )
+            extent=(min(drift_time), max(drift_time), min(ret_time), max(ret_time)),
+        )
 
         plt.colorbar(label="PLS loadings")
         plt.title(f"PLS loadings of component {component}")
@@ -292,7 +299,7 @@ class PLSR:
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
-    
+
     def plot_coefficients(self, width=8, height=8):
         """
         Plots PLS coefficients as image with retention and drift time axis.
@@ -315,23 +322,22 @@ class PLSR:
             raise ValueError(
                 "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
             )
-        
+
         coef = self.coefficients.reshape(self.dataset[0].values.shape)
 
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
-        
+
         _, ax = plt.subplots(figsize=(width, height))
-        
+
         plt.imshow(
             coef,
             cmap="RdBu_r",
             norm=CenteredNorm(0),
             origin="lower",
             aspect="auto",
-            extent=(min(drift_time), max(drift_time),
-                    min(ret_time), max(ret_time))
-            )
+            extent=(min(drift_time), max(drift_time), min(ret_time), max(ret_time)),
+        )
 
         plt.colorbar(label="PLS coefficients")
         plt.title("PLS coefficients")
@@ -340,7 +346,7 @@ class PLSR:
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
-    
+
     def plot_vip_scores(self, threshold=None, width=8, height=8):
         """
         Plots VIP scores as image with retention and drift time axis.
@@ -368,7 +374,7 @@ class PLSR:
         ------
         ValueError
             If VIP scores have not been calculated prior.
-        """        
+        """
         if not self._fitted:
             raise ValueError(
                 "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
@@ -392,9 +398,8 @@ class PLSR:
             cmap="RdBu_r",
             origin="lower",
             aspect="auto",
-            extent=(min(drift_time), max(drift_time),
-                    min(ret_time), max(ret_time))
-            )
+            extent=(min(drift_time), max(drift_time), min(ret_time), max(ret_time)),
+        )
 
         plt.colorbar(label="VIP scores")
         plt.title(f"PLS VIP scores")
@@ -403,18 +408,18 @@ class PLSR:
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
-    
+
     def plot_selectivity_ratio(self, threshold=None, width=8, height=8):
         """
         Plots VIP scores as image with retention and drift time axis.
-        
+
         Parameters
         ----------
         threshold : int
             Only plots VIP scores above threshold if set.
             Values below are displayed as 0,
             by default None.
-        
+
         width : int or float, optional
             Width of the plot in inches,
             by default 8.
@@ -431,7 +436,7 @@ class PLSR:
             raise ValueError(
                 "This model is not fitted yet! Call 'fit' with appropriate arguments before plotting."
             )
-        
+
         if threshold is None:
             sr_matrix = self.vip_scores.reshape(self.dataset[0].values.shape)
         else:
@@ -450,9 +455,8 @@ class PLSR:
             cmap="RdBu_r",
             origin="lower",
             aspect="auto",
-            extent=(min(drift_time), max(drift_time),
-                    min(ret_time), max(ret_time))
-            )
+            extent=(min(drift_time), max(drift_time), min(ret_time), max(ret_time)),
+        )
 
         plt.colorbar(label="Selectivity ratio")
         plt.title(f"PLS selectivity ratio")

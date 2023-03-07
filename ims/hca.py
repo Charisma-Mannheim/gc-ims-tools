@@ -48,15 +48,18 @@ class HCA:
     >>> hca.fit(X)
     >>> hca.plot_dendrogram()
     """
-    def __init__(self, dataset=None, affinity="euclidean", linkage="ward",):
+
+    def __init__(
+        self,
+        dataset=None,
+        affinity="euclidean",
+        linkage="ward",
+    ):
         self.dataset = dataset
         self.linkage = linkage
         self.affinity = affinity
         self.clustering = AgglomerativeClustering(
-            distance_threshold=0,
-            n_clusters=None,
-            affinity=affinity,
-            linkage=linkage
+            distance_threshold=0, n_clusters=None, affinity=affinity, linkage=linkage
         )
 
     def fit(self, X):
@@ -73,8 +76,7 @@ class HCA:
         self.R = dendrogram(self.linkage_matrix, no_plot=True)
         self.labels = self.clustering.labels_
 
-    def plot_dendrogram(self, width=8, height=8,
-                        orientation="right", **kwargs):
+    def plot_dendrogram(self, width=8, height=8, orientation="right", **kwargs):
         """
         Plots clustering results as dendrogram.
 
@@ -96,7 +98,7 @@ class HCA:
         Returns
         -------
         matplotlib.pyplot.axes
-        """        
+        """
         _, ax = plt.subplots(figsize=(width, height))
 
         if self.dataset is not None:
@@ -105,12 +107,8 @@ class HCA:
             labels = self.R["leaves"]
 
         dendrogram(
-            self.linkage_matrix,
-            ax=ax,
-            orientation=orientation,
-            labels=labels,
-            **kwargs
-            )
+            self.linkage_matrix, ax=ax, orientation=orientation, labels=labels, **kwargs
+        )
         plt.xlabel(f"Distances ({self.affinity} method)")
         return ax
 
@@ -128,6 +126,5 @@ class HCA:
             counts[i] = current_count
 
         return np.column_stack(
-            [self.clustering.children_,
-             self.clustering.distances_, counts]
-            ).astype(float)
+            [self.clustering.children_, self.clustering.distances_, counts]
+        ).astype(float)

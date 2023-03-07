@@ -28,7 +28,7 @@ def vip_scores(W, T, Q):
     Comparison of the variable importance in projection (VIP)
     and of the selectivity ratio (SR) methods for variable selection and interpretation.
     J. Chemometrics, 29: 528– 536. doi: 10.1002/cem.2736
-    
+
     https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/cem.2736
     """
     W0 = W / np.sqrt(np.sum(W**2, 0))
@@ -61,14 +61,14 @@ def selectivity_ratio(X, B):
     Comparison of the variable importance in projection (VIP)
     and of the selectivity ratio (SR) methods for variable selection and interpretation.
     J. Chemometrics, 29: 528– 536. doi: 10.1002/cem.2736
-    
+
     https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/cem.2736
     """
     t_tp = X @ B / np.linalg.norm(B)
     p_tp = X.T @ t_tp / (t_tp.T @ t_tp)
 
-    exp_var = (t_tp @ p_tp.T)**2
-    exp_res = (X - exp_var)**2
+    exp_var = (t_tp @ p_tp.T) ** 2
+    exp_res = (X - exp_var) ** 2
 
     ss_expl = np.sum(exp_var, axis=0)
     ss_res = np.sum(exp_res, axis=0)

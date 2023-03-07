@@ -19,7 +19,7 @@ class Spectrum:
     Represents one GCIMS-Spectrum with the data matrix,
     retention and drift time coordinates.
     Sample or file name and timestamp are included unique identifiers.
-    
+
     This class contains all methods that can be applied on a per spectrum basis,
     like I/O, plotting and some preprocessing tools. Methods that return a Spectrum change the instance inplace. Use the copy method.
 
@@ -32,7 +32,7 @@ class Spectrum:
 
     values : numpy.array
         Intensity matrix.
-        
+
     ret_time : numpy.array
         Retention time coordinate.
 
@@ -41,31 +41,31 @@ class Spectrum:
 
     time : datetime object
         Timestamp when the spectrum was recorded.
-        
+
     Example
     -------
     >>> import ims
     >>> sample = ims.Spectrum.read_mea("sample.mea")
     >>> sample.plot()
     """
+
     def __init__(self, name, values, ret_time, drift_time, time):
         self.name = name
         self.values = values
         self.ret_time = ret_time
         self.drift_time = drift_time
         self.time = time
-        self._drift_time_label = 'Drift time [ms]'
-        
+        self._drift_time_label = "Drift time [ms]"
+
     def __repr__(self):
         return f"GC-IMS Spectrum: {self.name}"
-    
+
     # add, radd and truediv are implemented to calculate means easily
     def __add__(self, other):
         values = self.values + other.values
         ret_time = self.ret_time + other.ret_time
         drift_time = self.drift_time + other.drift_time
-        x =  Spectrum(self.name, values, ret_time, drift_time,
-                      self.time)
+        x = Spectrum(self.name, values, ret_time, drift_time, self.time)
         x._drift_time_label = self._drift_time_label
         return x
 
@@ -80,8 +80,7 @@ class Spectrum:
             values = self.values / other
             ret_time = self.ret_time / other
             drift_time = self.drift_time / other
-            x = Spectrum(self.name, values, ret_time,
-                         drift_time, self.time)
+            x = Spectrum(self.name, values, ret_time, drift_time, self.time)
             x._drift_time_label = self._drift_time_label
             return x
         else:
@@ -138,25 +137,28 @@ class Spectrum:
         GC-IMS Spectrum: sample
         """
         with ZipFile(path) as myzip:
-            with myzip.open('csv_data.csv', 'r') as mycsv:
+            with myzip.open("csv_data.csv", "r") as mycsv:
                 values = pd.read_csv(mycsv, header=None)
-            with myzip.open('meta_attributes.json', 'r') as myjson:
+            with myzip.open("meta_attributes.json", "r") as myjson:
                 meta_attr = json.load(myjson)
 
         values = np.array(values)
         values = np.delete(values, -1, axis=1)
 
-        ret_time = np.arange(meta_attr['Chunks count'])\
-            * (meta_attr['Chunk averages'] + 1)\
-            * meta_attr['Chunk trigger repetition [ms]']\
+        ret_time = (
+            np.arange(meta_attr["Chunks count"])
+            * (meta_attr["Chunk averages"] + 1)
+            * meta_attr["Chunk trigger repetition [ms]"]
             / 1000
-        drift_time = np.arange(meta_attr['Chunk sample count'])\
+        )
+        drift_time = (
+            np.arange(meta_attr["Chunk sample count"])
             / meta_attr["Chunk sample rate [kHz]"]
+        )
 
         path = os.path.normpath(path)
         name = os.path.split(path)[1]
-        time = datetime.strptime(meta_attr["Timestamp"],
-                                 "%Y-%m-%dT%H:%M:%S")
+        time = datetime.strptime(meta_attr["Timestamp"], "%Y-%m-%dT%H:%M:%S")
 
         return cls(name, values, ret_time, drift_time, time)
 
@@ -185,15 +187,15 @@ class Spectrum:
         """
         path = os.path.normpath(path)
         name = os.path.split(path)[1]
-        name = name.split('.')[0]
+        name = name.split(".")[0]
 
         with open(path, "rb") as f:
             content = f.read()
             i = content.index(0)
-            meta_attr = content[:i-1]
+            meta_attr = content[: i - 1]
             meta_attr = meta_attr.decode("windows-1252")
-            data = content[i+1:]
-            data = array('h', data)
+            data = content[i + 1 :]
+            data = array("h", data)
 
         meta_attr = meta_attr.split("\n")
 
@@ -220,8 +222,12 @@ class Spectrum:
         data = np.array(data)
         data = data.reshape(chunks_count, chunk_sample_count)
 
-        ret_time = np.arange(chunks_count) * (chunk_averages + 1)\
-            * chunk_trigger_repetition / 1000
+        ret_time = (
+            np.arange(chunks_count)
+            * (chunk_averages + 1)
+            * chunk_trigger_repetition
+            / 1000
+        )
 
         drift_time = np.arange(chunk_sample_count) / chunk_sample_rate
 
@@ -244,7 +250,7 @@ class Spectrum:
         Returns
         -------
         Spectrum
-        
+
         Example
         -------
         >>> import ims
@@ -253,15 +259,14 @@ class Spectrum:
         GC-IMS Spectrum: sample
         """
         name = os.path.split(path)[1]
-        name = name.split('.')[0]
+        name = name.split(".")[0]
         df = pd.read_csv(path)
         values = df.values
         ret_time = df.index
-        drift_time= df.columns
+        drift_time = df.columns
         timestamp = os.path.getctime(path)
         timestamp = ctime(timestamp)
-        timestamp = datetime.strptime(timestamp,
-                                      "%a %b  %d %H:%M:%S %Y")
+        timestamp = datetime.strptime(timestamp, "%a %b  %d %H:%M:%S %Y")
         return cls(name, values, ret_time, drift_time, timestamp)
 
     @classmethod
@@ -288,13 +293,13 @@ class Spectrum:
         >>> sample = ims.Spectrum.read_mea("sample.mea")
         >>> sample.to_hdf5()
         >>> sample = ims.Spectrum.read_hdf5("sample.hdf5")
-        """     
-        with h5py.File(path, 'r') as f:
-            values = np.array(f['values'])
-            ret_time = np.array(f['ret_time'])
-            drift_time = np.array(f['drift_time'])
-            name = str(f.attrs['name'])
-            time = datetime.strptime(f.attrs['time'], "%Y-%m-%dT%H:%M:%S")
+        """
+        with h5py.File(path, "r") as f:
+            values = np.array(f["values"])
+            ret_time = np.array(f["ret_time"])
+            drift_time = np.array(f["drift_time"])
+            name = str(f.attrs["name"])
+            time = datetime.strptime(f.attrs["time"], "%Y-%m-%dT%H:%M:%S")
             drift_time_label = str(f.attrs["drift_time_label"])
 
         spectrum = cls(name, values, ret_time, drift_time, time)
@@ -322,15 +327,14 @@ class Spectrum:
         """
         if path is None:
             path = os.getcwd()
-        
-        with h5py.File(f'{path}/{self.name}.hdf5', 'w-') as f:
-            f.create_dataset('values', data=self.values)
-            f.create_dataset('ret_time', data=self.ret_time)
-            f.create_dataset('drift_time', data=self.drift_time)
-            f.attrs['name'] = self.name
-            f.attrs['time'] = datetime.strftime(self.time,
-                                                "%Y-%m-%dT%H:%M:%S")
-            f.attrs['drift_time_label'] = self._drift_time_label
+
+        with h5py.File(f"{path}/{self.name}.hdf5", "w-") as f:
+            f.create_dataset("values", data=self.values)
+            f.create_dataset("ret_time", data=self.ret_time)
+            f.create_dataset("drift_time", data=self.drift_time)
+            f.attrs["name"] = self.name
+            f.attrs["time"] = datetime.strftime(self.time, "%Y-%m-%dT%H:%M:%S")
+            f.attrs["drift_time_label"] = self._drift_time_label
 
     def tophat(self, size=15):
         """
@@ -360,7 +364,7 @@ class Spectrum:
         -------
         Spectrum
         """
-        fl = self.values[0:n-1, :].mean(axis=0)
+        fl = self.values[0 : n - 1, :].mean(axis=0)
         self.values = self.values - fl
         # self.values[self.values < 0] = 0
         return self
@@ -383,7 +387,7 @@ class Spectrum:
         rip_ms = self.drift_time[rip_index]
         dt_riprel = self.drift_time / rip_ms
         self.drift_time = dt_riprel
-        self._drift_time_label = 'Drift time RIP relative'
+        self._drift_time_label = "Drift time RIP relative"
         return self
 
     def rip_scaling(self):
@@ -431,8 +435,8 @@ class Spectrum:
         a, _ = self.values.shape
         rest = a % n
         if rest != 0:
-            self.values = self.values[:a-rest, :]
-            self.ret_time = self.ret_time[:a-rest]
+            self.values = self.values[: a - rest, :]
+            self.ret_time = self.ret_time[: a - rest]
 
         self.values = (self.values[0::n, :] + self.values[1::n, :]) / n
         self.ret_time = self.ret_time[::n]
@@ -445,7 +449,7 @@ class Spectrum:
         simultaneously.
         If the dimensions are not divisible by the binning factor
         shortens it by the remainder at the long end.
-        Very effective data reduction because a factor n=2 already 
+        Very effective data reduction because a factor n=2 already
         reduces the number of features to a quarter.
 
         Parameters
@@ -473,16 +477,15 @@ class Spectrum:
         rest1 = b % n
 
         if rest0 != 0:
-            self.values = self.values[:a-rest0, :]
-            self.ret_time = self.ret_time[:a-rest0]
+            self.values = self.values[: a - rest0, :]
+            self.ret_time = self.ret_time[: a - rest0]
         if rest1 != 0:
-            self.values = self.values[:, :b-rest1]
-            self.drift_time = self.drift_time[:b-rest1]
+            self.values = self.values[:, : b - rest1]
+            self.drift_time = self.drift_time[: b - rest1]
 
         new_dims = (a // n, b // n)
 
-        shape = (new_dims[0], a // new_dims[0],
-                 new_dims[1], b // new_dims[1])
+        shape = (new_dims[0], a // new_dims[0], new_dims[1], b // new_dims[1])
 
         self.values = self.values.reshape(shape).mean(axis=(-1, 1))
         self.ret_time = self.ret_time[::n]
@@ -502,7 +505,7 @@ class Spectrum:
         ----------
         start : int or float
             Start value on drift time coordinate.
-        
+
         stop : int or float, optional
             Stop value on drift time coordinate.
             If None uses the end of the array,
@@ -597,13 +600,13 @@ class Spectrum:
         -------
         tuple
             (matplotlib.figure.Figure, matplotlib.pyplot.axes)
-        
+
         Example
         -------
         >>> import ims
         >>> sample = ims.Spectrum.read_mea("sample.mea")
         >>> fig, ax = sample.plot()
-        """        
+        """
 
         fig, ax = plt.subplots(figsize=(width, height))
 
@@ -614,9 +617,13 @@ class Spectrum:
             cmap="RdBu_r",
             vmin=vmin,
             vmax=vmax,
-            extent=(min(self.drift_time), max(self.drift_time),
-                    min(self.ret_time), max(self.ret_time))
-            )
+            extent=(
+                min(self.drift_time),
+                max(self.drift_time),
+                min(self.ret_time),
+                max(self.ret_time),
+            ),
+        )
 
         plt.colorbar().set_label("Intensities [arbitrary units]")
         plt.title(self.name)
@@ -629,8 +636,7 @@ class Spectrum:
 
         return fig, ax
 
-    def export_plot(self, path=None, dpi=300,
-                    file_format='jpg', **kwargs):
+    def export_plot(self, path=None, dpi=300, file_format="jpg", **kwargs):
         """
         Saves the figure as image file. See the docs for
         matplotlib savefig function for supported file formats and kwargs
@@ -656,5 +662,9 @@ class Spectrum:
             path = os.getcwd()
 
         fig, _ = self.plot(**kwargs)
-        fig.savefig(f'{path}/{self.name}.{file_format}', dpi=dpi,
-                    bbox_inches="tight", pad_inches=0.2)
+        fig.savefig(
+            f"{path}/{self.name}.{file_format}",
+            dpi=dpi,
+            bbox_inches="tight",
+            pad_inches=0.2,
+        )
