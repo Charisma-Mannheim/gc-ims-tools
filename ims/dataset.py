@@ -111,6 +111,18 @@ class Dataset:
     def __iter__(self):
         return iter(self.data)
     
+    def __add__(self, other):
+        """Concatenates two ims.Datasets instances"""
+        ds = Dataset(
+            self.data + other.data,
+            f"{self.name} {other.name}",
+            self.files + other.files,
+            self.samples + other.samples,
+            self.labels + other.labels
+        )
+        ds.preprocessing = self.preprocessing + other.preprocessing
+        return ds
+    
     def copy(self):
         """
         Uses deepcopy from the copy module in the standard library.
@@ -549,7 +561,7 @@ class Dataset:
             labels=labels,
         )
         
-    def add(self, spectrum, sample, label):
+    def add_spectrum(self, spectrum, sample, label):
         """
         Adds a ims.Spectrum to the dataset.
         Sample name and label must be provided because they are
@@ -578,7 +590,7 @@ class Dataset:
         >>> import ims
         >>> ds = ims.Dataset.read_mea("IMS_data")
         >>> sample = ims.Spectrum.read_mea("sample.mea")
-        >>> ds.add(sample, "sample_name", "class_label")
+        >>> ds.add_spectrum(sample, "sample_name", "class_label")
         """
         self.data.append(spectrum)
         self.files.append(spectrum.name)
