@@ -14,7 +14,7 @@ Provides:
 * Scripted statistical workflows with prebuilt plots
 for common algorithms.
 """
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 __author__ = "Competency Center for Chemometrics Mannheim"
 __credits__ = "Competency Center for Chemometrics Mannheim"
 
