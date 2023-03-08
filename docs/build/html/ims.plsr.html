@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>PLSR &#8212; gc-ims-tools 0.1.2 documentation</title>
+    <title>PLSR &#8212; gc-ims-tools 0.1.3 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
     <link rel="prev" title="PCA_Model" href="ims.pca.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>gc-ims-tools 0.1.2 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.3 documentation</span></a></h1>
         <h2 class="heading"><span>PLSR</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -145,28 +145,6 @@ corrects the loadings using the weights.</p>
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ims.plsr.PLSR.rmse">
-<span class="sig-name descname"><span class="pre">rmse</span></span><a class="headerlink" href="#ims.plsr.PLSR.rmse" title="Permalink to this definition">¶</a></dt>
-<dd><p>If y_test is set in predict method calculates root mean squared error.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ims.plsr.PLSR.r2_score">
-<span class="sig-name descname"><span class="pre">r2_score</span></span><a class="headerlink" href="#ims.plsr.PLSR.r2_score" title="Permalink to this definition">¶</a></dt>
-<dd><p>If y_test is set in predict method calculates R^2 score.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -202,22 +180,12 @@ corrects the loadings using the weights.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots predicted vs actual values and shows regression line.
 Recommended to predict with test data first.</p>
 <dl class="simple">
-<dt>width<span class="classifier">int or float, optional</span></dt><dd><p>Width of the plot in inches,
-by default 9.</p>
-</dd>
-<dt>height<span class="classifier">int or float, optional</span></dt><dd><p>Height of the plot in inches,
-by default 8.</p>
-</dd>
 <dt>annotate<span class="classifier">bool, optional</span></dt><dd><p>If True annotates plot with sample names,
 by default False.</p>
-</dd>
-<dt>test_only<span class="classifier">bool, optional</span></dt><dd><p>Ignored if annotate is set to False.
-If True and only annotates test data,
-by default True.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -229,15 +197,15 @@ by default True.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.plot_coefficients">
-<span class="sig-name descname"><span class="pre">plot_coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_coefficients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_coefficients" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_coefficients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_coefficients" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots PLS coefficients as image with retention and drift time axis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
-by default 9.</p></li>
+by default 8.</p></li>
 <li><p><strong>height</strong> (<em>int or float, optional</em>) – Height of the plot in inches,
-by default 10.</p></li>
+by default 8.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -248,7 +216,7 @@ by default 10.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.plot_loadings">
-<span class="sig-name descname"><span class="pre">plot_loadings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_loadings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_loadings" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_loadings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_loadings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_loadings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots PLS x loadings as image with retention and drift
 time coordinates.</p>
 <dl class="field-list simple">
@@ -258,9 +226,9 @@ time coordinates.</p>
 <li><p><strong>color_range</strong> (<em>float, optional</em>) – Minimum and maximum to adjust to different scaling methods,
 by default 0.02.</p></li>
 <li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
-by default 9.</p></li>
+by default 8.</p></li>
 <li><p><strong>height</strong> (<em>int or float, optional</em>) – Height of the plot in inches,
-by default 10.</p></li>
+by default 8.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -271,15 +239,18 @@ by default 10.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.plot_selectivity_ratio">
-<span class="sig-name descname"><span class="pre">plot_selectivity_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_selectivity_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_selectivity_ratio" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_selectivity_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_selectivity_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_selectivity_ratio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots VIP scores as image with retention and drift time axis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>threshold</strong> (<em>int</em>) – Only plots VIP scores above threshold if set.
+Values below are displayed as 0,
+by default None.</p></li>
 <li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
-by default 9.</p></li>
+by default 8.</p></li>
 <li><p><strong>height</strong> (<em>int or float, optional</em>) – Height of the plot in inches,
-by default 10.</p></li>
+by default 8.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -290,15 +261,18 @@ by default 10.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.plot_vip_scores">
-<span class="sig-name descname"><span class="pre">plot_vip_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_vip_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_vip_scores" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_vip_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_vip_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_vip_scores" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots VIP scores as image with retention and drift time axis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>threshold</strong> (<em>int</em>) – Only plots VIP scores above threshold if set.
+Values below are displayed as 0,
+by default None.</p></li>
 <li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
-by default 9.</p></li>
+by default 8.</p></li>
 <li><p><strong>height</strong> (<em>int or float, optional</em>) – Height of the plot in inches,
-by default 10.</p></li>
+by default 8.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -313,14 +287,13 @@ by default 10.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.predict">
 <span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.predict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Predicts responses for features of the test data.
-If y_test is set calculates root mean squared error and
-R^2 score.</p>
+<dd><p>Predicts responses for features of the test data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X_test</strong> (<em>numpy.ndarray of shape (n_samples, n_features)</em>) – Features of test data.</p></li>
-<li><p><strong>y_test</strong> (<em>numpy.ndarray of shape (n_samples, n_targets), optional</em>) – Target vector of response variables. If set calculates error metrics,
+<li><p><strong>y_train</strong> (<em>numpy.ndarray of shape (n_samples, n_targets), optional</em>) – True labels for test data.
+If set allows automatic plotting of validation data,
 by default None.</p></li>
 </ul>
 </dd>

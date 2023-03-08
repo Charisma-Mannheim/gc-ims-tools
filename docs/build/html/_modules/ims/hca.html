@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ims.hca &#8212; gc-ims-tools 0.1.2 documentation</title>
+    <title>ims.hca &#8212; gc-ims-tools 0.1.3 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/haiku.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -16,7 +16,7 @@
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
-          <span>gc-ims-tools 0.1.2 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.3 documentation</span></a></h1>
         <h2 class="heading"><span>ims.hca</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -80,15 +80,18 @@
 <span class="sd">    &gt;&gt;&gt; hca.fit(X)</span>
 <span class="sd">    &gt;&gt;&gt; hca.plot_dendrogram()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">affinity</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span> <span class="n">linkage</span><span class="o">=</span><span class="s2">&quot;ward&quot;</span><span class="p">,):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">affinity</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+        <span class="n">linkage</span><span class="o">=</span><span class="s2">&quot;ward&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">linkage</span> <span class="o">=</span> <span class="n">linkage</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">affinity</span> <span class="o">=</span> <span class="n">affinity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clustering</span> <span class="o">=</span> <span class="n">AgglomerativeClustering</span><span class="p">(</span>
-            <span class="n">distance_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-            <span class="n">n_clusters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">affinity</span><span class="o">=</span><span class="n">affinity</span><span class="p">,</span>
-            <span class="n">linkage</span><span class="o">=</span><span class="n">linkage</span>
+            <span class="n">distance_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">affinity</span><span class="o">=</span><span class="n">affinity</span><span class="p">,</span> <span class="n">linkage</span><span class="o">=</span><span class="n">linkage</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="HCA.fit"><a class="viewcode-back" href="../../ims.hca.html#ims.hca.HCA.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
@@ -105,18 +108,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">dendrogram</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linkage_matrix</span><span class="p">,</span> <span class="n">no_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clustering</span><span class="o">.</span><span class="n">labels_</span></div>
 
-<div class="viewcode-block" id="HCA.plot_dendrogram"><a class="viewcode-back" href="../../ims.hca.html#ims.hca.HCA.plot_dendrogram">[docs]</a>    <span class="k">def</span> <span class="nf">plot_dendrogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-                        <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="HCA.plot_dendrogram"><a class="viewcode-back" href="../../ims.hca.html#ims.hca.HCA.plot_dendrogram">[docs]</a>    <span class="k">def</span> <span class="nf">plot_dendrogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plots clustering results as dendrogram.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        width : int, optional</span>
-<span class="sd">            Width of the figure in inches, by default 9</span>
+<span class="sd">            Width of the figure in inches, by default 8</span>
 
 <span class="sd">        height : int, optional</span>
-<span class="sd">            Width of the figure in inches, by default 10</span>
+<span class="sd">            Width of the figure in inches, by default 8</span>
 
 <span class="sd">        orientation : str, optional</span>
 <span class="sd">            Root position of the clustering tree, by default &quot;right&quot;</span>
@@ -128,22 +130,17 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        matplotlib.pyplot.axes</span>
-<span class="sd">        &quot;&quot;&quot;</span>        
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">; </span><span class="si">{</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
-                                                     <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">samples</span><span class="p">)]</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">labels</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">[</span><span class="s2">&quot;leaves&quot;</span><span class="p">]</span>
 
         <span class="n">dendrogram</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">linkage_matrix</span><span class="p">,</span>
-            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
-            <span class="n">orientation</span><span class="o">=</span><span class="n">orientation</span><span class="p">,</span>
-            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">linkage_matrix</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="n">orientation</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Distances (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">affinity</span><span class="si">}</span><span class="s2"> method)&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ax</span></div>
 
@@ -161,9 +158,8 @@
             <span class="n">counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_count</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">clustering</span><span class="o">.</span><span class="n">children_</span><span class="p">,</span>
-             <span class="bp">self</span><span class="o">.</span><span class="n">clustering</span><span class="o">.</span><span class="n">distances_</span><span class="p">,</span> <span class="n">counts</span><span class="p">]</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span></div>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">clustering</span><span class="o">.</span><span class="n">children_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clustering</span><span class="o">.</span><span class="n">distances_</span><span class="p">,</span> <span class="n">counts</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span></div>
 </pre></div>
 
       </div>

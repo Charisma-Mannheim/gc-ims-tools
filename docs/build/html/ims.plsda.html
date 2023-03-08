@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>PLS_DA &#8212; gc-ims-tools 0.1.2 documentation</title>
+    <title>PLS_DA &#8212; gc-ims-tools 0.1.3 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
     <link rel="prev" title="PLSR" href="ims.plsr.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>gc-ims-tools 0.1.2 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.3 documentation</span></a></h1>
         <h2 class="heading"><span>PLS_DA</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -135,45 +135,23 @@ corrects the loadings using the weights.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ims.plsda.PLS_DA.vip_scores">
+<span class="sig-name descname"><span class="pre">vip_scores</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.vip_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variable importance in projection (VIP) scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.ndarray of shape (n_features,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ims.plsda.PLS_DA.y_pred_train">
 <span class="sig-name descname"><span class="pre">y_pred_train</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.y_pred_train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the predicted values from the training data for the plot method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>numpy.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ims.plsda.PLS_DA.accuracy">
-<span class="sig-name descname"><span class="pre">accuracy</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.accuracy" title="Permalink to this definition">¶</a></dt>
-<dd><p>If y_test is set in predict method, calculates accuracy internally.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ims.plsda.PLS_DA.precision">
-<span class="sig-name descname"><span class="pre">precision</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.precision" title="Permalink to this definition">¶</a></dt>
-<dd><p>If y_test is set in predict method, calculates precision internally.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ims.plsda.PLS_DA.recall">
-<span class="sig-name descname"><span class="pre">recall</span></span><a class="headerlink" href="#ims.plsda.PLS_DA.recall" title="Permalink to this definition">¶</a></dt>
-<dd><p>If y_test is set in predict method, calculates recall internally.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -211,17 +189,13 @@ Converts the labels into a binary matrix.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsda.PLS_DA.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots PLS components as scatter plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x_comp</strong> (<em>int, optional</em>) – Component x axis, by default 1.</p></li>
 <li><p><strong>y_comp</strong> (<em>int, optional</em>) – Component y axis, by default 2.</p></li>
-<li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
-by default 9.</p></li>
-<li><p><strong>height</strong> (<em>int or float, optional</em>) – Height of the plot in inches,
-by default 8.</p></li>
 <li><p><strong>annotate</strong> (<em>bool, optional</em>) – If True adds sample names to markers,
 by default False.</p></li>
 </ul>
@@ -234,7 +208,7 @@ by default False.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsda.PLS_DA.plot_coefficients">
-<span class="sig-name descname"><span class="pre">plot_coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.plot_coefficients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.plot_coefficients" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.plot_coefficients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.plot_coefficients" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots PLS coefficients of selected group as image
 with retention and drift time axis.</p>
 <dl class="field-list simple">
@@ -242,9 +216,9 @@ with retention and drift time axis.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>group</strong> (<em>int or str, optional</em>) – Index or name of group, by default 0.</p></li>
 <li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
-by default 9.</p></li>
+by default 8.</p></li>
 <li><p><strong>height</strong> (<em>int or float, optional</em>) – Height of the plot in inches,
-by default 10.</p></li>
+by default 8.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -255,7 +229,7 @@ by default 10.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsda.PLS_DA.plot_loadings">
-<span class="sig-name descname"><span class="pre">plot_loadings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.plot_loadings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.plot_loadings" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_loadings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.plot_loadings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.plot_loadings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots PLS x loadings as image with retention and drift
 time coordinates.</p>
 <dl class="field-list simple">
@@ -265,9 +239,9 @@ time coordinates.</p>
 <li><p><strong>color_range</strong> (<em>float, optional</em>) – Minimum and Maximum to adjust to different scaling methods,
 by default 0.02.</p></li>
 <li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
-by default 9.</p></li>
+by default 8.</p></li>
 <li><p><strong>height</strong> (<em>int or float, optional</em>) – Height of the plot in inches,
-by default 10.</p></li>
+by default 8.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -278,15 +252,18 @@ by default 10.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsda.PLS_DA.plot_vip_scores">
-<span class="sig-name descname"><span class="pre">plot_vip_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.plot_vip_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.plot_vip_scores" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_vip_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.plot_vip_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.plot_vip_scores" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots VIP scores as image with retention and drift time axis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>threshold</strong> (<em>int</em>) – Only plots VIP scores above threshold if set.
+Values below are displayed as 0,
+by default None.</p></li>
 <li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
-by default 9.</p></li>
+by default 8.</p></li>
 <li><p><strong>height</strong> (<em>int or float, optional</em>) – Height of the plot in inches,
-by default 10.</p></li>
+by default 8.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -297,17 +274,13 @@ by default 10.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsda.PLS_DA.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.predict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsda.html#PLS_DA.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsda.PLS_DA.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predicts class labels for test data. Converts back from binary
 labels matrix to a list of class names. If y_test is set also calculates
 accuracy, precision and recall and stores them as attributes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X_test</strong> (<em>numpy.ndarray of shape (n_samples, n_features)</em>) – Feature vectors of test dataset.</p></li>
-<li><p><strong>y_test</strong> (<em>numpy.ndarray of shape (n_samples,), optional</em>) – True labels for test dataset. If set calculates error metrics,
-by default None</p></li>
-</ul>
+<dd class="field-odd"><p><strong>X_test</strong> (<em>numpy.ndarray of shape (n_samples, n_features)</em>) – Feature vectors of test dataset.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Predicted class labels.</p>
@@ -350,8 +323,11 @@ by default None</p></li>
 <li><p><strong>y</strong> (<em>numpy.ndarray of shape (n_samples, n_targtets), optional</em>) – Dependend variables, by default None</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>X_scores</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>

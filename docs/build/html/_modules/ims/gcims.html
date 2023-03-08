@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ims.gcims &#8212; gc-ims-tools 0.1.2 documentation</title>
+    <title>ims.gcims &#8212; gc-ims-tools 0.1.3 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/haiku.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -16,7 +16,7 @@
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
-          <span>gc-ims-tools 0.1.2 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.3 documentation</span></a></h1>
         <h2 class="heading"><span>ims.gcims</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -51,7 +51,7 @@
 <span class="sd">    Represents one GCIMS-Spectrum with the data matrix,</span>
 <span class="sd">    retention and drift time coordinates.</span>
 <span class="sd">    Sample or file name and timestamp are included unique identifiers.</span>
-<span class="sd">    </span>
+
 <span class="sd">    This class contains all methods that can be applied on a per spectrum basis,</span>
 <span class="sd">    like I/O, plotting and some preprocessing tools. Methods that return a Spectrum change the instance inplace. Use the copy method.</span>
 
@@ -64,7 +64,7 @@
 
 <span class="sd">    values : numpy.array</span>
 <span class="sd">        Intensity matrix.</span>
-<span class="sd">        </span>
+
 <span class="sd">    ret_time : numpy.array</span>
 <span class="sd">        Retention time coordinate.</span>
 
@@ -73,31 +73,31 @@
 
 <span class="sd">    time : datetime object</span>
 <span class="sd">        Timestamp when the spectrum was recorded.</span>
-<span class="sd">        </span>
+
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
 <span class="sd">    &gt;&gt;&gt; import ims</span>
 <span class="sd">    &gt;&gt;&gt; sample = ims.Spectrum.read_mea(&quot;sample.mea&quot;)</span>
 <span class="sd">    &gt;&gt;&gt; sample.plot()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">ret_time</span><span class="p">,</span> <span class="n">drift_time</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">=</span> <span class="n">ret_time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span> <span class="o">=</span> <span class="n">drift_time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">time</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_drift_time_label</span> <span class="o">=</span> <span class="s1">&#39;Drift time [ms]&#39;</span>
-        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drift_time_label</span> <span class="o">=</span> <span class="s2">&quot;Drift time [ms]&quot;</span>
+
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;GC-IMS Spectrum: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
-    
+
     <span class="c1"># add, radd and truediv are implemented to calculate means easily</span>
     <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">values</span>
         <span class="n">ret_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">ret_time</span>
         <span class="n">drift_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">drift_time</span>
-        <span class="n">x</span> <span class="o">=</span>  <span class="n">Spectrum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">ret_time</span><span class="p">,</span> <span class="n">drift_time</span><span class="p">,</span>
-                      <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">Spectrum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">ret_time</span><span class="p">,</span> <span class="n">drift_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
         <span class="n">x</span><span class="o">.</span><span class="n">_drift_time_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drift_time_label</span>
         <span class="k">return</span> <span class="n">x</span>
 
@@ -112,8 +112,7 @@
             <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">/</span> <span class="n">other</span>
             <span class="n">ret_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">/</span> <span class="n">other</span>
             <span class="n">drift_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span> <span class="o">/</span> <span class="n">other</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">Spectrum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">ret_time</span><span class="p">,</span>
-                         <span class="n">drift_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">Spectrum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">ret_time</span><span class="p">,</span> <span class="n">drift_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
             <span class="n">x</span><span class="o">.</span><span class="n">_drift_time_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drift_time_label</span>
             <span class="k">return</span> <span class="n">x</span>
         <span class="k">else</span><span class="p">:</span>
@@ -170,25 +169,28 @@
 <span class="sd">        GC-IMS Spectrum: sample</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="n">ZipFile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">myzip</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">myzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;csv_data.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mycsv</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">myzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;csv_data.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mycsv</span><span class="p">:</span>
                 <span class="n">values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">mycsv</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-            <span class="k">with</span> <span class="n">myzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;meta_attributes.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">myjson</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">myzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;meta_attributes.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">myjson</span><span class="p">:</span>
                 <span class="n">meta_attr</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">myjson</span><span class="p">)</span>
 
         <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
         <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">ret_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">meta_attr</span><span class="p">[</span><span class="s1">&#39;Chunks count&#39;</span><span class="p">])</span>\
-            <span class="o">*</span> <span class="p">(</span><span class="n">meta_attr</span><span class="p">[</span><span class="s1">&#39;Chunk averages&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>\
-            <span class="o">*</span> <span class="n">meta_attr</span><span class="p">[</span><span class="s1">&#39;Chunk trigger repetition [ms]&#39;</span><span class="p">]</span>\
+        <span class="n">ret_time</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">meta_attr</span><span class="p">[</span><span class="s2">&quot;Chunks count&quot;</span><span class="p">])</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">meta_attr</span><span class="p">[</span><span class="s2">&quot;Chunk averages&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">meta_attr</span><span class="p">[</span><span class="s2">&quot;Chunk trigger repetition [ms]&quot;</span><span class="p">]</span>
             <span class="o">/</span> <span class="mi">1000</span>
-        <span class="n">drift_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">meta_attr</span><span class="p">[</span><span class="s1">&#39;Chunk sample count&#39;</span><span class="p">])</span>\
+        <span class="p">)</span>
+        <span class="n">drift_time</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">meta_attr</span><span class="p">[</span><span class="s2">&quot;Chunk sample count&quot;</span><span class="p">])</span>
             <span class="o">/</span> <span class="n">meta_attr</span><span class="p">[</span><span class="s2">&quot;Chunk sample rate [kHz]&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
 
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">meta_attr</span><span class="p">[</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">],</span>
-                                 <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S&quot;</span><span class="p">)</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">meta_attr</span><span class="p">[</span><span class="s2">&quot;Timestamp&quot;</span><span class="p">],</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">ret_time</span><span class="p">,</span> <span class="n">drift_time</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span></div>
 
@@ -217,15 +219,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
             <span class="n">i</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-            <span class="n">meta_attr</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">meta_attr</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
             <span class="n">meta_attr</span> <span class="o">=</span> <span class="n">meta_attr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;windows-1252&quot;</span><span class="p">)</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
         <span class="n">meta_attr</span> <span class="o">=</span> <span class="n">meta_attr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -252,8 +254,12 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">chunks_count</span><span class="p">,</span> <span class="n">chunk_sample_count</span><span class="p">)</span>
 
-        <span class="n">ret_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">chunks_count</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">chunk_averages</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>\
-            <span class="o">*</span> <span class="n">chunk_trigger_repetition</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="n">ret_time</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">chunks_count</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">chunk_averages</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">chunk_trigger_repetition</span>
+            <span class="o">/</span> <span class="mi">1000</span>
+        <span class="p">)</span>
 
         <span class="n">drift_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">chunk_sample_count</span><span class="p">)</span> <span class="o">/</span> <span class="n">chunk_sample_rate</span>
 
@@ -276,7 +282,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Spectrum</span>
-<span class="sd">        </span>
+
 <span class="sd">        Example</span>
 <span class="sd">        -------</span>
 <span class="sd">        &gt;&gt;&gt; import ims</span>
@@ -285,15 +291,14 @@
 <span class="sd">        GC-IMS Spectrum: sample</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">values</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span>
         <span class="n">ret_time</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span>
-        <span class="n">drift_time</span><span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+        <span class="n">drift_time</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
         <span class="n">timestamp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getctime</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">timestamp</span> <span class="o">=</span> <span class="n">ctime</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
-        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span>
-                                      <span class="s2">&quot;</span><span class="si">%a</span><span class="s2"> %b  </span><span class="si">%d</span><span class="s2"> %H:%M:%S %Y&quot;</span><span class="p">)</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%a</span><span class="s2"> %b  </span><span class="si">%d</span><span class="s2"> %H:%M:%S %Y&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">ret_time</span><span class="p">,</span> <span class="n">drift_time</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Spectrum.read_hdf5"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.read_hdf5">[docs]</a>    <span class="nd">@classmethod</span>
@@ -320,13 +325,13 @@
 <span class="sd">        &gt;&gt;&gt; sample = ims.Spectrum.read_mea(&quot;sample.mea&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; sample.to_hdf5()</span>
 <span class="sd">        &gt;&gt;&gt; sample = ims.Spectrum.read_hdf5(&quot;sample.hdf5&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>     
-        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">])</span>
-            <span class="n">ret_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;ret_time&#39;</span><span class="p">])</span>
-            <span class="n">drift_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;drift_time&#39;</span><span class="p">])</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
-            <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S&quot;</span><span class="p">)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">])</span>
+            <span class="n">ret_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;ret_time&quot;</span><span class="p">])</span>
+            <span class="n">drift_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;drift_time&quot;</span><span class="p">])</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">],</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S&quot;</span><span class="p">)</span>
             <span class="n">drift_time_label</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;drift_time_label&quot;</span><span class="p">])</span>
 
         <span class="n">spectrum</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">ret_time</span><span class="p">,</span> <span class="n">drift_time</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
@@ -354,15 +359,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-        
-        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">.hdf5&#39;</span><span class="p">,</span> <span class="s1">&#39;w-&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;values&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;ret_time&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;drift_time&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
-                                                <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;drift_time_label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drift_time_label</span></div>
+
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.hdf5&quot;</span><span class="p">,</span> <span class="s2">&quot;w-&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;values&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;ret_time&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;drift_time&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;drift_time_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drift_time_label</span></div>
 
 <div class="viewcode-block" id="Spectrum.tophat"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.tophat">[docs]</a>    <span class="k">def</span> <span class="nf">tophat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -392,7 +396,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        Spectrum</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">fl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">fl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">fl</span>
         <span class="c1"># self.values[self.values &lt; 0] = 0</span>
         <span class="k">return</span> <span class="bp">self</span></div>
@@ -415,7 +419,7 @@
         <span class="n">rip_ms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">[</span><span class="n">rip_index</span><span class="p">]</span>
         <span class="n">dt_riprel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span> <span class="o">/</span> <span class="n">rip_ms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span> <span class="o">=</span> <span class="n">dt_riprel</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_drift_time_label</span> <span class="o">=</span> <span class="s1">&#39;Drift time RIP relative&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_drift_time_label</span> <span class="o">=</span> <span class="s2">&quot;Drift time RIP relative&quot;</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Spectrum.rip_scaling"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.rip_scaling">[docs]</a>    <span class="k">def</span> <span class="nf">rip_scaling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -463,8 +467,8 @@
         <span class="n">a</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">rest</span> <span class="o">=</span> <span class="n">a</span> <span class="o">%</span> <span class="n">n</span>
         <span class="k">if</span> <span class="n">rest</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[:</span><span class="n">a</span><span class="o">-</span><span class="n">rest</span><span class="p">,</span> <span class="p">:]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">[:</span><span class="n">a</span><span class="o">-</span><span class="n">rest</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[:</span> <span class="n">a</span> <span class="o">-</span> <span class="n">rest</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">[:</span> <span class="n">a</span> <span class="o">-</span> <span class="n">rest</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="n">n</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="n">n</span><span class="p">,</span> <span class="p">:])</span> <span class="o">/</span> <span class="n">n</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">[::</span><span class="n">n</span><span class="p">]</span>
@@ -477,7 +481,7 @@
 <span class="sd">        simultaneously.</span>
 <span class="sd">        If the dimensions are not divisible by the binning factor</span>
 <span class="sd">        shortens it by the remainder at the long end.</span>
-<span class="sd">        Very effective data reduction because a factor n=2 already </span>
+<span class="sd">        Very effective data reduction because a factor n=2 already</span>
 <span class="sd">        reduces the number of features to a quarter.</span>
 
 <span class="sd">        Parameters</span>
@@ -505,16 +509,15 @@
         <span class="n">rest1</span> <span class="o">=</span> <span class="n">b</span> <span class="o">%</span> <span class="n">n</span>
 
         <span class="k">if</span> <span class="n">rest0</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[:</span><span class="n">a</span><span class="o">-</span><span class="n">rest0</span><span class="p">,</span> <span class="p">:]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">[:</span><span class="n">a</span><span class="o">-</span><span class="n">rest0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[:</span> <span class="n">a</span> <span class="o">-</span> <span class="n">rest0</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">[:</span> <span class="n">a</span> <span class="o">-</span> <span class="n">rest0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">rest1</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="p">:</span><span class="n">b</span><span class="o">-</span><span class="n">rest1</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">[:</span><span class="n">b</span><span class="o">-</span><span class="n">rest1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="p">:</span> <span class="n">b</span> <span class="o">-</span> <span class="n">rest1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">[:</span> <span class="n">b</span> <span class="o">-</span> <span class="n">rest1</span><span class="p">]</span>
 
         <span class="n">new_dims</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">//</span> <span class="n">n</span><span class="p">,</span> <span class="n">b</span> <span class="o">//</span> <span class="n">n</span><span class="p">)</span>
 
-        <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span> <span class="o">//</span> <span class="n">new_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                 <span class="n">new_dims</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">b</span> <span class="o">//</span> <span class="n">new_dims</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span> <span class="o">//</span> <span class="n">new_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">new_dims</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">b</span> <span class="o">//</span> <span class="n">new_dims</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">[::</span><span class="n">n</span><span class="p">]</span>
@@ -534,7 +537,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        start : int or float</span>
 <span class="sd">            Start value on drift time coordinate.</span>
-<span class="sd">        </span>
+
 <span class="sd">        stop : int or float, optional</span>
 <span class="sd">            Stop value on drift time coordinate.</span>
 <span class="sd">            If None uses the end of the array,</span>
@@ -629,13 +632,13 @@
 <span class="sd">        -------</span>
 <span class="sd">        tuple</span>
 <span class="sd">            (matplotlib.figure.Figure, matplotlib.pyplot.axes)</span>
-<span class="sd">        </span>
+
 <span class="sd">        Example</span>
 <span class="sd">        -------</span>
 <span class="sd">        &gt;&gt;&gt; import ims</span>
 <span class="sd">        &gt;&gt;&gt; sample = ims.Spectrum.read_mea(&quot;sample.mea&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; fig, ax = sample.plot()</span>
-<span class="sd">        &quot;&quot;&quot;</span>        
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
 
@@ -646,9 +649,13 @@
             <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdBu_r&quot;</span><span class="p">,</span>
             <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span>
             <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span>
-            <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">),</span>
-                    <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">))</span>
-            <span class="p">)</span>
+            <span class="n">extent</span><span class="o">=</span><span class="p">(</span>
+                <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">),</span>
+                <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">),</span>
+                <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">),</span>
+                <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">),</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
 
         <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">&quot;Intensities [arbitrary units]&quot;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -661,8 +668,7 @@
 
         <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
 
-<div class="viewcode-block" id="Spectrum.export_plot"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.export_plot">[docs]</a>    <span class="k">def</span> <span class="nf">export_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
-                    <span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;jpg&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Spectrum.export_plot"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.export_plot">[docs]</a>    <span class="k">def</span> <span class="nf">export_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Saves the figure as image file. See the docs for</span>
 <span class="sd">        matplotlib savefig function for supported file formats and kwargs</span>
@@ -688,8 +694,12 @@
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">file_format</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span>
-                    <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span> <span class="n">pad_inches</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span></div></div>
+        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">file_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span>
+            <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span>
+            <span class="n">pad_inches</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
 </pre></div>
 
       </div>
