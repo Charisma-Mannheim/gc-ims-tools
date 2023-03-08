@@ -143,7 +143,6 @@ class PCA_Model:
             pc_df["Label"] = self.dataset.labels
 
         ax = sns.scatterplot(
-            ax=ax,
             x=f"PC {PC_x}",
             y=f"PC {PC_y}",
             data=pc_df,
