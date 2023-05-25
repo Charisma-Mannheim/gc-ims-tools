@@ -575,7 +575,7 @@ class Spectrum:
         self.values = self.values[idx_start:idx_stop, :]
         return self
 
-    def plot(self, vmin=30, vmax=400, width=9, height=10):
+    def plot(self, vmin=30, vmax=400, width=8, height=8):
         """
         Plots Spectrum using matplotlibs imshow.
         Use %matplotlib widget in IPython or %matplotlib notebook
