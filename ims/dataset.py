@@ -918,6 +918,31 @@ class Dataset:
         self.preprocessing.append("mean()")
         return self
 
+    def asymcorr(self, lam=1e7, p=1e-3, niter=20):
+        """
+        Retention time baseline correction using asymmetric least squares.
+
+        Parameters
+        ----------
+        lam : float, optional
+            Controls smoothness. Larger numbers return smoother curves,
+            by default 1e7
+
+        p : float, optional
+            Controls asymmetry, by default 1e-3
+
+        niter : int, optional
+            Number of iterations during optimization,
+            by default 20
+
+        Returns
+        -------
+        Dataset
+        """
+        self.data = [Spectrum.asymcorr(i, lam, p, niter) for i in self.data]
+        self.preprocessing.append("asymcorr")
+        return self
+
     def tophat(self, size=15):
         """
         Applies white tophat filter on data matrix as a baseline correction.
@@ -931,7 +956,7 @@ class Dataset:
 
         Returns
         -------
-        ims.Dataset
+        Dataset
         """
         self.data = [Spectrum.tophat(i, size) for i in self.data]
         self.preprocessing.append("tophat")

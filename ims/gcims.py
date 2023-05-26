@@ -12,6 +12,7 @@ from datetime import datetime
 from time import ctime
 from skimage.morphology import white_tophat, disk
 from zipfile import ZipFile
+from ims.utils import asymcorr
 
 
 class Spectrum:
@@ -335,6 +336,33 @@ class Spectrum:
             f.attrs["name"] = self.name
             f.attrs["time"] = datetime.strftime(self.time, "%Y-%m-%dT%H:%M:%S")
             f.attrs["drift_time_label"] = self._drift_time_label
+
+    def asymcorr(self, lam=1e7, p=1e-3, niter=20):
+        """
+        Retention time baseline correction using asymmetric least squares.
+
+        Parameters
+        ----------
+        lam : float, optional
+            Controls smoothness. Larger numbers return smoother curves,
+            by default 1e7
+
+        p : float, optional
+            Controls asymmetry, by default 1e-3
+
+        niter : int, optional
+            Number of iterations during optimization,
+            by default 20
+
+        Returns
+        -------
+        Spectrum
+        """
+        for i in range(self.values.shape[1]):
+            y = self.values[:, i]
+            self.values[:, i] = asymcorr(y, lam=lam, p=p, niter=niter)
+
+        return self
 
     def tophat(self, size=15):
         """

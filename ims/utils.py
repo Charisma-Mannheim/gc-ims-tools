@@ -1,4 +1,7 @@
 import numpy as np
+from scipy import sparse
+from scipy.sparse.linalg import spsolve
+from scipy.spatial import ConvexHull
 
 
 def vip_scores(W, T, Q):
@@ -73,3 +76,41 @@ def selectivity_ratio(X, B):
     ss_expl = np.sum(exp_var, axis=0)
     ss_res = np.sum(exp_res, axis=0)
     return ss_expl / ss_res
+
+
+def asymcorr(y, lam=1e7, p=1e-3, niter=20):
+    """
+    Baseline correction using asymmetric least squares.
+
+    Parameters
+    ----------
+    y : numpy.ndarray of shape (1,)
+        Input spectrum or chromatogram.
+
+    lam : float, optional
+        Controls smoothness. Larger numbers return smoother curves,
+        by default 1e7.
+
+    p : float, optional
+        Controls asymmetry, by default 1e-3.
+
+    niter : int, optional
+        Number of iterations during optimization,
+        by default 20.
+
+    Returns
+    -------
+    numpy.ndarray of shape (1,)
+        Copy of input y with baseline subtracted.
+    """
+    L = len(y)
+    D = sparse.diags([1, -2, 1], [0, -1, -2], shape=(L, L - 2))
+    w = np.ones(L)
+
+    for _ in range(niter):
+        W = sparse.spdiags(w, 0, L, L)
+        Z = W + lam * D.dot(D.transpose())
+        z = spsolve(Z, w * y)
+        w = p * (y > z) + (1 - p) * (y < z)
+
+    return y - z
