@@ -13,6 +13,10 @@ from time import ctime
 from skimage.morphology import white_tophat, disk
 from zipfile import ZipFile
 from ims.utils import asymcorr
+from findpeaks import findpeaks
+from scipy.signal import savgol_filter
+from scipy import ndimage as ndi
+from skimage.segmentation import watershed
 
 
 class Spectrum:
@@ -56,6 +60,7 @@ class Spectrum:
         self.ret_time = ret_time
         self.drift_time = drift_time
         self.time = time
+        self.peak_table = None
         self._drift_time_label = "Drift time [ms]"
 
     def __repr__(self):
@@ -337,6 +342,175 @@ class Spectrum:
             f.attrs["time"] = datetime.strftime(self.time, "%Y-%m-%dT%H:%M:%S")
             f.attrs["drift_time_label"] = self._drift_time_label
 
+    def find_peaks(self, limit=None, denoise="fastnl", window=30, verbose=0):
+        """
+        Automated GC-IMS peak detection based on persistent homology.
+
+        Parameters
+        ----------
+        spectrum : ims.Spectrum
+            GC-IMS spectrum to use.
+
+        limit : float
+            Values > limit are active search areas to detect regions of interest (ROI).
+            If None limit is selected by the minimum persistence score,
+            by default None.
+
+        denoise : string, (default : 'fastnl', None to disable)
+            Filtering method to remove noise:
+                * None
+                * 'fastnl'
+                * 'bilateral'
+                * 'lee'
+                * 'lee_enhanced'
+                * 'kuan'
+                * 'frost'
+                * 'median'
+                * 'mean'
+
+        window : int, (default : 30)
+            Denoising window. Increasing the window size may removes noise better but may also removes details of image in certain denoising methods.
+
+        verbose : int (default : 3)
+            Print to screen. 0: None, 1: Error, 2: Warning, 3: Info, 4: Debug, 5: Trace.
+
+        Returns
+        -------
+        pandas.DataFrame
+            Peak table with drift and retention times,
+            the correspondig x and y indices,
+            birth and death levels and scores.
+
+        References
+        ----------
+        Taskesen, E. (2020). findpeaks is for the detection of peaks and valleys in a 1D vector and 2D array (image). (Version 2.3.1) [Computer software]. https://erdogant.github.io/findpeaks
+        """
+        if limit is None:
+            fp = findpeaks(
+                method="topology",
+                limit=0,
+                scale=True,
+                denoise=denoise,
+                window=window,
+                verbose=verbose,
+            )
+            fp.fit(self.values)
+            limit = fp.results["persistence"]["score"].min()
+
+        # actual peak detection
+        fp = findpeaks(
+            method="topology",
+            limit=limit,
+            scale=True,
+            denoise=denoise,
+            window=window,
+            verbose=verbose,
+        )
+        fp.fit(self.values)
+
+        # reindex to ensure consistent numbering and start at 1
+        df = fp.results["persistence"].reset_index(drop=True)
+        df.index = df.index + 1
+        df.index.name = "peak number"
+
+        df["x"] = df["x"].astype("int")
+        df["y"] = df["y"].astype("int")
+
+        # add the drift and retention time values for all indices
+        df.insert(0, "drift_time", self.drift_time[df["x"].values])
+        df.insert(2, "ret_time", self.ret_time[df["y"].values])
+        df.insert(0, "compound", "")
+
+        self.peak_table = df
+        return self
+
+    def plot_peaks(self):
+        """
+        Plots GC-IMS spectrum with peak labels from findpeaks method.
+
+        Returns
+        -------
+        matplotlib.pyplot.axes
+        """
+        if self.peak_table is None:
+            raise ValueError("Call 'findpeaks' method first.")
+
+        # call ims.Spectrum.plot method
+        _, ax = self.plot()
+
+        # iterate over peak table and add labels
+        for i, row in self.peak_table.iterrows():
+            x = row["drift_time"]
+            y = row["ret_time"]
+            label = f"{i} {row['compound']}"
+            ax.text(x, y, label, c="yellow", fontsize=12)
+
+        return ax
+
+    def plot_persistence(self):
+        """
+        Persistance plot of birth vs death levels from findpeak method.
+
+        Returns
+        -------
+        matplotlib.pyplot.axes
+        """
+        x = self.peak_table["birth_level"].values
+        y = self.peak_table["death_level"].values
+
+        ax = plt.subplot()
+        ax.plot(x, y, ".", c="tab:blue")
+
+        # draw line across plot
+        X = np.c_[x, y]
+        ax.plot([np.min(X), np.max(X)], [np.min(X), np.max(X)], "--", c="tab:grey")
+
+        # set axis limits and labels
+        ax.set_xlim((np.min(X), np.max(X)))
+        ax.set_ylim((np.min(X), np.max(X)))
+        ax.set_xlabel("Birth level")
+        ax.set_ylabel("Death level")
+
+        # add peak labels
+        for i, row in self.peak_table.iterrows():
+            x = row["birth_level"]
+            y = row["death_level"]
+            label = f"{i} {row['compound']}"
+            ax.text(x, y, label)
+
+        return ax
+
+    def watershed_segmentation(self, threshold):
+        """
+        Finds boundaries for overlapping peaks using watershed segmentation.
+        Requires peak_table for starting coordinates.
+
+        Parameters
+        ----------
+        threshold : int
+            Threshold is used to binarize the intensity values to calculate the distances.
+
+        Returns
+        -------
+        numpy.ndarray
+            Labels array with same shape as intensity values.
+        """    
+        # Binarize intensity values
+        image = np.copy(self.values) >= threshold
+
+        # Generate the markers as local maxima of the distance to the background
+        distance = ndi.distance_transform_edt(image)
+
+        # Use x and y coordinates from the peak table
+        coords = self.peak_table[["y", "x"]].values
+
+        # Watershed segmentation according to scikit-image tutorial
+        mask = np.zeros(distance.shape, dtype=bool)
+        mask[tuple(coords.T)] = True
+        markers, _ = ndi.label(mask)
+        labels = watershed(-distance, markers, mask=image)
+        return labels
+
     def asymcorr(self, lam=1e7, p=1e-3, niter=20):
         """
         Retention time baseline correction using asymmetric least squares.
@@ -394,7 +568,6 @@ class Spectrum:
         """
         fl = self.values[0 : n - 1, :].mean(axis=0)
         self.values = self.values - fl
-        # self.values[self.values < 0] = 0
         return self
 
     def riprel(self):
