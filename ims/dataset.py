@@ -943,6 +943,34 @@ class Dataset:
         self.preprocessing.append("asymcorr")
         return self
 
+    def savgol(self, window_length=10, polyorder=2, direction="both"):
+        """
+        Applys a Savitzky-Golay filter to intensity values.
+        Can be applied in the drift time, retention time or both directions.
+
+        Parameters
+        ----------
+        window_length : int, optional
+            The length of the filter window, by default 10
+
+        polyorder : int, optional
+            The order of the polynomial used to fit the samples, by default 2
+
+        direction : str, optional
+            The direction in which to apply the filter.
+            Can be 'drift time', 'retention time' or 'both'.
+            By default 'both'
+
+        Returns
+        -------
+        Dataset
+        """
+        self.data = [
+            Spectrum.savgol(i, window_length, polyorder, direction) for i in self.data
+        ]
+        self.preprocessing.append("savgol")
+        return self
+
     def tophat(self, size=15):
         """
         Applies white tophat filter on data matrix as a baseline correction.

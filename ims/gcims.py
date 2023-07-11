@@ -494,7 +494,7 @@ class Spectrum:
         -------
         numpy.ndarray
             Labels array with same shape as intensity values.
-        """    
+        """
         # Binarize intensity values
         image = np.copy(self.values) >= threshold
 
@@ -536,6 +536,43 @@ class Spectrum:
             y = self.values[:, i]
             self.values[:, i] = asymcorr(y, lam=lam, p=p, niter=niter)
 
+        return self
+
+    def savgol(self, window_length=10, polyorder=2, direction="both"):
+        """
+        Applys a Savitzky-Golay filter to intensity values.
+        Can be applied in the drift time, retention time or both directions.
+
+        Parameters
+        ----------
+        window_length : int, optional
+            The length of the filter window, by default 10
+
+        polyorder : int, optional
+            The order of the polynomial used to fit the samples, by default 2
+
+        direction : str, optional
+            The direction in which to apply the filter.
+            Can be 'drift time', 'retention time' or 'both'.
+            By default 'both'
+
+        Returns
+        -------
+        Spectrum
+        """
+        if direction == "drift time":
+            axis = 1
+        elif direction == "retention time":
+            axis = 0
+        elif direction == "both":
+            self.values = savgol_filter(self.values, window_length, polyorder, axis=0)
+            axis = 1
+        else:
+            raise ValueError(
+                "Only 'drift time', 'retention time' or 'both' are valid options!"
+            )
+
+        self.values = savgol_filter(self.values, window_length, polyorder, axis=axis)
         return self
 
     def tophat(self, size=15):
