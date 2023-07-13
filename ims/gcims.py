@@ -26,7 +26,8 @@ class Spectrum:
     Sample or file name and timestamp are included unique identifiers.
 
     This class contains all methods that can be applied on a per spectrum basis,
-    like I/O, plotting and some preprocessing tools. Methods that return a Spectrum change the instance inplace. Use the copy method.
+    like I/O, plotting and some preprocessing tools.
+    Methods that return a Spectrum change the instance inplace. Use the copy method.
 
 
     Parameters
@@ -433,7 +434,7 @@ class Spectrum:
         matplotlib.pyplot.axes
         """
         if self.peak_table is None:
-            raise ValueError("Call 'findpeaks' method first.")
+            raise ValueError("Call 'find_peaks' method first.")
 
         # call ims.Spectrum.plot method
         _, ax = self.plot()
@@ -455,6 +456,9 @@ class Spectrum:
         -------
         matplotlib.pyplot.axes
         """
+        if self.peak_table is None:
+            raise ValueError("Call 'find_peaks' method first.")
+        
         x = self.peak_table["birth_level"].values
         y = self.peak_table["death_level"].values
 
@@ -495,6 +499,9 @@ class Spectrum:
         numpy.ndarray
             Labels array with same shape as intensity values.
         """
+        if self.peak_table is None:
+            raise ValueError("Call 'find_peaks' method first.")
+        
         # Binarize intensity values
         image = np.copy(self.values) >= threshold
 
@@ -845,7 +852,6 @@ class Spectrum:
         >>> sample = ims.Spectrum.read_mea("sample.mea")
         >>> fig, ax = sample.plot()
         """
-
         fig, ax = plt.subplots(figsize=(width, height))
 
         plt.imshow(
