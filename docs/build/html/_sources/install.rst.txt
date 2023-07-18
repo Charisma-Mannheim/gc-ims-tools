@@ -17,3 +17,4 @@ It depends on:
     * h5py
     * scikit-learn
     * scikit-image
+    * findpeaks

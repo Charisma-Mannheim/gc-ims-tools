@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Spectrum &#8212; gc-ims-tools 0.1.5 documentation</title>
+    <title>Spectrum &#8212; gc-ims-tools 0.1.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
     <link rel="prev" title="Install" href="install.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>gc-ims-tools 0.1.5 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.6 documentation</span></a></h1>
         <h2 class="heading"><span>Spectrum</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -46,7 +46,8 @@
 retention and drift time coordinates.
 Sample or file name and timestamp are included unique identifiers.</p>
 <p>This class contains all methods that can be applied on a per spectrum basis,
-like I/O, plotting and some preprocessing tools. Methods that return a Spectrum change the instance inplace. Use the copy method.</p>
+like I/O, plotting and some preprocessing tools.
+Methods that return a Spectrum change the instance inplace. Use the copy method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -65,6 +66,26 @@ Reader methods set this attribute to the file name without extension.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.gcims.Spectrum.asymcorr">
+<span class="sig-name descname"><span class="pre">asymcorr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">niter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.asymcorr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.asymcorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retention time baseline correction using asymmetric least squares.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lam</strong> (<em>float, optional</em>) – Controls smoothness. Larger numbers return smoother curves,
+by default 1e7</p></li>
+<li><p><strong>p</strong> (<em>float, optional</em>) – Controls asymmetry, by default 1e-3</p></li>
+<li><p><strong>niter</strong> (<em>int, optional</em>) – Number of iterations during optimization,
+by default 20</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.binning">
 <span class="sig-name descname"><span class="pre">binning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.binning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.binning" title="Permalink to this definition">¶</a></dt>
@@ -216,8 +237,52 @@ by default ‘jpg’.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ims.gcims.Spectrum.find_peaks">
+<span class="sig-name descname"><span class="pre">find_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denoise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fastnl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.find_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.find_peaks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Automated GC-IMS peak detection based on persistent homology.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>spectrum</strong> (<em>ims.Spectrum</em>) – GC-IMS spectrum to use.</p></li>
+<li><p><strong>limit</strong> (<em>float</em>) – Values &gt; limit are active search areas to detect regions of interest (ROI).
+If None limit is selected by the minimum persistence score,
+by default None.</p></li>
+<li><p><strong>denoise</strong> (<em>string, (default : ‘fastnl’, None to disable)</em>) –</p>
+<dl class="simple">
+<dt>Filtering method to remove noise:</dt><dd><ul class="simple">
+<li><p>None</p></li>
+<li><p>‘fastnl’</p></li>
+<li><p>‘bilateral’</p></li>
+<li><p>‘lee’</p></li>
+<li><p>‘lee_enhanced’</p></li>
+<li><p>‘kuan’</p></li>
+<li><p>‘frost’</p></li>
+<li><p>‘median’</p></li>
+<li><p>‘mean’</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p><strong>window</strong> (<em>int, (default : 30)</em>) – Denoising window. Increasing the window size may removes noise better but may also removes details of image in certain denoising methods.</p></li>
+<li><p><strong>verbose</strong> (<em>int (default : 3)</em>) – Print to screen. 0: None, 1: Error, 2: Warning, 3: Info, 4: Debug, 5: Trace.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Peak table with drift and retention times,
+the correspondig x and y indices,
+birth and death levels and scores.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Taskesen, E. (2020). findpeaks is for the detection of peaks and valleys in a 1D vector and 2D array (image). (Version 2.3.1) [Computer software]. <a class="reference external" href="https://erdogant.github.io/findpeaks">https://erdogant.github.io/findpeaks</a></p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots Spectrum using matplotlibs imshow.
 Use %matplotlib widget in IPython or %matplotlib notebook
 in jupyter notebooks to get an interactive plot widget.
@@ -244,6 +309,28 @@ Returning the figure is needed to make the export plot utilities possible.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.gcims.Spectrum.plot_peaks">
+<span class="sig-name descname"><span class="pre">plot_peaks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.plot_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.plot_peaks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots GC-IMS spectrum with peak labels from findpeaks method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib.pyplot.axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.gcims.Spectrum.plot_persistence">
+<span class="sig-name descname"><span class="pre">plot_persistence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.plot_persistence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.plot_persistence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Persistance plot of birth vs death levels from findpeak method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib.pyplot.axes</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -406,6 +493,27 @@ otherwise unchanged.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.gcims.Spectrum.savgol">
+<span class="sig-name descname"><span class="pre">savgol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.savgol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.savgol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applys a Savitzky-Golay filter to intensity values.
+Can be applied in the drift time, retention time or both directions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>window_length</strong> (<em>int, optional</em>) – The length of the filter window, by default 10</p></li>
+<li><p><strong>polyorder</strong> (<em>int, optional</em>) – The order of the polynomial used to fit the samples, by default 2</p></li>
+<li><p><strong>direction</strong> (<em>str, optional</em>) – The direction in which to apply the filter.
+Can be ‘drift time’, ‘retention time’ or ‘both’.
+By default ‘both’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.shape">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#ims.gcims.Spectrum.shape" title="Permalink to this definition">¶</a></dt>
@@ -459,6 +567,24 @@ Size parameter is the diameter of the circular structuring element.
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.gcims.Spectrum.watershed_segmentation">
+<span class="sig-name descname"><span class="pre">watershed_segmentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.watershed_segmentation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.watershed_segmentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds boundaries for overlapping peaks using watershed segmentation.
+Requires peak_table for starting coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>threshold</strong> (<em>int</em>) – Threshold is used to binarize the intensity values to calculate the distances.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Labels array with same shape as intensity values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
 </dd></dl>

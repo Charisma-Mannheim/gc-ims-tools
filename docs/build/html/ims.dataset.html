@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Dataset &#8212; gc-ims-tools 0.1.5 documentation</title>
+    <title>Dataset &#8212; gc-ims-tools 0.1.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
     <link rel="prev" title="Spectrum" href="ims.gcims.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>gc-ims-tools 0.1.5 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.6 documentation</span></a></h1>
         <h2 class="heading"><span>Dataset</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -145,6 +145,26 @@ Necessary because labels are not stored in ims.Spectrum class.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span><span class="o">.</span><span class="n">add_spectrum</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="s2">&quot;sample_name&quot;</span><span class="p">,</span> <span class="s2">&quot;class_label&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.dataset.Dataset.asymcorr">
+<span class="sig-name descname"><span class="pre">asymcorr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">niter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.asymcorr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.asymcorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retention time baseline correction using asymmetric least squares.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lam</strong> (<em>float, optional</em>) – Controls smoothness. Larger numbers return smoother curves,
+by default 1e7</p></li>
+<li><p><strong>p</strong> (<em>float, optional</em>) – Controls asymmetry, by default 1e-3</p></li>
+<li><p><strong>niter</strong> (<em>int, optional</em>) – Number of iterations during optimization,
+by default 20</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -778,6 +798,27 @@ Useful to select or remove specific samples or files.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ims.dataset.Dataset.savgol">
+<span class="sig-name descname"><span class="pre">savgol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.savgol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.savgol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applys a Savitzky-Golay filter to intensity values.
+Can be applied in the drift time, retention time or both directions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>window_length</strong> (<em>int, optional</em>) – The length of the filter window, by default 10</p></li>
+<li><p><strong>polyorder</strong> (<em>int, optional</em>) – The order of the polynomial used to fit the samples, by default 2</p></li>
+<li><p><strong>direction</strong> (<em>str, optional</em>) – The direction in which to apply the filter.
+Can be ‘drift time’, ‘retention time’ or ‘both’.
+By default ‘both’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.scaling">
 <span class="sig-name descname"><span class="pre">scaling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pareto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_centering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.scaling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scales and mean centeres features according to selected method.</p>
@@ -925,7 +966,7 @@ Size parameter is the diameter of the circular structuring element.
 <dd class="field-odd"><p><strong>size</strong> (<em>int, optional</em>) – Size of structuring element, by default 15.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>ims.Dataset</p>
+<dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 </dd></dl>
