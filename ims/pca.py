@@ -160,7 +160,7 @@ class PCA_Model:
 
         return ax
 
-    def plot_loadings(self, PC=1, color_range=0.1, width=9, height=10):
+    def plot_loadings(self, PC=1, color_range=0.1, width=6, height=6):
         """
         Plots loadings of a principle component with the original retention
         and drift time coordinates.

@@ -244,7 +244,7 @@ class PLSR:
         plt.legend()
         return ax
 
-    def plot_loadings(self, component=1, color_range=0.01, width=8, height=8):
+    def plot_loadings(self, component=1, color_range=0.01, width=6, height=6):
         """
         Plots PLS x loadings as image with retention and drift
         time coordinates.
@@ -300,7 +300,7 @@ class PLSR:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
 
-    def plot_coefficients(self, width=8, height=8):
+    def plot_coefficients(self, width=6, height=6):
         """
         Plots PLS coefficients as image with retention and drift time axis.
 
@@ -347,7 +347,7 @@ class PLSR:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
 
-    def plot_vip_scores(self, threshold=None, width=8, height=8):
+    def plot_vip_scores(self, threshold=None, width=6, height=6):
         """
         Plots VIP scores as image with retention and drift time axis.
 
@@ -409,7 +409,7 @@ class PLSR:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
 
-    def plot_selectivity_ratio(self, threshold=None, width=8, height=8):
+    def plot_selectivity_ratio(self, threshold=None, width=6, height=6):
         """
         Plots VIP scores as image with retention and drift time axis.
 

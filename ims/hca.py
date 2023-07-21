@@ -76,7 +76,7 @@ class HCA:
         self.R = dendrogram(self.linkage_matrix, no_plot=True)
         self.labels = self.clustering.labels_
 
-    def plot_dendrogram(self, width=8, height=8, orientation="right", **kwargs):
+    def plot_dendrogram(self, width=6, height=6, orientation="right", **kwargs):
         """
         Plots clustering results as dendrogram.
 

@@ -240,7 +240,7 @@ class PLS_DA:
 
         return ax
 
-    def plot_loadings(self, component=1, color_range=0.02, width=8, height=8):
+    def plot_loadings(self, component=1, color_range=0.02, width=6, height=6):
         """
         Plots PLS x loadings as image with retention and drift
         time coordinates.
@@ -296,7 +296,7 @@ class PLS_DA:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
 
-    def plot_coefficients(self, group=0, width=8, height=8):
+    def plot_coefficients(self, group=0, width=6, height=6):
         """
         Plots PLS coefficients of selected group as image
         with retention and drift time axis.
@@ -355,7 +355,7 @@ class PLS_DA:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         return ax
 
-    def plot_vip_scores(self, threshold=None, width=8, height=8):
+    def plot_vip_scores(self, threshold=None, width=6, height=6):
         """
         Plots VIP scores as image with retention and drift time axis.
 
