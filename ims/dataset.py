@@ -7,6 +7,7 @@ from datetime import datetime
 import h5py
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
+from dtwalign import dtw
 from sklearn.utils import resample
 from sklearn.model_selection import (
     ShuffleSplit,
@@ -1038,6 +1039,41 @@ class Dataset:
 
         self.preprocessing.append("interp_riprel()")
         return self
+    
+    def align_ret_time(self, reference="mean"):
+        """
+        Retention time alignment based on dymanic time warping.
+
+        Parameters
+        ----------
+        reference : str, int or Spectrum, optional
+            Reference intensity values and retention time.
+            If "mean" is used, calculates the mean from all samples in dataset.
+            An integer is used to index the dataset and select a Spectrum.
+            If a Spectrum is given, uses this external sample as reference,
+            by default "mean".
+        """        
+        if isinstance(reference, str) and reference == "mean":
+            reference_ret_time = np.mean(
+                np.vstack([sample.ret_time for sample in self.data]),
+                axis=0
+                )
+            X, _ = self.get_xy(flatten=False)
+            reference_values = np.mean(X, axis=0)
+            
+        elif isinstance(reference, int):
+            reference_ret_time = self.data[reference].ret_time
+            reference_values = self.data[reference].values
+            
+        elif isinstance(reference, Spectrum):
+            reference_ret_time = reference.ret_time
+            reference_values = reference.values
+
+        for sample in self.data:
+            res = dtw(sample.values, reference_values)
+            warping_path = res.get_warping_path(target="query")
+            sample.values = sample.values[warping_path, :]
+            sample.ret_time = reference_ret_time
 
     def rip_scaling(self):
         """
