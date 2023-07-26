@@ -1074,6 +1074,8 @@ class Dataset:
             warping_path = res.get_warping_path(target="query")
             sample.values = sample.values[warping_path, :]
             sample.ret_time = reference_ret_time
+            
+        return self
 
     def rip_scaling(self):
         """
