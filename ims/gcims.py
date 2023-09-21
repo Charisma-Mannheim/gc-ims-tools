@@ -2,6 +2,7 @@ import os
 import re
 import json
 import h5py
+import pywt
 from array import array
 from copy import deepcopy
 import numpy as np
@@ -567,16 +568,16 @@ class Spectrum:
         -------
         Spectrum
         """
-        if direction == "drift time":
+        if direction == "drift_time":
             axis = 1
-        elif direction == "retention time":
+        elif direction == "ret_time":
             axis = 0
         elif direction == "both":
             self.values = savgol_filter(self.values, window_length, polyorder, axis=0)
             axis = 1
         else:
             raise ValueError(
-                "Only 'drift time', 'retention time' or 'both' are valid options!"
+                "Only 'drift_time', 'ret_time' or 'both' are valid options!"
             )
 
         self.values = savgol_filter(self.values, window_length, polyorder, axis=axis)
@@ -735,6 +736,61 @@ class Spectrum:
         self.values = self.values.reshape(shape).mean(axis=(-1, 1))
         self.ret_time = self.ret_time[::n]
         self.drift_time = self.drift_time[::n]
+        return self
+    
+    def wavecompr(self, direction="ret_time", wavelet="db3", level=3):
+        """
+        Data reduction by wavelet compression.
+        Can be applied to drift time, retention time or both axis.
+
+        Parameters
+        ----------
+        direction : str, optional
+            The direction in which to apply the filter.
+            Can be 'drift time', 'retention time' or 'both'.
+            By default 'ret_time'.
+
+        wavelet : str, optional
+            Wavelet object or name string,
+            by default "db3".
+
+        level : int, optional
+            Decomposition level (must be >= 0),
+            by default 3.
+
+        Returns
+        -------
+        Spectrum
+
+        Raises
+        ------
+        ValueError
+            When direction is neither 'ret_time', 'drift_time' or 'both'.
+        """        
+        if direction == "ret_time":
+            coef = pywt.wavedec(
+                self.values,
+                wavelet=wavelet,
+                level=level,
+                axis=0
+                )
+        elif direction == "drift_time":
+            coef = pywt.wavedec(
+                self.values,
+                wavelet=wavelet,
+                level=level,
+                axis=0
+                )
+        elif direction == "both":
+            coef = pywt.wavedec2(
+                self.values,
+                wavelet=wavelet,
+                level=level
+            )
+        else:
+            raise ValueError("Direction must be 'ret_time', 'drift_time or 'both'!")
+
+        self.values = coef[0]
         return self
 
     def cut_dt(self, start, stop=None):

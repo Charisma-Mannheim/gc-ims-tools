@@ -1156,6 +1156,39 @@ class Dataset:
         self.data = [Spectrum.binning(i, n) for i in self.data]
         self.preprocessing.append(f"binning({n})")
         return self
+    
+    def wavecompr(self, direction="ret_time", wavelet="db3", level=3):
+        """
+        Data reduction by wavelet compression.
+        Can be applied to drift time, retention time or both axis.
+
+        Parameters
+        ----------
+        direction : str, optional
+            The direction in which to apply the filter.
+            Can be 'drift time', 'retention time' or 'both'.
+            By default 'ret_time'.
+
+        wavelet : str, optional
+            Wavelet object or name string,
+            by default "db3".
+
+        level : int, optional
+            Decomposition level (must be >= 0),
+            by default 3.
+
+        Returns
+        -------
+        Dataset
+
+        Raises
+        ------
+        ValueError
+            When direction is neither 'ret_time', 'drift_time' or 'both'.
+        """        
+        self.data = [Spectrum.wavecompr(i, direction, wavelet, level) for i in self.data]
+        self.preprocessing.append(f"wavecompr")
+        return self
 
     def cut_dt(self, start, stop=None):
         """
