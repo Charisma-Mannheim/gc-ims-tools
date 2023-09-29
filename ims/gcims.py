@@ -766,31 +766,51 @@ class Spectrum:
         ------
         ValueError
             When direction is neither 'ret_time', 'drift_time' or 'both'.
-        """        
-        if direction == "ret_time":
-            coef = pywt.wavedec(
-                self.values,
+        """
+        coef_ret_time = pywt.wavedec(
+                self.ret_time,
                 wavelet=wavelet,
                 level=level,
-                axis=0
-                )
-        elif direction == "drift_time":
-            coef = pywt.wavedec(
-                self.values,
-                wavelet=wavelet,
-                level=level,
-                axis=0
-                )
-        elif direction == "both":
-            coef = pywt.wavedec2(
-                self.values,
-                wavelet=wavelet,
-                level=level
             )
+        coef_drift_time = pywt.wavedec(
+                self.drift_time,
+                wavelet=wavelet,
+                level=level,
+            )
+        
+        if direction == "ret_time":
+            coef_values = pywt.wavedec(
+                self.values,
+                wavelet=wavelet,
+                level=level,
+                axis=0
+                )
+            self.values = coef_values[0]
+            self.ret_time = coef_ret_time[0]
+
+        elif direction == "drift_time":
+            coef_values = pywt.wavedec(
+                self.values,
+                wavelet=wavelet,
+                level=level,
+                axis=1
+                )
+            self.values = coef_values[0]
+            self.drift_time = coef_drift_time[0]
+
+        elif direction == "both":
+            coef_values = pywt.wavedec2(
+                self.values,
+                wavelet=wavelet,
+                level=level,
+            )
+            self.values = coef_values[0]
+            self.ret_time = coef_ret_time[0]
+            self.drift_time = coef_drift_time[0]
+
         else:
             raise ValueError("Direction must be 'ret_time', 'drift_time or 'both'!")
 
-        self.values = coef[0]
         return self
 
     def cut_dt(self, start, stop=None):
