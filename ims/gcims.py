@@ -268,10 +268,10 @@ class Spectrum:
         """
         name = os.path.split(path)[1]
         name = name.split(".")[0]
-        df = pd.read_csv(path)
+        df = pd.read_csv(path, index_col = [0])
         values = df.values
-        ret_time = df.index
-        drift_time = df.columns
+        ret_time = np.array(df.index)
+        drift_time = df.columns.to_numpy().astype(float)
         timestamp = os.path.getctime(path)
         timestamp = ctime(timestamp)
         timestamp = datetime.strptime(timestamp, "%a %b  %d %H:%M:%S %Y")
