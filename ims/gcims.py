@@ -738,7 +738,7 @@ class Spectrum:
         self.drift_time = self.drift_time[::n]
         return self
     
-    def wavecompr(self, direction="ret_time", wavelet="db3", level=3):
+    def wavecompr(self, direction="both", wavelet="db3", level=3):
         """
         Data reduction by wavelet compression.
         Can be applied to drift time, retention time or both axis.
@@ -767,17 +767,6 @@ class Spectrum:
         ValueError
             When direction is neither 'ret_time', 'drift_time' or 'both'.
         """
-        coef_ret_time = pywt.wavedec(
-                self.ret_time,
-                wavelet=wavelet,
-                level=level,
-            )
-        coef_drift_time = pywt.wavedec(
-                self.drift_time,
-                wavelet=wavelet,
-                level=level,
-            )
-        
         if direction == "ret_time":
             coef_values = pywt.wavedec(
                 self.values,
@@ -786,7 +775,11 @@ class Spectrum:
                 axis=0
                 )
             self.values = coef_values[0]
-            self.ret_time = coef_ret_time[0]
+            self.ret_time = np.linspace(
+                self.ret_time[0],
+                stop=self.ret_time[-1],
+                num=self.values.shape[0]
+                )
 
         elif direction == "drift_time":
             coef_values = pywt.wavedec(
@@ -796,7 +789,11 @@ class Spectrum:
                 axis=1
                 )
             self.values = coef_values[0]
-            self.drift_time = coef_drift_time[0]
+            self.drift_time = np.linspace(
+                self.drift_time[0],
+                stop=self.drift_time[-1],
+                num=self.values.shape[1]
+                )
 
         elif direction == "both":
             coef_values = pywt.wavedec2(
@@ -805,8 +802,16 @@ class Spectrum:
                 level=level,
             )
             self.values = coef_values[0]
-            self.ret_time = coef_ret_time[0]
-            self.drift_time = coef_drift_time[0]
+            self.ret_time = np.linspace(
+                self.ret_time[0],
+                stop=self.ret_time[-1],
+                num=self.values.shape[0]
+                )
+            self.drift_time = np.linspace(
+                self.drift_time[0],
+                stop=self.drift_time[-1],
+                num=self.values.shape[1]
+                )
 
         else:
             raise ValueError("Direction must be 'ret_time', 'drift_time or 'both'!")
