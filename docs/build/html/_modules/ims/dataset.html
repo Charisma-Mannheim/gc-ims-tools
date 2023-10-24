@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ims.dataset &#8212; gc-ims-tools 0.1.5 documentation</title>
+    <title>ims.dataset &#8212; gc-ims-tools 0.1.7 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/haiku.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -16,7 +16,7 @@
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
-          <span>gc-ims-tools 0.1.5 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.7 documentation</span></a></h1>
         <h2 class="heading"><span>ims.dataset</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -39,6 +39,7 @@
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span> <span class="nn">dtwalign</span> <span class="kn">import</span> <span class="n">dtw</span>
 <span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="kn">import</span> <span class="n">resample</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ShuffleSplit</span><span class="p">,</span>
@@ -1070,6 +1071,43 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;interp_riprel()&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
+    
+<div class="viewcode-block" id="Dataset.align_ret_time"><a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.align_ret_time">[docs]</a>    <span class="k">def</span> <span class="nf">align_ret_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retention time alignment based on dymanic time warping.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        reference : str, int or Spectrum, optional</span>
+<span class="sd">            Reference intensity values and retention time.</span>
+<span class="sd">            If &quot;mean&quot; is used, calculates the mean from all samples in dataset.</span>
+<span class="sd">            An integer is used to index the dataset and select a Spectrum.</span>
+<span class="sd">            If a Spectrum is given, uses this external sample as reference,</span>
+<span class="sd">            by default &quot;mean&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">reference</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+            <span class="n">reference_ret_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">sample</span><span class="o">.</span><span class="n">ret_time</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]),</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+                <span class="p">)</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_xy</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">reference_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">reference_ret_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span><span class="o">.</span><span class="n">ret_time</span>
+            <span class="n">reference_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">reference</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">Spectrum</span><span class="p">):</span>
+            <span class="n">reference_ret_time</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">ret_time</span>
+            <span class="n">reference_values</span> <span class="o">=</span> <span class="n">reference</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">dtw</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">reference_values</span><span class="p">)</span>
+            <span class="n">warping_path</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get_warping_path</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;query&quot;</span><span class="p">)</span>
+            <span class="n">sample</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">warping_path</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">sample</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">=</span> <span class="n">reference_ret_time</span>
+            
+        <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Dataset.rip_scaling"><a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.rip_scaling">[docs]</a>    <span class="k">def</span> <span class="nf">rip_scaling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1149,6 +1187,39 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">binning</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;binning(</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+    
+<div class="viewcode-block" id="Dataset.wavecompr"><a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.wavecompr">[docs]</a>    <span class="k">def</span> <span class="nf">wavecompr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;ret_time&quot;</span><span class="p">,</span> <span class="n">wavelet</span><span class="o">=</span><span class="s2">&quot;db3&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Data reduction by wavelet compression.</span>
+<span class="sd">        Can be applied to drift time, retention time or both axis.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        direction : str, optional</span>
+<span class="sd">            The direction in which to apply the filter.</span>
+<span class="sd">            Can be &#39;drift time&#39;, &#39;retention time&#39; or &#39;both&#39;.</span>
+<span class="sd">            By default &#39;ret_time&#39;.</span>
+
+<span class="sd">        wavelet : str, optional</span>
+<span class="sd">            Wavelet object or name string,</span>
+<span class="sd">            by default &quot;db3&quot;.</span>
+
+<span class="sd">        level : int, optional</span>
+<span class="sd">            Decomposition level (must be &gt;= 0),</span>
+<span class="sd">            by default 3.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Dataset</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            When direction is neither &#39;ret_time&#39;, &#39;drift_time&#39; or &#39;both&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">wavecompr</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">wavelet</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;wavecompr&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Dataset.cut_dt"><a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.cut_dt">[docs]</a>    <span class="k">def</span> <span class="nf">cut_dt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

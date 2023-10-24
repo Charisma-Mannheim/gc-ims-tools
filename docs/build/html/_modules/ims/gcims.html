@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ims.gcims &#8212; gc-ims-tools 0.1.3 documentation</title>
+    <title>ims.gcims &#8212; gc-ims-tools 0.1.7 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/haiku.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -16,7 +16,7 @@
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
-          <span>gc-ims-tools 0.1.3 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.7 documentation</span></a></h1>
         <h2 class="heading"><span>ims.gcims</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -34,6 +34,7 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">pywt</span>
 <span class="kn">from</span> <span class="nn">array</span> <span class="kn">import</span> <span class="n">array</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -44,6 +45,11 @@
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">ctime</span>
 <span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="kn">import</span> <span class="n">white_tophat</span><span class="p">,</span> <span class="n">disk</span>
 <span class="kn">from</span> <span class="nn">zipfile</span> <span class="kn">import</span> <span class="n">ZipFile</span>
+<span class="kn">from</span> <span class="nn">ims.utils</span> <span class="kn">import</span> <span class="n">asymcorr</span>
+<span class="kn">from</span> <span class="nn">findpeaks</span> <span class="kn">import</span> <span class="n">findpeaks</span>
+<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">savgol_filter</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span> <span class="k">as</span> <span class="n">ndi</span>
+<span class="kn">from</span> <span class="nn">skimage.segmentation</span> <span class="kn">import</span> <span class="n">watershed</span>
 
 
 <div class="viewcode-block" id="Spectrum"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum">[docs]</a><span class="k">class</span> <span class="nc">Spectrum</span><span class="p">:</span>
@@ -53,7 +59,8 @@
 <span class="sd">    Sample or file name and timestamp are included unique identifiers.</span>
 
 <span class="sd">    This class contains all methods that can be applied on a per spectrum basis,</span>
-<span class="sd">    like I/O, plotting and some preprocessing tools. Methods that return a Spectrum change the instance inplace. Use the copy method.</span>
+<span class="sd">    like I/O, plotting and some preprocessing tools.</span>
+<span class="sd">    Methods that return a Spectrum change the instance inplace. Use the copy method.</span>
 
 
 <span class="sd">    Parameters</span>
@@ -87,6 +94,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">=</span> <span class="n">ret_time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span> <span class="o">=</span> <span class="n">drift_time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">peak_table</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_drift_time_label</span> <span class="o">=</span> <span class="s2">&quot;Drift time [ms]&quot;</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -292,10 +300,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">values</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span>
-        <span class="n">ret_time</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span>
-        <span class="n">drift_time</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+        <span class="n">ret_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">drift_time</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">timestamp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getctime</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">timestamp</span> <span class="o">=</span> <span class="n">ctime</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
         <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%a</span><span class="s2"> %b  </span><span class="si">%d</span><span class="s2"> %H:%M:%S %Y&quot;</span><span class="p">)</span>
@@ -368,6 +376,245 @@
             <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S&quot;</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;drift_time_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drift_time_label</span></div>
 
+<div class="viewcode-block" id="Spectrum.find_peaks"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.find_peaks">[docs]</a>    <span class="k">def</span> <span class="nf">find_peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">denoise</span><span class="o">=</span><span class="s2">&quot;fastnl&quot;</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Automated GC-IMS peak detection based on persistent homology.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        spectrum : ims.Spectrum</span>
+<span class="sd">            GC-IMS spectrum to use.</span>
+
+<span class="sd">        limit : float</span>
+<span class="sd">            Values &gt; limit are active search areas to detect regions of interest (ROI).</span>
+<span class="sd">            If None limit is selected by the minimum persistence score,</span>
+<span class="sd">            by default None.</span>
+
+<span class="sd">        denoise : string, (default : &#39;fastnl&#39;, None to disable)</span>
+<span class="sd">            Filtering method to remove noise:</span>
+<span class="sd">                * None</span>
+<span class="sd">                * &#39;fastnl&#39;</span>
+<span class="sd">                * &#39;bilateral&#39;</span>
+<span class="sd">                * &#39;lee&#39;</span>
+<span class="sd">                * &#39;lee_enhanced&#39;</span>
+<span class="sd">                * &#39;kuan&#39;</span>
+<span class="sd">                * &#39;frost&#39;</span>
+<span class="sd">                * &#39;median&#39;</span>
+<span class="sd">                * &#39;mean&#39;</span>
+
+<span class="sd">        window : int, (default : 30)</span>
+<span class="sd">            Denoising window. Increasing the window size may removes noise better but may also removes details of image in certain denoising methods.</span>
+
+<span class="sd">        verbose : int (default : 3)</span>
+<span class="sd">            Print to screen. 0: None, 1: Error, 2: Warning, 3: Info, 4: Debug, 5: Trace.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            Peak table with drift and retention times,</span>
+<span class="sd">            the correspondig x and y indices,</span>
+<span class="sd">            birth and death levels and scores.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Taskesen, E. (2020). findpeaks is for the detection of peaks and valleys in a 1D vector and 2D array (image). (Version 2.3.1) [Computer software]. https://erdogant.github.io/findpeaks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">limit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fp</span> <span class="o">=</span> <span class="n">findpeaks</span><span class="p">(</span>
+                <span class="n">method</span><span class="o">=</span><span class="s2">&quot;topology&quot;</span><span class="p">,</span>
+                <span class="n">limit</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">denoise</span><span class="o">=</span><span class="n">denoise</span><span class="p">,</span>
+                <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">fp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">limit</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;persistence&quot;</span><span class="p">][</span><span class="s2">&quot;score&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+
+        <span class="c1"># actual peak detection</span>
+        <span class="n">fp</span> <span class="o">=</span> <span class="n">findpeaks</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;topology&quot;</span><span class="p">,</span>
+            <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+            <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">denoise</span><span class="o">=</span><span class="n">denoise</span><span class="p">,</span>
+            <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="c1"># reindex to ensure consistent numbering and start at 1</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;persistence&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;peak number&quot;</span>
+
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
+
+        <span class="c1"># add the drift and retention time values for all indices</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;drift_time&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">])</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;ret_time&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">])</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;compound&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">peak_table</span> <span class="o">=</span> <span class="n">df</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Spectrum.plot_peaks"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.plot_peaks">[docs]</a>    <span class="k">def</span> <span class="nf">plot_peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots GC-IMS spectrum with peak labels from findpeaks method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.pyplot.axes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Call &#39;find_peaks&#39; method first.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># call ims.Spectrum.plot method</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+        <span class="c1"># iterate over peak table and add labels</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_table</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;drift_time&quot;</span><span class="p">]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;ret_time&quot;</span><span class="p">]</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;compound&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ax</span></div>
+
+<div class="viewcode-block" id="Spectrum.plot_persistence"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.plot_persistence">[docs]</a>    <span class="k">def</span> <span class="nf">plot_persistence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Persistance plot of birth vs death levels from findpeak method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.pyplot.axes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Call &#39;find_peaks&#39; method first.&quot;</span><span class="p">)</span>
+        
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_table</span><span class="p">[</span><span class="s2">&quot;birth_level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_table</span><span class="p">[</span><span class="s2">&quot;death_level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;tab:blue&quot;</span><span class="p">)</span>
+
+        <span class="c1"># draw line across plot</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">)],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">)],</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;tab:grey&quot;</span><span class="p">)</span>
+
+        <span class="c1"># set axis limits and labels</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">)))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">)))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Birth level&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Death level&quot;</span><span class="p">)</span>
+
+        <span class="c1"># add peak labels</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_table</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;birth_level&quot;</span><span class="p">]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;death_level&quot;</span><span class="p">]</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;compound&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ax</span></div>
+
+<div class="viewcode-block" id="Spectrum.watershed_segmentation"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.watershed_segmentation">[docs]</a>    <span class="k">def</span> <span class="nf">watershed_segmentation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds boundaries for overlapping peaks using watershed segmentation.</span>
+<span class="sd">        Requires peak_table for starting coordinates.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        threshold : int</span>
+<span class="sd">            Threshold is used to binarize the intensity values to calculate the distances.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Labels array with same shape as intensity values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Call &#39;find_peaks&#39; method first.&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Binarize intensity values</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">threshold</span>
+
+        <span class="c1"># Generate the markers as local maxima of the distance to the background</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">distance_transform_edt</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+        <span class="c1"># Use x and y coordinates from the peak table</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">peak_table</span><span class="p">[[</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># Watershed segmentation according to scikit-image tutorial</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">distance</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">mask</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">T</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">markers</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">watershed</span><span class="p">(</span><span class="o">-</span><span class="n">distance</span><span class="p">,</span> <span class="n">markers</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">labels</span></div>
+
+<div class="viewcode-block" id="Spectrum.asymcorr"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.asymcorr">[docs]</a>    <span class="k">def</span> <span class="nf">asymcorr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="mf">1e7</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retention time baseline correction using asymmetric least squares.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lam : float, optional</span>
+<span class="sd">            Controls smoothness. Larger numbers return smoother curves,</span>
+<span class="sd">            by default 1e7</span>
+
+<span class="sd">        p : float, optional</span>
+<span class="sd">            Controls asymmetry, by default 1e-3</span>
+
+<span class="sd">        niter : int, optional</span>
+<span class="sd">            Number of iterations during optimization,</span>
+<span class="sd">            by default 20</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Spectrum</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">asymcorr</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="n">niter</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Spectrum.savgol"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.savgol">[docs]</a>    <span class="k">def</span> <span class="nf">savgol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">polyorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applys a Savitzky-Golay filter to intensity values.</span>
+<span class="sd">        Can be applied in the drift time, retention time or both directions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        window_length : int, optional</span>
+<span class="sd">            The length of the filter window, by default 10</span>
+
+<span class="sd">        polyorder : int, optional</span>
+<span class="sd">            The order of the polynomial used to fit the samples, by default 2</span>
+
+<span class="sd">        direction : str, optional</span>
+<span class="sd">            The direction in which to apply the filter.</span>
+<span class="sd">            Can be &#39;drift time&#39;, &#39;retention time&#39; or &#39;both&#39;.</span>
+<span class="sd">            By default &#39;both&#39;</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Spectrum</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;drift_time&quot;</span><span class="p">:</span>
+            <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;ret_time&quot;</span><span class="p">:</span>
+            <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;both&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">savgol_filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">window_length</span><span class="p">,</span> <span class="n">polyorder</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Only &#39;drift_time&#39;, &#39;ret_time&#39; or &#39;both&#39; are valid options!&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">savgol_filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">window_length</span><span class="p">,</span> <span class="n">polyorder</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
 <div class="viewcode-block" id="Spectrum.tophat"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.tophat">[docs]</a>    <span class="k">def</span> <span class="nf">tophat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies white tophat filter on data matrix as a baseline correction.</span>
@@ -398,7 +645,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">fl</span>
-        <span class="c1"># self.values[self.values &lt; 0] = 0</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Spectrum.riprel"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.riprel">[docs]</a>    <span class="k">def</span> <span class="nf">riprel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -523,6 +769,86 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">[::</span><span class="n">n</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">[::</span><span class="n">n</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span></div>
+    
+<div class="viewcode-block" id="Spectrum.wavecompr"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.wavecompr">[docs]</a>    <span class="k">def</span> <span class="nf">wavecompr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">wavelet</span><span class="o">=</span><span class="s2">&quot;db3&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Data reduction by wavelet compression.</span>
+<span class="sd">        Can be applied to drift time, retention time or both axis.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        direction : str, optional</span>
+<span class="sd">            The direction in which to apply the filter.</span>
+<span class="sd">            Can be &#39;drift time&#39;, &#39;retention time&#39; or &#39;both&#39;.</span>
+<span class="sd">            By default &#39;ret_time&#39;.</span>
+
+<span class="sd">        wavelet : str, optional</span>
+<span class="sd">            Wavelet object or name string,</span>
+<span class="sd">            by default &quot;db3&quot;.</span>
+
+<span class="sd">        level : int, optional</span>
+<span class="sd">            Decomposition level (must be &gt;= 0),</span>
+<span class="sd">            by default 3.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Spectrum</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            When direction is neither &#39;ret_time&#39;, &#39;drift_time&#39; or &#39;both&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;ret_time&quot;</span><span class="p">:</span>
+            <span class="n">coef_values</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">wavedec</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="n">wavelet</span><span class="o">=</span><span class="n">wavelet</span><span class="p">,</span>
+                <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">coef_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">stop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;drift_time&quot;</span><span class="p">:</span>
+            <span class="n">coef_values</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">wavedec</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="n">wavelet</span><span class="o">=</span><span class="n">wavelet</span><span class="p">,</span>
+                <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">coef_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">stop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;both&quot;</span><span class="p">:</span>
+            <span class="n">coef_values</span> <span class="o">=</span> <span class="n">pywt</span><span class="o">.</span><span class="n">wavedec2</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="n">wavelet</span><span class="o">=</span><span class="n">wavelet</span><span class="p">,</span>
+                <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">coef_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">stop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ret_time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">stop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">drift_time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Direction must be &#39;ret_time&#39;, &#39;drift_time or &#39;both&#39;!&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Spectrum.cut_dt"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.cut_dt">[docs]</a>    <span class="k">def</span> <span class="nf">cut_dt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -607,7 +933,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_stop</span><span class="p">,</span> <span class="p">:]</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Spectrum.plot"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<div class="viewcode-block" id="Spectrum.plot"><a class="viewcode-back" href="../../ims.gcims.html#ims.gcims.Spectrum.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plots Spectrum using matplotlibs imshow.</span>
 <span class="sd">        Use %matplotlib widget in IPython or %matplotlib notebook</span>
@@ -639,7 +965,6 @@
 <span class="sd">        &gt;&gt;&gt; sample = ims.Spectrum.read_mea(&quot;sample.mea&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; fig, ax = sample.plot()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
 
         <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>

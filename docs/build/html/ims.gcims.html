@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Spectrum &#8212; gc-ims-tools 0.1.6 documentation</title>
+    <title>Spectrum &#8212; gc-ims-tools 0.1.7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -19,7 +19,7 @@
     <link rel="prev" title="Install" href="install.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>gc-ims-tools 0.1.6 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.7 documentation</span></a></h1>
         <h2 class="heading"><span>Spectrum</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="top navigation">
@@ -282,7 +282,7 @@ birth and death levels and scores.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots Spectrum using matplotlibs imshow.
 Use %matplotlib widget in IPython or %matplotlib notebook
 in jupyter notebooks to get an interactive plot widget.
@@ -585,6 +585,32 @@ Requires peak_table for starting coordinates.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.gcims.Spectrum.wavecompr">
+<span class="sig-name descname"><span class="pre">wavecompr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'db3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.wavecompr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.wavecompr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data reduction by wavelet compression.
+Can be applied to drift time, retention time or both axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>direction</strong> (<em>str, optional</em>) – The direction in which to apply the filter.
+Can be ‘drift time’, ‘retention time’ or ‘both’.
+By default ‘ret_time’.</p></li>
+<li><p><strong>wavelet</strong> (<em>str, optional</em>) – Wavelet object or name string,
+by default “db3”.</p></li>
+<li><p><strong>level</strong> (<em>int, optional</em>) – Decomposition level (must be &gt;= 0),
+by default 3.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – When direction is neither ‘ret_time’, ‘drift_time’ or ‘both’.</p>
 </dd>
 </dl>
 </dd></dl>
