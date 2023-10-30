@@ -419,9 +419,9 @@ class Spectrum:
         df["y"] = df["y"].astype("int")
 
         # add the drift and retention time values for all indices
-        if self.rip_ms is not None:
+        if hasattr(self, "rip_ms"):
             df.insert(0, "riprel_dt", self.drift_time[df["x"].values])
-            df.insert(3,"abs_dt",self.drift_time[df["x"].values]+self.rip_ms)
+            df.insert(3, "abs_dt", self.drift_time[df["x"].values] * self.rip_ms)
         else:
             df.insert(0, "abs_dt", self.drift_time[df["x"].values])
         df.insert(2, "ret_time", self.ret_time[df["y"].values])
@@ -446,7 +446,7 @@ class Spectrum:
 
         # iterate over peak table and add labels
         for i, row in self.peak_table.iterrows():
-            if self.peak_table["riprel_dt"] is not None:
+            if "riprel_dt" in self.peak_table.columns:
                 x = row["riprel_dt"]
             else:
                 x = row["abs_dt"]
@@ -525,14 +525,14 @@ class Spectrum:
         markers, _ = ndi.label(mask)
         labels = watershed(-distance, markers, mask=image)
         return labels
-    
+
     def calc_reduced_mobility(self, T = 318.15, p = 1013.25, Ud = 2132, L = 5.3):
         """
         Calculates the reduced mobility values for the drift times denoted in the peak table.
-        The formula for the calculation of the reduced mobility values originates from 
+        The formula for the calculation of the reduced mobility values originates from
         Ahrens, A., Zimmermann, S. Towards a hand-held, fast, and sensitive gas chromatograph-ion mobility spectrometer
         for detecting volatile compounds. Anal Bioanal Chem 413, 1009–1016 (2021). https://doi.org/10.1007/s00216-020-03059-9
-        
+
         Parameters
         ----------
         T : float, optional
@@ -549,15 +549,15 @@ class Spectrum:
         pandas.DataFrame
             returns the original dataframe from the find_peaks method,
             but adds a column for the reduced mobility
-        """    
+        """
         if self.peak_table is None:
             raise ValueError("Call 'find_peaks' method first.")
         T0 = 273.15
         p0 = 1013.15
-            
-        dt = self.peak_table['abs_dt'].values
-        K0 = (L ** 2 * T0 * p) / (dt * 10 ** -3 * Ud * T *p0)
-        self.peak_table['mobility'] = K0
+
+        dt = self.peak_table["abs_dt"].values
+        K0 = (L**2 * T0 * p) / (dt * 10**-3 * Ud * T * p0)
+        self.peak_table["mobility"] = K0
         return self
 
     def asymcorr(self, lam=1e7, p=1e-3, niter=20):
