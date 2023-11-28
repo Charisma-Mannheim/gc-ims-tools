@@ -381,6 +381,7 @@ class Spectrum:
         pandas.DataFrame
             Peak table with drift and retention times,
             the correspondig x and y indices,
+            the maximum intensity of the peak,
             birth and death levels and scores.
 
         References
@@ -426,6 +427,7 @@ class Spectrum:
             df.insert(0, "abs_dt", self.drift_time[df["x"].values])
         df.insert(2, "ret_time", self.ret_time[df["y"].values])
         df.insert(0, "compound", "")
+        df.insert(1, "intensity", self.values[df["y"].values, df["x"].values])
 
         self.peak_table = df
         return self
