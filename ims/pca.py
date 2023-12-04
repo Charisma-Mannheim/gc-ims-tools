@@ -99,7 +99,7 @@ class PCA_Model:
         self.singular_values = self._sk_pca.singular_values_
         self.mean = self._sk_pca.mean_
         self.loadings = self._sk_pca.components_
-        self.residuals = X_train - self.scores @ self.loadings
+        self.residuals = X_train - self._sk_pca.inverse_transform(self.scores)
         self.Q = np.sum(self.residuals**2, axis=1)
         self.Tsq = np.sum((self.scores / np.std(self.scores, axis=0)) ** 2, axis=1)
         if theoretical_quantiles:
