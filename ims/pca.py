@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.ticker import MaxNLocator, AutoMinorLocator
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 from scipy.stats import f, norm
 
 
@@ -81,8 +82,10 @@ class PCA_Model:
         ----------
         X_train : numpy.ndarray of shape (n_samples, n_features)
             The training data.
+
         conf_level : float, optional
             Confidence level for Tsq/Q outlier detection, by default 0.95.
+
         theoretical_quantiles : bool, optional
             Use theoretical quantiles for Tsq/Q outlier detection,
             by default True. If False, empirical quantiles are used.
@@ -111,12 +114,19 @@ class PCA_Model:
                 / (self.scores.shape[0] - self.n_components)
             )
             # theoretical quantile for Q, according to Jackson and Mudholkar (1979), Eq. (3.4)
-            lambda_ = np.linalg.eigvals(np.cov(X_train, rowvar=False))
-            theta = {i: np.sum(np.power(lambda_[len(self.explained_variance):], i)) for i in [1,2,3]}
-            h0 = 1 - 2 * theta[1] * theta[3] / (3 * theta[2]**2)
-            self.Q_conf = theta[1] * (1
-                                      + norm.ppf(conf_level) * np.sqrt(2 * theta[2] * h0**2) / theta[1]
-                                      + theta[2]*h0*(h0-1) / theta[1]**2)**(1/h0)
+            lambda_values = PCA().fit(X_train).explained_variance_[self.n_components :]
+
+            theta_1 = np.sum(lambda_values)
+            theta_2 = np.sum(lambda_values**2)
+            theta_3 = np.sum(lambda_values**3)
+
+            h0 = 1 - 2 * theta_1 * theta_3 / (3 * theta_2**2)
+
+            self.Q_conf = theta_1 * (
+                1
+                + norm.ppf(conf_level) * np.sqrt(2 * theta_2 * h0**2) / theta_1
+                + theta_2 * h0 * (h0 - 1) / theta_1**2
+            ) ** (1 / h0)
         else:
             self.Tsq_conf = np.quantile(self.Tsq, q=conf_level)
             self.Q_conf = np.quantile(self.Q, q=conf_level)
