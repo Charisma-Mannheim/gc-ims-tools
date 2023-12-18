@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.ticker import MaxNLocator, AutoMinorLocator
 from sklearn.decomposition import PCA
-from scipy.stats import f
+from sklearn.preprocessing import StandardScaler
+from scipy.stats import f, norm
 
 
 class PCA_Model:
@@ -73,7 +74,7 @@ class PCA_Model:
         self.svd_solver = svd_solver
         self._sk_pca = PCA(n_components, svd_solver=svd_solver, **kwargs)
 
-    def fit(self, X_train):
+    def fit(self, X_train, conf_level=0.95, theoretical_quantiles=True):
         """
         Fit the PCA model with training data.
 
@@ -81,6 +82,13 @@ class PCA_Model:
         ----------
         X_train : numpy.ndarray of shape (n_samples, n_features)
             The training data.
+
+        conf_level : float, optional
+            Confidence level for Tsq/Q outlier detection, by default 0.95.
+
+        theoretical_quantiles : bool, optional
+            Use theoretical quantiles for Tsq/Q outlier detection,
+            by default True. If False, empirical quantiles are used.
 
         Returns
         -------
@@ -94,16 +102,34 @@ class PCA_Model:
         self.singular_values = self._sk_pca.singular_values_
         self.mean = self._sk_pca.mean_
         self.loadings = self._sk_pca.components_
-        self.residuals = X_train - self.scores @ self.loadings
+        self.residuals = X_train - self._sk_pca.inverse_transform(self.scores)
         self.Q = np.sum(self.residuals**2, axis=1)
         self.Tsq = np.sum((self.scores / np.std(self.scores, axis=0)) ** 2, axis=1)
-        self.Tsq_conf = (
-            f.ppf(q=0.95, dfn=self.n_components, dfd=self.scores.shape[0])
-            * self.n_components
-            * (self.scores.shape[0] - 1)
-            / (self.scores.shape[0] - self.n_components)
-        )
-        self.Q_conf = np.quantile(self.Q, q=0.95)
+        if theoretical_quantiles:
+            # theoretical quantile for T2, according to Hotelling statistics (which is a scaled F distribution)
+            self.Tsq_conf = (
+                f.ppf(q=conf_level, dfn=self.n_components, dfd=self.scores.shape[0])
+                * self.n_components
+                * (self.scores.shape[0] - 1)
+                / (self.scores.shape[0] - self.n_components)
+            )
+            # theoretical quantile for Q, according to Jackson and Mudholkar (1979), Eq. (3.4)
+            lambda_values = PCA().fit(X_train).explained_variance_[self.n_components :]
+
+            theta_1 = np.sum(lambda_values)
+            theta_2 = np.sum(lambda_values**2)
+            theta_3 = np.sum(lambda_values**3)
+
+            h0 = 1 - 2 * theta_1 * theta_3 / (3 * theta_2**2)
+
+            self.Q_conf = theta_1 * (
+                1
+                + norm.ppf(conf_level) * np.sqrt(2 * theta_2 * h0**2) / theta_1
+                + theta_2 * h0 * (h0 - 1) / theta_1**2
+            ) ** (1 / h0)
+        else:
+            self.Tsq_conf = np.quantile(self.Tsq, q=conf_level)
+            self.Q_conf = np.quantile(self.Q, q=conf_level)
         return self
 
     def plot(self, PC_x=1, PC_y=2, annotate=False):
