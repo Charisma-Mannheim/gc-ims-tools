@@ -1005,10 +1005,16 @@ class Dataset:
         self.preprocessing.append("sub_first_row")
         return self
 
-    def interp_riprel(self):
+    def interp_riprel(self, rip_position=None):
         """
         Interpolates all spectra to common RIP relative drift time coordinate.
         Alignment along drift time coordinate.
+        
+        Parameters
+        ----------
+        rip_position : int or float, optional
+            Position of the RIP in ms. If None the maximum value is used,
+            by default None.
 
         Returns
         -------
@@ -1019,8 +1025,11 @@ class Dataset:
         interp_fn = []
         for i in self.data:
             dt = i.drift_time
-            rip = np.median(np.argmax(i.values, axis=1)).astype("int32")
-            rip_ms = np.mean(dt[rip])
+            if rip_position is None:
+                rip = np.median(np.argmax(i.values, axis=1)).astype("int32")
+                rip_ms = np.mean(dt[rip])
+            else:
+                rip_ms = rip_position
             riprel = dt / rip_ms
             f = interp1d(riprel, i.values, axis=1, kind="cubic")
             dt_riprel.append(riprel)
