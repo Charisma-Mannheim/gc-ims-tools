@@ -212,7 +212,7 @@ class Dataset:
         return (paths, name, files, samples, labels)
 
     @classmethod
-    def read_mea(cls, path, subfolders=False):
+    def read_mea(cls, path, subfolders=False, sequential=False, compr="wavecompr", **kwargs):
         """
         Reads all mea files from G.A.S Dortmund instruments in the
         given directory and combines them into a dataset.
@@ -233,29 +233,52 @@ class Dataset:
         Labels can then be auto-generated from directory names.
         Otherwise labels and sample names need to be added from other sources
         for all methods to work.
-
+        
+        If sequential=True files are compressed with the chosen compr method ("wavecompr" or "binning").
+        Compression is done sequentially which is more memory efficient than comnpression of the 
+        full dataset afterwards. Espically useful for big datatsets or systems with lower RAM specifications.
+         
         Parameters
         ----------
         path : str
             Absolute or relative file path.
 
         subfolders : bool, optional
-            Uses subdirectory names as labels,
-            by default False.
+            Uses subdirectory names as labels, 
+            by default False
+
+        sequential : bool, optional
+            Sequential compression of each file, 
+            by default False
+
+        compr : str, optional
+            Compression method "binning" or "wavecompr" are valid, 
+            by default "wavecompr"
 
         Returns
         -------
         Dataset
 
-        Example
-        -------
-        >>> import ims
-        >>> ds = ims.Dataset.read_mea("IMS_data", subfolders=True)
-        >>> print(ds)
-        Dataset: IMS_data, 58 Spectra
+        Raises
+        ------
+        ValueError
+            If scaling method is not supported
         """
         paths, name, files, samples, labels = Dataset._measurements(path, subfolders)
-        data = [Spectrum.read_mea(i) for i in paths]
+        if sequential:
+            if compr == "wavecompr":
+                data = [Spectrum.read_mea(i).wavecompr(**kwargs) for i in paths]
+                
+            elif compr == "binning":
+                data = [Spectrum.read_mea(i).binning(**kwargs) for i in paths] 
+                
+            else:
+                 raise ValueError(f"Unsupported compression algorithm: {compr}! Use wavecompr or binning instead.")
+            
+        else:
+            data = [Spectrum.read_mea(i) for i in paths]
+        
+        
         return cls(data, name, files, samples, labels)
 
     @classmethod
