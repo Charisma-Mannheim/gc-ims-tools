@@ -237,7 +237,8 @@ class Dataset:
         If sequential=True files are compressed with the chosen compr method ("wavecompr" or "binning").
         Compression is done sequentially which is more memory efficient than comnpression of the 
         full dataset afterwards. Espically useful for big datatsets or systems with lower RAM specifications.
-         
+        Valid kwargs for the compression methods can be found in the respective definitions.  
+        
         Parameters
         ----------
         path : str
@@ -262,7 +263,14 @@ class Dataset:
         Raises
         ------
         ValueError
-            If scaling method is not supported
+            If compression method is not supported
+        
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data", subfolders=True)
+        >>> print(ds)
+        Dataset: IMS_data, 58 Spectra
         """
         paths, name, files, samples, labels = Dataset._measurements(path, subfolders)
         if sequential:
@@ -278,8 +286,11 @@ class Dataset:
         else:
             data = [Spectrum.read_mea(i) for i in paths]
         
+        dataset = cls(data, name, files, samples, labels)
+        if sequential:
+            dataset.preprocessing.append(f"{compr}")
         
-        return cls(data, name, files, samples, labels)
+        return dataset
 
     @classmethod
     def read_zip(cls, path, subfolders=False):
