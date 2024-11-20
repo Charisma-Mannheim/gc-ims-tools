@@ -784,7 +784,7 @@ class Spectrum:
         self.drift_time = self.drift_time[::n]
         return self
     
-    def wavecompr(self, direction="both", wavelet="db3", level=3):
+    def wavecompr(self, direction="ret_time", wavelet="db3", level=3):
         """
         Data reduction by wavelet compression.
         Can be applied to drift time, retention time or both axis.
