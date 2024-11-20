@@ -56,7 +56,7 @@ class Spectrum:
     >>> sample.plot()
     """
 
-    def __init__(self, name, values, ret_time, drift_time, time):
+    def __init__(self, name, values, ret_time, drift_time, time, meta_attr):
         self.name = name
         self.values = values
         self.ret_time = ret_time
@@ -64,6 +64,7 @@ class Spectrum:
         self.time = time
         self.peak_table = None
         self._drift_time_label = "Drift time [ms]"
+        self.meta_attr = meta_attr
 
     def __repr__(self):
         return f"GC-IMS Spectrum: {self.name}"
@@ -239,7 +240,7 @@ class Spectrum:
 
         drift_time = np.arange(chunk_sample_count) / chunk_sample_rate
 
-        return cls(name, data, ret_time, drift_time, timestamp)
+        return cls(name, data, ret_time, drift_time, timestamp, meta_attr)
 
     @classmethod
     def read_csv(cls, path):
