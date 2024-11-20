@@ -224,11 +224,11 @@ class Dataset:
         * Data
             * Group A
                 * Sample A
-                    * file a
-                    * file b
+                    * File A
+                    * File B
                 * Sample B
-                    * file a
-                    * file b
+                    * File A
+                    * File B
 
         Labels can then be auto-generated from directory names.
         Otherwise labels and sample names need to be added from other sources
@@ -305,11 +305,11 @@ class Dataset:
         * Data
             * Group A
                 * Sample A
-                    * file a
-                    * file b
+                    * File A
+                    * File B
                 * Sample B
-                    * file a
-                    * file b
+                    * File A
+                    * File B
 
         Labels can then be auto-generated from directory names.
         Otherwise labels and sample names need to be added from other sources
@@ -350,11 +350,11 @@ class Dataset:
         * Data
             * Group A
                 * Sample A
-                    * file a
-                    * file b
+                    * File A
+                    * File B
                 * Sample B
-                    * file a
-                    * file b
+                    * File A
+                    * File B
 
         Labels can then be auto-generated from directory names.
         Otherwise labels and sample names need to be added from other sources
@@ -478,18 +478,21 @@ class Dataset:
                 grp.attrs["time"] = datetime.strftime(sample.time, "%Y-%m-%dT%H:%M:%S")
                 grp.attrs["drift_time_label"] = sample._drift_time_label
 
-    def select(self, label=None, sample=None):
+    def select(self, labels=None, samples=None, files=None):
         """
-        Selects all spectra of specified label or sample.
+        Selects all spectra of specified labels, samples, or files.
         Must set at least one of the parameters.
 
         Parameters
         ----------
-        label : str, optional
-            Label name to keep, by default None
+        labels : list of str, optional
+            List of label names to keep, by default None
 
-        sample : str, optional
-            Sample name to keep, by default None
+        samples : list of str, optional
+            List of sample names to keep, by default None
+
+        files : list of str, optional
+            List of file names to keep, by default None
 
         Returns
         -------
@@ -500,94 +503,113 @@ class Dataset:
         -------
         >>> import ims
         >>> ds = ims.Dataset.read_mea("IMS_data")
-        >>> group_a = ds.select(label="GroupA")
+        >>> group_a = ds.select(labels=["GroupA", "GroupB"], samples=["SampleA"])
         """
-        if label is None and sample is None:
-            raise ValueError("Must give either label or sample value.")
+        if labels is None and samples is None and files is None:
+            raise ValueError("Must provide at least one of labels, samples, or files.")
 
-        if label is not None:
-            name = label
-            indices = []
-            for i, j in enumerate(self.labels):
-                if j == label:
-                    indices.append(i)
+        indices = set()
 
-        if sample is not None:
-            name = sample
-            indices = []
-            for i, j in enumerate(self.samples):
-                if j == sample:
-                    indices.append(i)
+        if labels is not None:
+            for label in labels:
+                if label not in self.labels:
+                    raise ValueError(f"Label '{label}' does not exist in the dataset.")
+                indices.update(i for i, j in enumerate(self.labels) if j == label)
 
-        result = []
+        if samples is not None:
+            for sample in samples:
+                if sample not in self.samples:
+                    raise ValueError(f"Sample '{sample}' does not exist in the dataset.")
+                indices.update(i for i, j in enumerate(self.samples) if j == sample)
+
+        if files is not None:
+            for file in files:
+                if file not in self.files:
+                    raise ValueError(f"File '{file}' does not exist in the dataset.")
+                indices.update(i for i, j in enumerate(self.files) if j == file)
+
+        data = []
         files = []
         labels = []
         samples = []
+
         for i in indices:
-            result.append(self.data[i])
+            data.append(self.data[i])
             files.append(self.files[i])
             labels.append(self.labels[i])
             samples.append(self.samples[i])
 
         return Dataset(
-            data=result,
-            name=name,
+            data=data,
+            name=self.name,
             files=files,
             samples=samples,
             labels=labels,
         )
 
-    def drop(self, label=None, sample=None):
+    def drop(self, labels=None, samples=None, files=None):
         """
-        Removes all spectra of specified label or sample from dataset.
+        Removes all spectra of specified labels, samples, or files from the dataset.
         Must set at least one of the parameters.
 
         Parameters
         ----------
-        label : str, optional
-            Label name to keep, by default None
+        labels : str or list of str, optional
+            List of label names to remove, by default None
 
-        sample : str, optional
-            Sample name to keep, by default None
+        samples : str or list of str, optional
+            List of sample names to remove, by default None
+
+        files : str or list of str, optional
+            List of file names to remove, by default None
 
         Returns
         -------
         Dataset
-            Contains only matching spectra.
+            Contains only spectra that do not match the specified criteria.
 
         Example
         -------
         >>> import ims
         >>> ds = ims.Dataset.read_mea("IMS_data")
-        >>> ds = ds.drop(label="GroupA")
+        >>> ds = ds.drop(labels=["GroupA"], files=[FileA, FileB])
         """
-        if label is None and sample is None:
-            raise ValueError("Must give either label or sample value.")
+        if labels is None and samples is None and files is None:
+            raise ValueError("Must provide at least one of labels, samples, or files.")
 
-        if label is not None:
-            indices = []
-            for i, j in enumerate(self.labels):
-                if j != label:
-                    indices.append(i)
+        indices = set(range(len(self.data)))
 
-        if sample is not None:
-            indices = []
-            for i, j in enumerate(self.samples):
-                if j != sample:
-                    indices.append(i)
+        if labels is not None:
+            for label in labels:
+                if label not in self.labels:
+                    raise ValueError(f"Label '{label}' does not exist in the dataset.")
+                indices -= {i for i, j in enumerate(self.labels) if j == label}
 
-        result = []
+        if samples is not None:
+            for sample in samples:
+                if sample not in self.samples:
+                    raise ValueError(f"Sample '{sample}' does not exist in the dataset.")
+                indices -= {i for i, j in enumerate(self.samples) if j == sample}
+
+        if files is not None:
+            for file in files:
+                if file not in self.files:
+                    raise ValueError(f"File '{file}' does not exist in the dataset.")
+                indices -= {i for i, j in enumerate(self.files) if j == file}
+
+        data = []
         files = []
         labels = []
         samples = []
+
         for i in indices:
-            result.append(self.data[i])
+            data.append(self.data[i])
             files.append(self.files[i])
             labels.append(self.labels[i])
             samples.append(self.samples[i])
 
         return Dataset(
-            data=result,
+            data=data,
             name=self.name,
             files=files,
             samples=samples,
@@ -651,12 +673,12 @@ class Dataset:
         result = []
         if key == "label":
             for group in np.unique(self.labels):
-                result.append(self.select(label=group))
+                result.append(self.select(labels=group))
             return result
 
         if key == "sample":
             for sample in np.unique(self.samples):
-                result.append(self.select(sample=sample))
+                result.append(self.select(samples=sample))
             return result
 
     def plot(self, index=0, **kwargs):
