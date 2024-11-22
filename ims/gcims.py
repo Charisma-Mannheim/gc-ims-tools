@@ -344,6 +344,35 @@ class Spectrum:
             f.attrs["name"] = self.name
             f.attrs["time"] = datetime.strftime(self.time, "%Y-%m-%dT%H:%M:%S")
             f.attrs["drift_time_label"] = self._drift_time_label
+    
+    def normalize_spectrum(self):
+        """
+        Normalize a single spectrum by scaling its values to the range [0, 1].
+
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> sample.normalize_spectrum()
+
+        Returns
+        -------
+        self : Spectrum
+            The spectrum with normalized values.
+        """
+
+        # Find the minimum and maximum values of the intensity values
+        min_value = np.min(self.values)
+        max_value = np.max(self.values)
+
+        # Normalize the intensity values to the range [0, 1]
+        if max_value > min_value:
+            self.values = (self.values - min_value) / (max_value - min_value)
+        # Raise Error
+        else:
+            raise ValueError(f"Spectrum {self.name} cannot be normalized because it has constant or zero values.")
+
+        return self
 
     def find_peaks(self, limit=None, denoise="fastnl", window=30, verbose=0):
         """
