@@ -616,6 +616,31 @@ class Dataset:
             labels=labels,
         )
 
+    def normalization(self):
+        """
+        Normalizes each spectrum in the dataset by scaling its intensity values to the range [0, 1].
+
+        This method ensures that the intensity values of each spectrum are individually normalized 
+        between 0 and 1 based on their unique minimum and maximum values. This standardizes the 
+        dataset, facilitating consistent comparison and analysis across different spectra.
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_data")
+        >>> ds.normalization()
+
+        Returns
+        -------
+        self : Dataset
+            The dataset with normalized spectra.
+        """
+
+        self.data = [Spectrum.normalize_spectrum(i) for i in self.data]
+        self.preprocessing.append("normalization")
+        
+        return self
+
     def add_spectrum(self, spectrum, sample, label):
         """
         Adds a ims.Spectrum to the dataset.
