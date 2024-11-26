@@ -345,7 +345,7 @@ class Spectrum:
             f.attrs["time"] = datetime.strftime(self.time, "%Y-%m-%dT%H:%M:%S")
             f.attrs["drift_time_label"] = self._drift_time_label
     
-    def normalize_spectrum(self):
+    def normalization(self):
         """
         Normalize a single spectrum by scaling its values to the range [0, 1].
 
@@ -353,7 +353,7 @@ class Spectrum:
         -------
         >>> import ims
         >>> sample = ims.Spectrum.read_mea("sample.mea")
-        >>> sample.normalize_spectrum()
+        >>> sample.normalization()
 
         Returns
         -------

@@ -636,7 +636,7 @@ class Dataset:
             The dataset with normalized spectra.
         """
 
-        self.data = [Spectrum.normalize_spectrum(i) for i in self.data]
+        self.data = [Spectrum.normalization(i) for i in self.data]
         self.preprocessing.append("normalization")
         
         return self
