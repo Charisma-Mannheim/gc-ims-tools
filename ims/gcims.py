@@ -74,7 +74,7 @@ class Spectrum:
         values = self.values + other.values
         ret_time = self.ret_time + other.ret_time
         drift_time = self.drift_time + other.drift_time
-        x = Spectrum(self.name, values, ret_time, drift_time, self.time)
+        x = Spectrum(self.name, values, ret_time, drift_time, self.time, self.meta_attr)
         x._drift_time_label = self._drift_time_label
         return x
 
@@ -89,7 +89,7 @@ class Spectrum:
             values = self.values / other
             ret_time = self.ret_time / other
             drift_time = self.drift_time / other
-            x = Spectrum(self.name, values, ret_time, drift_time, self.time)
+            x = Spectrum(self.name, values, ret_time, drift_time, self.time, self.meta_attr)
             x._drift_time_label = self._drift_time_label
             return x
         else:
