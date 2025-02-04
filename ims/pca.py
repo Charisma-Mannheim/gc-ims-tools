@@ -276,7 +276,7 @@ class PCA_Model:
 
         return ax
 
-    def plot_3d(self, PC_x=1, PC_y=2, PC_z=3, annotate=False):
+    def plot_3d(self, PC_x=1, PC_y=2, PC_z=3, annotate=False, **kwargs):
         """
         3-d Scatter plot of selected principal components.
 
@@ -290,10 +290,14 @@ class PCA_Model:
 
         PC_z : int, optional
             PC z axis, by default 3.   
-
+            
         annotate : bool, optional
             label data points with sample name,
             by default False.
+        
+        **kwargs: optional
+            Additional keyword arguments are passed to the legend of the plotted samples.
+            See the original documentation for valid parameters. 
 
         Returns
         -------
@@ -328,13 +332,13 @@ class PCA_Model:
         ax.set_ylabel(f"PC {PC_y} ({expl_var[PC_y-1]} % of variance)")
         ax.set_zlabel(f"PC {PC_z} ({expl_var[PC_z-1]} % of variance)")
      
-        cmap = ListedColormap(sns.color_palette("husl", 256).as_hex())
+        cmap = ListedColormap(sns.color_palette().as_hex())
         dics = {k: v for v, k in enumerate(sorted(set(pc_df["Label"])))}
         y_mapped = [dics[i] for i in pc_df["Label"]]
 
         sc = ax.scatter(xs=x, ys=y, zs=z, c=y_mapped, cmap=cmap, s=50)
-
-        legend1 = ax.legend(*[sc.legend_elements()[0],np.unique(pc_df["Label"])])
+            
+        legend1 = ax.legend(*[sc.legend_elements()[0],np.unique(pc_df["Label"])], **kwargs)
         ax.add_artist(legend1)
 
         
@@ -345,7 +349,7 @@ class PCA_Model:
         
         if annotate:
             for i, point in pc_df.iterrows():
-                ax.text(point[f"PC {PC_x}"], point[f"PC {PC_y}"], point["Sample"])
+                ax.text(point[f"PC {PC_x}"], point[f"PC {PC_y}"], point[f"PC {PC_z}"], point["Sample"])
 
         return sc
 
