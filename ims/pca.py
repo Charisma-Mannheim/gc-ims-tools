@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.ticker import MaxNLocator, AutoMinorLocator
 from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
-from scipy.stats import f, norm
-
+from scipy.stats import f
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.colors import ListedColormap
 
 class PCA_Model:
     """
@@ -74,7 +74,7 @@ class PCA_Model:
         self.svd_solver = svd_solver
         self._sk_pca = PCA(n_components, svd_solver=svd_solver, **kwargs)
 
-    def fit(self, X_train, conf_level=0.95, theoretical_quantiles=True):
+    def fit(self, X_train):
         """
         Fit the PCA model with training data.
 
@@ -82,13 +82,6 @@ class PCA_Model:
         ----------
         X_train : numpy.ndarray of shape (n_samples, n_features)
             The training data.
-
-        conf_level : float, optional
-            Confidence level for Tsq/Q outlier detection, by default 0.95.
-
-        theoretical_quantiles : bool, optional
-            Use theoretical quantiles for Tsq/Q outlier detection,
-            by default True. If False, empirical quantiles are used.
 
         Returns
         -------
@@ -102,34 +95,16 @@ class PCA_Model:
         self.singular_values = self._sk_pca.singular_values_
         self.mean = self._sk_pca.mean_
         self.loadings = self._sk_pca.components_
-        self.residuals = X_train - self._sk_pca.inverse_transform(self.scores)
+        self.residuals = X_train - self.scores @ self.loadings
         self.Q = np.sum(self.residuals**2, axis=1)
         self.Tsq = np.sum((self.scores / np.std(self.scores, axis=0)) ** 2, axis=1)
-        if theoretical_quantiles:
-            # theoretical quantile for T2, according to Hotelling statistics (which is a scaled F distribution)
-            self.Tsq_conf = (
-                f.ppf(q=conf_level, dfn=self.n_components, dfd=self.scores.shape[0])
-                * self.n_components
-                * (self.scores.shape[0] - 1)
-                / (self.scores.shape[0] - self.n_components)
-            )
-            # theoretical quantile for Q, according to Jackson and Mudholkar (1979), Eq. (3.4)
-            lambda_values = PCA().fit(X_train).explained_variance_[self.n_components :]
-
-            theta_1 = np.sum(lambda_values)
-            theta_2 = np.sum(lambda_values**2)
-            theta_3 = np.sum(lambda_values**3)
-
-            h0 = 1 - 2 * theta_1 * theta_3 / (3 * theta_2**2)
-
-            self.Q_conf = theta_1 * (
-                1
-                + norm.ppf(conf_level) * np.sqrt(2 * theta_2 * h0**2) / theta_1
-                + theta_2 * h0 * (h0 - 1) / theta_1**2
-            ) ** (1 / h0)
-        else:
-            self.Tsq_conf = np.quantile(self.Tsq, q=conf_level)
-            self.Q_conf = np.quantile(self.Q, q=conf_level)
+        self.Tsq_conf = (
+            f.ppf(q=0.95, dfn=self.n_components, dfd=self.scores.shape[0])
+            * self.n_components
+            * (self.scores.shape[0] - 1)
+            / (self.scores.shape[0] - self.n_components)
+        )
+        self.Q_conf = np.quantile(self.Q, q=0.95)
         return self
 
     def plot(self, PC_x=1, PC_y=2, annotate=False):
@@ -300,3 +275,77 @@ class PCA_Model:
                 plt.text(x, y, sample)
 
         return ax
+
+    def plot_3d(self, PC_x=1, PC_y=2, PC_z=3, annotate=False):
+        """
+        3-d Scatter plot of selected principal components.
+
+        Parameters
+        ----------
+        PC_x : int, optional
+            PC x axis, by default 1.
+
+        PC_y : int, optional
+            PC y axis, by default 2.
+
+        PC_z : int, optional
+            PC z axis, by default 3.   
+
+        annotate : bool, optional
+            label data points with sample name,
+            by default False.
+
+        Returns
+        -------
+        matplotlib.pyplot.axes
+        """
+        expl_var = []
+        for i in range(1, self.n_components + 1):
+            expl_var.append(round(self.explained_variance_ratio[i - 1] * 100, 1))
+
+        pc_df = pd.DataFrame(
+            data=self.scores,
+            columns=[f"PC {x}" for x in range(1, self.n_components + 1)],
+        )
+
+        if hasattr(self.dataset, "train_index"):
+            pc_df["Sample"] = self.dataset[self.dataset.train_index].samples
+            pc_df["Label"] = self.dataset[self.dataset.train_index].labels
+        else:
+            pc_df["Sample"] = self.dataset.samples
+            pc_df["Label"] = self.dataset.labels
+
+        x=pc_df[f"PC {PC_x}"]
+        y=pc_df[f"PC {PC_y}"]
+        z=pc_df[f"PC {PC_z}"]
+
+        fig = plt.figure(figsize=(12,9))
+
+        ax = Axes3D(fig)
+        fig.add_axes(ax)
+
+        ax.set_xlabel(f"PC {PC_x} ({expl_var[PC_x-1]} % of variance)")
+        ax.set_ylabel(f"PC {PC_y} ({expl_var[PC_y-1]} % of variance)")
+        ax.set_zlabel(f"PC {PC_z} ({expl_var[PC_z-1]} % of variance)")
+     
+        cmap = ListedColormap(sns.color_palette("husl", 256).as_hex())
+        dics = {k: v for v, k in enumerate(sorted(set(pc_df["Label"])))}
+        y_mapped = [dics[i] for i in pc_df["Label"]]
+
+        sc = ax.scatter(xs=x, ys=y, zs=z, c=y_mapped, cmap=cmap, s=50)
+
+        legend1 = ax.legend(*[sc.legend_elements()[0],np.unique(pc_df["Label"])])
+        ax.add_artist(legend1)
+
+        
+        o = ax.scatter(0, 0, 0, c='red', marker='x', s=100, label='Origin')
+        
+        
+        plt.legend(loc='lower left')
+        
+        if annotate:
+            for i, point in pc_df.iterrows():
+                ax.text(point[f"PC {PC_x}"], point[f"PC {PC_y}"], point["Sample"])
+
+        return sc
+
