@@ -331,7 +331,7 @@ class PLS_DA:
             group_index = group
             group_name = self.groups[group]
 
-        coef = self.pls.coef_[:, group_index].reshape(self.dataset[0].values.shape)
+        coef = self.pls.coef_[group_index, :].reshape(self.dataset[0].values.shape)
 
         ret_time = self.dataset[0].ret_time
         drift_time = self.dataset[0].drift_time
