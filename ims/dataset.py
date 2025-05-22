@@ -1422,8 +1422,9 @@ class Dataset:
         Parameters
         ----------
         method : str, optional
-            "pareto", "auto" or "var" are valid,
+            "pareto", "auto" , "var" or None are valid options,
             by default "pareto".
+            If method = None and mean_centering=True, it only implements mean_centering
 
         mean_centering : bool, optional
             If true center the data before scaling,
@@ -1449,6 +1450,8 @@ class Dataset:
             weights = 1 / np.sqrt(np.std(X, 0))
         elif method == "var":
             weights = 1 / np.var(X, 0)
+        elif method == None:
+            weights = 1
         else:
             raise ValueError(f"{method} is not a supported method!")
 
