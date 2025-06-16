@@ -30,6 +30,7 @@ class Dataset:
     are done inplace for memory efficiency.
 
 
+
     Parameters
     ----------
     data : list
@@ -184,17 +185,30 @@ class Dataset:
         return indices
 
     @staticmethod
-    def _measurements(path, subfolders):
-        """
-        Lists paths to every file in folder.
-        Optionally generates label and sample names by splitting file paths.
-        """
+    def _measurements(path, subfolders, extension=None):
+        if extension is None:
+            # No extension provided: lists all files 
+            if subfolders:
+                paths = [os.path.normpath(i) for i in glob(f"{path}/*/*/*")]
+            else:
+                paths = [os.path.normpath(i) for i in glob(f"{path}/*")]
+        else:
+            # Extension(s) provided: filters according to extensions
+            if isinstance(extension, str):
+                extensions = [extension]
+            else:
+                extensions = list(extension)
+            paths = []
+            if subfolders:
+                for ext in extensions:
+                    paths.extend([os.path.normpath(i) for i in glob(f"{path}/*/*/*.{ext}")])
+            else:
+                for ext in extensions:
+                    paths.extend([os.path.normpath(i) for i in glob(f"{path}/*.{ext}")])
+    
+        name = os.path.split(path)[1]
         if subfolders:
-            files = []
-            samples = []
-            labels = []
-            paths = [os.path.normpath(i) for i in glob(f"{path}/*/*/*")]
-            name = os.path.split(path)[1]
+            files, samples, labels = [], [], []
             for filedir in paths:
                 file_name = os.path.split(filedir)[1]
                 files.append(file_name)
@@ -203,16 +217,13 @@ class Dataset:
                 label = filedir.split(os.sep)[-3]
                 labels.append(label)
         else:
-            paths = [os.path.normpath(i) for i in glob(f"{path}/*")]
-            name = os.path.split(path)[1]
             files = [os.path.split(i)[1] for i in paths]
-            samples = []
-            labels = []
-
+            samples, labels = [], []
+    
         return (paths, name, files, samples, labels)
 
     @classmethod
-    def read_mea(cls, path, subfolders=False, sequential=False, compr="wavecompr", **kwargs):
+    def read_mea(cls, path, subfolders=False, sequential=False, compr="wavecompr", extension=".mea" ,**kwargs):
         """
         Reads all mea files from G.A.S Dortmund instruments in the
         given directory and combines them into a dataset.
@@ -272,7 +283,7 @@ class Dataset:
         >>> print(ds)
         Dataset: IMS_data, 58 Spectra
         """
-        paths, name, files, samples, labels = Dataset._measurements(path, subfolders)
+        paths, name, files, samples, labels = Dataset._measurements(path, subfolders, extension)
         if sequential:
             if compr == "wavecompr":
                 data = [Spectrum.read_mea(i).wavecompr(**kwargs) for i in paths]
@@ -293,7 +304,7 @@ class Dataset:
         return dataset
 
     @classmethod
-    def read_zip(cls, path, subfolders=False):
+    def read_zip(cls, path, subfolders=False, extension=[".csv",".json"]):
         """
         Reads zipped csv and json files from G.A.S Dortmund mea2zip converting tool.
         Present for backwards compatibility. Reading mea files is much faster and saves
@@ -331,12 +342,12 @@ class Dataset:
         >>> print(ds)
         Dataset: IMS_data, 58 Spectra
         """
-        paths, name, files, samples, labels = Dataset._measurements(path, subfolders)
+        paths, name, files, samples, labels = Dataset._measurements(path, subfolders, extension)
         data = [Spectrum.read_zip(i) for i in paths]
         return cls(data, name, files, samples, labels)
 
     @classmethod
-    def read_csv(cls, path, subfolders=False):
+    def read_csv(cls, path, subfolders=False, extension=".csv"):
         """
         Reads generic csv files. The first row must be
         the drift time values and the first column must be
@@ -376,7 +387,7 @@ class Dataset:
         >>> print(ds)
         Dataset: IMS_data, 58 Spectra
         """
-        paths, name, files, samples, labels = Dataset._measurements(path, subfolders)
+        paths, name, files, samples, labels = Dataset._measurements(path, subfolders, extension)
         data = [Spectrum.read_csv(i) for i in paths]
         return cls(data, name, files, samples, labels)
 
