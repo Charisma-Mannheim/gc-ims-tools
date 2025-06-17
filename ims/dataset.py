@@ -186,14 +186,18 @@ class Dataset:
 
     @staticmethod
     def _measurements(path, subfolders, extension=None):
-        if extension is None:
-            # No extension provided: lists all files 
+        """
+        Lists paths to every file in folder. If an extenasion is specified only list 
+        these specific file types. methods like read_mea, read_csv, etc. use this method to filter for the 
+        correct files.
+        Optionally generates label and sample names by splitting file paths.
+        """        
+        if extension is None:             
             if subfolders:
                 paths = [os.path.normpath(i) for i in glob(f"{path}/*/*/*")]
             else:
                 paths = [os.path.normpath(i) for i in glob(f"{path}/*")]
         else:
-            # Extension(s) provided: filters according to extensions
             if isinstance(extension, str):
                 extensions = [extension]
             else:
@@ -201,10 +205,10 @@ class Dataset:
             paths = []
             if subfolders:
                 for ext in extensions:
-                    paths.extend([os.path.normpath(i) for i in glob(f"{path}/*/*/*.{ext}")])
+                    paths.extend([os.path.normpath(i) for i in glob(f"{path}/*/*/*{ext}")])
             else:
                 for ext in extensions:
-                    paths.extend([os.path.normpath(i) for i in glob(f"{path}/*.{ext}")])
+                    paths.extend([os.path.normpath(i) for i in glob(f"{path}/*{ext}")])
     
         name = os.path.split(path)[1]
         if subfolders:
@@ -1143,7 +1147,7 @@ class Dataset:
     
     def align_ret_time(self, reference="mean"):
         """
-        Retention time alignment based on dymanic time warping.
+        Retention time alignment based on dymamic time warping.
 
         Parameters
         ----------
