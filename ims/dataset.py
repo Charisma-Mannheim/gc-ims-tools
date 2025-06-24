@@ -436,6 +436,13 @@ class Dataset:
                 name = str(f[key].attrs["name"])
                 time = datetime.strptime(f[key].attrs["time"], "%Y-%m-%dT%H:%M:%S")
                 drift_time_label = str(f[key].attrs["drift_time_label"])
+                # Reads meta_attr if present.
+                if "meta_attr" in f[key]:
+                    meta_attr = [s for s in f[key]["meta_attr"][()]] 
+                    # decode bytes to str 
+                    meta_attr = [s.decode() if isinstance(s, bytes) else s for s in meta_attr]                  
+                else:
+                    meta_attr = None
                 spectrum = Spectrum(name, values, ret_time, drift_time, time, meta_attr)
                 spectrum._drift_time_label = drift_time_label
                 data.append(spectrum)
@@ -492,6 +499,12 @@ class Dataset:
                 grp.create_dataset("drift_time", data=sample.drift_time)
                 grp.attrs["time"] = datetime.strftime(sample.time, "%Y-%m-%dT%H:%M:%S")
                 grp.attrs["drift_time_label"] = sample._drift_time_label
+                # Saves meta_attr of each spectrum to the hdf5 file.
+                if hasattr(sample, "meta_attr") and sample.meta_attr is not None:
+                    dt = h5py.string_dtype(encoding='utf-8')
+                    grp.create_dataset("meta_attr", data=np.array(sample.meta_attr, dtype=object), dtype=dt)
+                else:
+                    grp.create_dataset("meta_attr", data=np.array([], dtype=object), dtype=h5py.string_dtype(encoding='utf-8'))
 
     def select(self, labels=None, samples=None, files=None):
         """
