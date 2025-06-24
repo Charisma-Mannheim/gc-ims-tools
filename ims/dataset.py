@@ -436,7 +436,7 @@ class Dataset:
                 name = str(f[key].attrs["name"])
                 time = datetime.strptime(f[key].attrs["time"], "%Y-%m-%dT%H:%M:%S")
                 drift_time_label = str(f[key].attrs["drift_time_label"])
-                spectrum = Spectrum(name, values, ret_time, drift_time, time)
+                spectrum = Spectrum(name, values, ret_time, drift_time, time, meta_attr)
                 spectrum._drift_time_label = drift_time_label
                 data.append(spectrum)
 
