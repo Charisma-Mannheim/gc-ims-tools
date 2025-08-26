@@ -1,5 +1,6 @@
 from ims import Spectrum
 import numpy as np
+import re
 import os
 from glob import glob
 from copy import deepcopy
