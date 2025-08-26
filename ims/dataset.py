@@ -192,7 +192,7 @@ class Dataset:
         correct files.
         Optionally generates label and names by splitting file paths.
         If subfolders=False, tries to assign labels by searching file names for keywords.
-        Samples are not assigned automatically
+        Samples are not assigned automatically.
         
         """        
         if extension is None:             
