@@ -234,7 +234,8 @@ class Dataset:
                 fname_lower = fname.lower()
                 found = False
                 for kw in keywords:
-                    if kw.lower() in fname_lower:
+                    # Use word boundary matching to avoid false positives
+                    if re.search(r"\b{}\b".format(re.escape(kw.lower())), fname_lower):
                         labels.append(kw.lower())
                         found = True
                         break
