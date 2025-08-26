@@ -187,7 +187,7 @@ class Dataset:
     @staticmethod
     def _measurements(path, subfolders, extension=None, label_keywords=None):
         """
-        Lists paths to every file in folder. If an extenasion is specified only list 
+        Lists paths to every file in folder. If an extension is specified only list 
         these specific file types. methods like read_mea, read_csv, etc. use this method to filter for the 
         correct files.
         Optionally generates label and names by splitting file paths.
