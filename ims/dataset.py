@@ -275,8 +275,7 @@ class Dataset:
 
         
         If sequential=True files are compressed with the chosen compr method ("wavecompr" or "binning").
-        Compression is done sequentially which is more memory efficient than compression of the 
-        full dataset afterwards. Espically useful for big datatsets or systems with lower RAM specifications.
+        full dataset afterwards. Especially useful for big datasets or systems with lower RAM specifications.
         Valid kwargs for the compression methods can be found in the respective definitions.  
         
         Parameters
