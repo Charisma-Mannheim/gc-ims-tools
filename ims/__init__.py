@@ -14,7 +14,7 @@ Provides:
 * Scripted statistical workflows with prebuilt plots
 for common algorithms.
 """
-__version__ = "0.1.7"
+__version__ = "0.1.8"
 __author__ = "Competency Center for Chemometrics Mannheim"
 __credits__ = "Competency Center for Chemometrics Mannheim"
 
@@ -25,3 +25,5 @@ from ims.plsr import PLSR
 from ims.plsda import PLS_DA
 from ims.hca import HCA
 import ims.utils
+from ims.simca import OneClassSIMCA
+from ims.simca import MultiClassSIMCA
