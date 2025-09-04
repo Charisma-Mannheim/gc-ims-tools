@@ -1,25 +1,23 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ims.pca &#8212; gc-ims-tools 0.1.7 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/haiku.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
+    <title>ims.pca &#8212; gc-ims-tools 0.1.8 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=47202671" />
+    <link rel="stylesheet" type="text/css" href="../../_static/haiku.css?v=fce32b03" />
+    <script src="../../_static/documentation_options.js?v=22607128"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
-          <span>gc-ims-tools 0.1.7 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.8 documentation</span></a></h1>
         <h2 class="heading"><span>ims.pca</span></h2>
       </div>
-      <div class="topnav" role="navigation" aria-label="top navigation">
+      <div class="topnav" role="navigation" aria-label="Top">
       
         <p>
         <a class="uplink" href="../../index.html">Contents</a>
@@ -30,17 +28,20 @@
         
         
   <h1>Source code for ims.pca</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">MaxNLocator</span><span class="p">,</span> <span class="n">AutoMinorLocator</span>
-<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
-<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">f</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxNLocator</span><span class="p">,</span> <span class="n">AutoMinorLocator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.decomposition</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">f</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mpl_toolkits.mplot3d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ListedColormap</span>
 
-
-<div class="viewcode-block" id="PCA_Model"><a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model">[docs]</a><span class="k">class</span> <span class="nc">PCA_Model</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PCA_Model">
+<a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PCA_Model</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    PCA_Model is a wrapper class around the scikit-learn PCA implementation</span>
 <span class="sd">    and provides prebuilt plots for GC-IMS datasets.</span>
 
@@ -96,7 +97,7 @@
 <span class="sd">    &gt;&gt;&gt; pca.plot()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">svd_solver</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">svd_solver</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
         <span class="k">if</span> <span class="n">n_components</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
@@ -105,8 +106,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">svd_solver</span> <span class="o">=</span> <span class="n">svd_solver</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sk_pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="p">,</span> <span class="n">svd_solver</span><span class="o">=</span><span class="n">svd_solver</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PCA_Model.fit"><a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PCA_Model.fit">
+<a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit the PCA model with training data.</span>
 
 <span class="sd">        Parameters</span>
@@ -138,8 +141,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">Q_conf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="PCA_Model.plot"><a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">PC_x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">PC_y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PCA_Model.plot">
+<a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">PC_x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">PC_y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Scatter plot of selected principal components.</span>
 
 <span class="sd">        Parameters</span>
@@ -192,8 +198,11 @@
 
         <span class="k">return</span> <span class="n">ax</span></div>
 
-<div class="viewcode-block" id="PCA_Model.plot_loadings"><a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.plot_loadings">[docs]</a>    <span class="k">def</span> <span class="nf">plot_loadings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">PC</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color_range</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PCA_Model.plot_loadings">
+<a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.plot_loadings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_loadings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">PC</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color_range</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plots loadings of a principle component with the original retention</span>
 <span class="sd">        and drift time coordinates.</span>
 
@@ -248,8 +257,11 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PCA loadings of PC </span><span class="si">{</span><span class="n">PC</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">expl_var</span><span class="p">[</span><span class="n">PC</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> % of variance)&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ax</span></div>
 
-<div class="viewcode-block" id="PCA_Model.scree_plot"><a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.scree_plot">[docs]</a>    <span class="k">def</span> <span class="nf">scree_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PCA_Model.scree_plot">
+<a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.scree_plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">scree_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plots the explained variance ratio per principal component</span>
 <span class="sd">        and cumulatively.</span>
 
@@ -275,8 +287,11 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">ax</span></div>
 
-<div class="viewcode-block" id="PCA_Model.Tsq_Q_plot"><a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.Tsq_Q_plot">[docs]</a>    <span class="k">def</span> <span class="nf">Tsq_Q_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PCA_Model.Tsq_Q_plot">
+<a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.Tsq_Q_plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Tsq_Q_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plots T square values and Q residuals with 95 % confidence limits</span>
 <span class="sd">        for outlier detection.</span>
 <span class="sd">        Q confidence limit is determined empirically,</span>
@@ -305,11 +320,94 @@
             <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Tsq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">samples</span><span class="p">):</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">ax</span></div></div>
+        <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="PCA_Model.plot_3d">
+<a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.plot_3d">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_3d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">PC_x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">PC_y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">PC_z</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        3-d Scatter plot of selected principal components.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        PC_x : int, optional</span>
+<span class="sd">            PC x axis, by default 1.</span>
+
+<span class="sd">        PC_y : int, optional</span>
+<span class="sd">            PC y axis, by default 2.</span>
+
+<span class="sd">        PC_z : int, optional</span>
+<span class="sd">            PC z axis, by default 3.   </span>
+<span class="sd">            </span>
+<span class="sd">        annotate : bool, optional</span>
+<span class="sd">            label data points with sample name,</span>
+<span class="sd">            by default False.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs: optional</span>
+<span class="sd">            Additional keyword arguments are passed to the legend of the plotted samples.</span>
+<span class="sd">            See the original documentation for valid parameters. </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.pyplot.axes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">expl_var</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">expl_var</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">explained_variance_ratio</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">pc_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;PC </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)],</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;train_index&quot;</span><span class="p">):</span>
+            <span class="n">pc_df</span><span class="p">[</span><span class="s2">&quot;Sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">train_index</span><span class="p">]</span><span class="o">.</span><span class="n">samples</span>
+            <span class="n">pc_df</span><span class="p">[</span><span class="s2">&quot;Label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">train_index</span><span class="p">]</span><span class="o">.</span><span class="n">labels</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pc_df</span><span class="p">[</span><span class="s2">&quot;Sample&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">samples</span>
+            <span class="n">pc_df</span><span class="p">[</span><span class="s2">&quot;Label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">labels</span>
+
+        <span class="n">x</span><span class="o">=</span><span class="n">pc_df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;PC </span><span class="si">{</span><span class="n">PC_x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">pc_df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;PC </span><span class="si">{</span><span class="n">PC_y</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+        <span class="n">z</span><span class="o">=</span><span class="n">pc_df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;PC </span><span class="si">{</span><span class="n">PC_z</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">9</span><span class="p">))</span>
+
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">Axes3D</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PC </span><span class="si">{</span><span class="n">PC_x</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">expl_var</span><span class="p">[</span><span class="n">PC_x</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> % of variance)&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PC </span><span class="si">{</span><span class="n">PC_y</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">expl_var</span><span class="p">[</span><span class="n">PC_y</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> % of variance)&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PC </span><span class="si">{</span><span class="n">PC_z</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">expl_var</span><span class="p">[</span><span class="n">PC_z</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> % of variance)&quot;</span><span class="p">)</span>
+     
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">ListedColormap</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">()</span><span class="o">.</span><span class="n">as_hex</span><span class="p">())</span>
+        <span class="n">dics</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">pc_df</span><span class="p">[</span><span class="s2">&quot;Label&quot;</span><span class="p">])))}</span>
+        <span class="n">y_mapped</span> <span class="o">=</span> <span class="p">[</span><span class="n">dics</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pc_df</span><span class="p">[</span><span class="s2">&quot;Label&quot;</span><span class="p">]]</span>
+
+        <span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xs</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">zs</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">y_mapped</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+            
+        <span class="n">legend1</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">sc</span><span class="o">.</span><span class="n">legend_elements</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">pc_df</span><span class="p">[</span><span class="s2">&quot;Label&quot;</span><span class="p">])],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">legend1</span><span class="p">)</span>
+
+        
+        <span class="n">o</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Origin&#39;</span><span class="p">)</span>
+        
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">annotate</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">pc_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;PC </span><span class="si">{</span><span class="n">PC_x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;PC </span><span class="si">{</span><span class="n">PC_y</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;PC </span><span class="si">{</span><span class="n">PC_z</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;Sample&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">sc</span></div>
+</div>
+
+
 </pre></div>
 
       </div>
-      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
       
         <p>
         <a class="uplink" href="../../index.html">Contents</a>
@@ -318,8 +416,8 @@
       </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0.
     </div>
   </body>
 </html>

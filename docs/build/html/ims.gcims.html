@@ -1,28 +1,26 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Spectrum &#8212; gc-ims-tools 0.1.7 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <title>Spectrum &#8212; gc-ims-tools 0.1.8 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=47202671" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css?v=fce32b03" />
+    <script src="_static/documentation_options.js?v=22607128"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Dataset" href="ims.dataset.html" />
     <link rel="prev" title="Install" href="install.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>gc-ims-tools 0.1.7 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.8 documentation</span></a></h1>
         <h2 class="heading"><span>Spectrum</span></h2>
       </div>
-      <div class="topnav" role="navigation" aria-label="top navigation">
+      <div class="topnav" role="navigation" aria-label="Top">
       
         <p>
         «&#160;&#160;<a href="install.html">Install</a>
@@ -37,10 +35,10 @@
         
         
   <section id="module-ims.gcims">
-<span id="spectrum"></span><h1>Spectrum<a class="headerlink" href="#module-ims.gcims" title="Permalink to this headline">¶</a></h1>
+<span id="spectrum"></span><h1>Spectrum<a class="headerlink" href="#module-ims.gcims" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ims.gcims.</span></span><span class="sig-name descname"><span class="pre">Spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drift_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ims.gcims.</span></span><span class="sig-name descname"><span class="pre">Spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drift_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_attr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Represents one GCIMS-Spectrum with the data matrix,
 retention and drift time coordinates.
@@ -49,7 +47,7 @@ Sample or file name and timestamp are included unique identifiers.</p>
 like I/O, plotting and some preprocessing tools.
 Methods that return a Spectrum change the instance inplace. Use the copy method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – File or sample name as a unique identifier.
 Reader methods set this attribute to the file name without extension.</p></li>
@@ -61,17 +59,17 @@ Reader methods set this attribute to the file name without extension.</p></li>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.asymcorr">
-<span class="sig-name descname"><span class="pre">asymcorr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">niter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.asymcorr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.asymcorr" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">asymcorr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">niter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.asymcorr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.asymcorr" title="Link to this definition">¶</a></dt>
 <dd><p>Retention time baseline correction using asymmetric least squares.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lam</strong> (<em>float, optional</em>) – Controls smoothness. Larger numbers return smoother curves,
 by default 1e7</p></li>
@@ -80,7 +78,7 @@ by default 1e7</p></li>
 by default 20</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
@@ -88,7 +86,7 @@ by default 20</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.binning">
-<span class="sig-name descname"><span class="pre">binning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.binning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.binning" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">binning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.binning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.binning" title="Link to this definition">¶</a></dt>
 <dd><p>Downsamples spectrum by binning the array with factor n.
 Similar to ims.Spectrum.resampling but works on both dimensions
 simultaneously.
@@ -97,18 +95,18 @@ shortens it by the remainder at the long end.
 Very effective data reduction because a factor n=2 already
 reduces the number of features to a quarter.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>n</strong> (<em>int, optional</em>) – Binning factor, by default 2.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Downsampled data matrix.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="go">(4082, 3150)</span>
@@ -120,21 +118,47 @@ reduces the number of features to a quarter.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ims.gcims.Spectrum.calc_reduced_mobility">
+<span class="sig-name descname"><span class="pre">calc_reduced_mobility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">318.15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1013.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ud</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2132</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.calc_reduced_mobility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.calc_reduced_mobility" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the reduced mobility values for the drift times denoted in the peak table.
+The formula for the calculation of the reduced mobility values originates from
+Ahrens, A., Zimmermann, S. Towards a hand-held, fast, and sensitive gas chromatograph-ion mobility spectrometer
+for detecting volatile compounds. Anal Bioanal Chem 413, 1009–1016 (2021). <a class="reference external" href="https://doi.org/10.1007/s00216-020-03059-9">https://doi.org/10.1007/s00216-020-03059-9</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>float, optional</em>) – Temperature of the IMS cell, by default 318.15</p></li>
+<li><p><strong>p</strong> (<em>float, optional</em>) – pressure in the IMS cell, by default 1013.25</p></li>
+<li><p><strong>Ud</strong> (<em>int, optional</em>) – Drift voltage, by default 2132</p></li>
+<li><p><strong>L</strong> (<em>float, optional</em>) – Length of the drift tube, by default 5.3</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>returns the original dataframe from the find_peaks method,
+but adds a column for the reduced mobility</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.copy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.copy" title="Link to this definition">¶</a></dt>
 <dd><p>Uses deepcopy from the copy module in the standard library.
 Most operations happen inplace. Use this method if you do not
 want to change the original variable.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>deepcopy of self.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_variable</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </pre></div>
@@ -143,7 +167,7 @@ want to change the original variable.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.cut_dt">
-<span class="sig-name descname"><span class="pre">cut_dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.cut_dt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.cut_dt" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">cut_dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.cut_dt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.cut_dt" title="Link to this definition">¶</a></dt>
 <dd><p>Cuts data along drift time coordinate.
 Range in between start and stop is kept.
 If stop is not given uses the end of the array instead.
@@ -151,7 +175,7 @@ Combination with RIP relative drift time
 values makes it easier to cut the RIP away and focus
 on the peak area.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>start</strong> (<em>int or float</em>) – Start value on drift time coordinate.</p></li>
 <li><p><strong>stop</strong> (<em>int or float, optional</em>) – Stop value on drift time coordinate.
@@ -159,15 +183,15 @@ If None uses the end of the array,
 by default None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>New drift time range.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="go">(4082, 3150)</span>
@@ -180,12 +204,12 @@ by default None.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.cut_rt">
-<span class="sig-name descname"><span class="pre">cut_rt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.cut_rt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.cut_rt" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">cut_rt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.cut_rt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.cut_rt" title="Link to this definition">¶</a></dt>
 <dd><p>Cuts data along retention time coordinate.
 Range in between start and stop is kept.
 If stop is not given uses the end of the array instead.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>start</strong> (<em>int or float</em>) – Start value on retention time coordinate.</p></li>
 <li><p><strong>stop</strong> (<em>int or float, optional</em>) – Stop value on retention time coordinate.
@@ -193,15 +217,15 @@ If None uses the end of the array,
 by default None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>New retention time range.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="go">(4082, 3150)</span>
@@ -214,12 +238,12 @@ by default None.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.export_plot">
-<span class="sig-name descname"><span class="pre">export_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jpg'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.export_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.export_plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">export_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jpg'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.export_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.export_plot" title="Link to this definition">¶</a></dt>
 <dd><p>Saves the figure as image file. See the docs for
 matplotlib savefig function for supported file formats and kwargs
 (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html">https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html</a>).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> (<em>str, optional</em>) – Directory to save the image,
 by default current working directory.</p></li>
@@ -229,7 +253,7 @@ by default ‘jpg’.</p></li>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="o">.</span><span class="n">export_plot</span><span class="p">()</span>
 </pre></div>
@@ -238,10 +262,10 @@ by default ‘jpg’.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.find_peaks">
-<span class="sig-name descname"><span class="pre">find_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denoise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fastnl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.find_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.find_peaks" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">find_peaks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denoise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fastnl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.find_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.find_peaks" title="Link to this definition">¶</a></dt>
 <dd><p>Automated GC-IMS peak detection based on persistent homology.</p>
 <dl class="field-list">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul>
 <li><p><strong>spectrum</strong> (<em>ims.Spectrum</em>) – GC-IMS spectrum to use.</p></li>
 <li><p><strong>limit</strong> (<em>float</em>) – Values &gt; limit are active search areas to detect regions of interest (ROI).
@@ -267,12 +291,13 @@ by default None.</p></li>
 <li><p><strong>verbose</strong> (<em>int (default : 3)</em>) – Print to screen. 0: None, 1: Error, 2: Warning, 3: Info, 4: Debug, 5: Trace.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Peak table with drift and retention times,
 the correspondig x and y indices,
+the maximum intensity of the peak,
 birth and death levels and scores.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pandas.DataFrame</p>
 </dd>
 </dl>
@@ -281,14 +306,34 @@ birth and death levels and scores.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ims.gcims.Spectrum.normalization">
+<span class="sig-name descname"><span class="pre">normalization</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.normalization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.normalization" title="Link to this definition">¶</a></dt>
+<dd><p>Normalize a single spectrum by scaling its values to the range [0, 1].</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="o">.</span><span class="n">normalization</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>self</strong> – The spectrum with normalized values.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.plot" title="Link to this definition">¶</a></dt>
 <dd><p>Plots Spectrum using matplotlibs imshow.
 Use %matplotlib widget in IPython or %matplotlib notebook
 in jupyter notebooks to get an interactive plot widget.
 Returning the figure is needed to make the export plot utilities possible.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>vmin</strong> (<em>int, optional</em>) – Minimum of color range, by default 30.</p></li>
 <li><p><strong>vmax</strong> (<em>int, optional</em>) – Maximum of color range, by default 300.</p></li>
@@ -296,15 +341,15 @@ Returning the figure is needed to make the export plot utilities possible.</p>
 <li><p><strong>height</strong> (<em>int, optional</em>) – Height in inches, by default 10.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>(matplotlib.figure.Figure, matplotlib.pyplot.axes)</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
@@ -313,10 +358,10 @@ Returning the figure is needed to make the export plot utilities possible.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.plot_peaks">
-<span class="sig-name descname"><span class="pre">plot_peaks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.plot_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.plot_peaks" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_peaks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.plot_peaks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.plot_peaks" title="Link to this definition">¶</a></dt>
 <dd><p>Plots GC-IMS spectrum with peak labels from findpeaks method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
@@ -324,10 +369,10 @@ Returning the figure is needed to make the export plot utilities possible.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.plot_persistence">
-<span class="sig-name descname"><span class="pre">plot_persistence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.plot_persistence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.plot_persistence" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_persistence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.plot_persistence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.plot_persistence" title="Link to this definition">¶</a></dt>
 <dd><p>Persistance plot of birth vs death levels from findpeak method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
@@ -335,22 +380,22 @@ Returning the figure is needed to make the export plot utilities possible.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.read_csv">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.read_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.read_csv" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.read_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.read_csv" title="Link to this definition">¶</a></dt>
 <dd><p>Reads generic csv files. The first row must be
 the drift time values and the first column must be
 the retention time values. Values inbetween are the
 intensity matrix.
 Uses the time when the file was created as timestamp.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;sample.csv&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
 <span class="go">GC-IMS Spectrum: sample</span>
@@ -360,22 +405,22 @@ Uses the time when the file was created as timestamp.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.read_hdf5">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.read_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.read_hdf5" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.read_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.read_hdf5" title="Link to this definition">¶</a></dt>
 <dd><p>Reads hdf5 files exported by the to_hdf5 method.
 Convenient way to store preprocessed spectra.
 Especially useful for larger datasets as preprocessing
 requires more time.
 Preferred to csv because of very fast read and write speeds.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_hdf5</span><span class="p">(</span><span class="s2">&quot;sample.hdf5&quot;</span><span class="p">)</span>
@@ -385,20 +430,20 @@ Preferred to csv because of very fast read and write speeds.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.read_mea">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_mea</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.read_mea"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.read_mea" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_mea</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.read_mea"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.read_mea" title="Link to this definition">¶</a></dt>
 <dd><p>Reads mea files from G.A.S Dortmund instruments.
 Alternative constructor for ims.Spectrum class.
 Much faster than reading csv files and therefore preferred.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
 <span class="go">GC-IMS Spectrum: sample</span>
@@ -408,20 +453,20 @@ Much faster than reading csv files and therefore preferred.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.read_zip">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_zip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.read_zip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.read_zip" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_zip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.read_zip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.read_zip" title="Link to this definition">¶</a></dt>
 <dd><p>Reads zipped csv and json files from G.A.S Dortmund mea2zip converting tool.
 Present for backwards compatibility.
 Reading mea files is much faster and saves the manual extra step of converting.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_zip</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
 <span class="go">GC-IMS Spectrum: sample</span>
@@ -431,24 +476,24 @@ Reading mea files is much faster and saves the manual extra step of converting.<
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.resample">
-<span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.resample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.resample" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.resample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.resample" title="Link to this definition">¶</a></dt>
 <dd><p>Resamples spectrum by calculating means of every n rows.
 If the length of the retention time is not divisible by n
 it and the data matrix get cropped by the remainder at the long end.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>n</strong> (<em>int, optional</em>) – Number of rows to mean,
 by default 2.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Resampled values.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="go">(4082, 3150)</span>
@@ -461,15 +506,15 @@ by default 2.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.rip_scaling">
-<span class="sig-name descname"><span class="pre">rip_scaling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.rip_scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.rip_scaling" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">rip_scaling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.rip_scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.rip_scaling" title="Link to this definition">¶</a></dt>
 <dd><p>Scales values relative to global maximum.
 Can be useful to directly compare spectra from
 instruments with different sensitivity.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>With scaled values.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
@@ -477,17 +522,17 @@ instruments with different sensitivity.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.riprel">
-<span class="sig-name descname"><span class="pre">riprel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.riprel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.riprel" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">riprel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.riprel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.riprel" title="Link to this definition">¶</a></dt>
 <dd><p>Replaces drift time coordinate with RIP relative values.
 Useful to cut away the RIP because it´s position is set to 1.</p>
 <p>Does not interpolate the data matrix to a completly artificial
 axis like ims.Dataset.interp_riprel.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>RIP relative drift time coordinate
 otherwise unchanged.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
@@ -495,11 +540,11 @@ otherwise unchanged.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.savgol">
-<span class="sig-name descname"><span class="pre">savgol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.savgol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.savgol" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">savgol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.savgol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.savgol" title="Link to this definition">¶</a></dt>
 <dd><p>Applys a Savitzky-Golay filter to intensity values.
 Can be applied in the drift time, retention time or both directions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>window_length</strong> (<em>int, optional</em>) – The length of the filter window, by default 10</p></li>
 <li><p><strong>polyorder</strong> (<em>int, optional</em>) – The order of the polynomial used to fit the samples, by default 2</p></li>
@@ -508,7 +553,7 @@ Can be ‘drift time’, ‘retention time’ or ‘both’.
 By default ‘both’</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
@@ -516,19 +561,19 @@ By default ‘both’</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.shape">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#ims.gcims.Spectrum.shape" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#ims.gcims.Spectrum.shape" title="Link to this definition">¶</a></dt>
 <dd><p>Shape property of the data matrix.
 Equivalent to <cite>ims.Spectrum.values.shape</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.sub_first_rows">
-<span class="sig-name descname"><span class="pre">sub_first_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.sub_first_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.sub_first_rows" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sub_first_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.sub_first_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.sub_first_rows" title="Link to this definition">¶</a></dt>
 <dd><p>Subtracts first n rows from every row in spectrum.
 Effective and simple baseline correction
 if RIP tailing is a concern but can hide small peaks.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
@@ -536,18 +581,18 @@ if RIP tailing is a concern but can hide small peaks.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.to_hdf5">
-<span class="sig-name descname"><span class="pre">to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.to_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.to_hdf5" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.to_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.to_hdf5" title="Link to this definition">¶</a></dt>
 <dd><p>Exports spectrum as hdf5 file.
 Useful to save preprocessed spectra, especially for larger datasets.
 Preferred to csv format because of very fast read and write speeds.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str, optional</em>) – Directory to export files to,
 by default the current working directory.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_hdf5</span><span class="p">(</span><span class="s2">&quot;sample.hdf5&quot;</span><span class="p">)</span>
@@ -557,15 +602,15 @@ by default the current working directory.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.tophat">
-<span class="sig-name descname"><span class="pre">tophat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.tophat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.tophat" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">tophat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.tophat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.tophat" title="Link to this definition">¶</a></dt>
 <dd><p>Applies white tophat filter on data matrix as a baseline correction.
 Size parameter is the diameter of the circular structuring element.
 (Slow with large size values.)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>size</strong> (<em>int, optional</em>) – Size of structuring element, by default 15</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
 </dl>
@@ -573,17 +618,17 @@ Size parameter is the diameter of the circular structuring element.
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.watershed_segmentation">
-<span class="sig-name descname"><span class="pre">watershed_segmentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.watershed_segmentation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.watershed_segmentation" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">watershed_segmentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.watershed_segmentation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.watershed_segmentation" title="Link to this definition">¶</a></dt>
 <dd><p>Finds boundaries for overlapping peaks using watershed segmentation.
 Requires peak_table for starting coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>threshold</strong> (<em>int</em>) – Threshold is used to binarize the intensity values to calculate the distances.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Labels array with same shape as intensity values.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
@@ -591,11 +636,11 @@ Requires peak_table for starting coordinates.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.gcims.Spectrum.wavecompr">
-<span class="sig-name descname"><span class="pre">wavecompr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'db3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.wavecompr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.wavecompr" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">wavecompr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ret_time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'db3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/gcims.html#Spectrum.wavecompr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.gcims.Spectrum.wavecompr" title="Link to this definition">¶</a></dt>
 <dd><p>Data reduction by wavelet compression.
 Can be applied to drift time, retention time or both axis.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>direction</strong> (<em>str, optional</em>) – The direction in which to apply the filter.
 Can be ‘drift time’, ‘retention time’ or ‘both’.
@@ -606,10 +651,10 @@ by default “db3”.</p></li>
 by default 3.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.gcims.Spectrum" title="ims.gcims.Spectrum">Spectrum</a></p>
 </dd>
-<dt class="field-odd">Raises</dt>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – When direction is neither ‘ret_time’, ‘drift_time’ or ‘both’.</p>
 </dd>
 </dl>
@@ -621,7 +666,7 @@ by default 3.</p></li>
 
 
       </div>
-      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
       
         <p>
         «&#160;&#160;<a href="install.html">Install</a>
@@ -634,8 +679,8 @@ by default 3.</p></li>
       </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0.
     </div>
   </body>
 </html>

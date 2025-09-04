@@ -1,28 +1,26 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dataset &#8212; gc-ims-tools 0.1.7 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <title>Dataset &#8212; gc-ims-tools 0.1.8 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=47202671" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css?v=fce32b03" />
+    <script src="_static/documentation_options.js?v=22607128"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="PCA_Model" href="ims.pca.html" />
     <link rel="prev" title="Spectrum" href="ims.gcims.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>gc-ims-tools 0.1.7 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.8 documentation</span></a></h1>
         <h2 class="heading"><span>Dataset</span></h2>
       </div>
-      <div class="topnav" role="navigation" aria-label="top navigation">
+      <div class="topnav" role="navigation" aria-label="Top">
       
         <p>
         «&#160;&#160;<a href="ims.gcims.html">Spectrum</a>
@@ -37,10 +35,10 @@
         
         
   <section id="module-ims.dataset">
-<span id="dataset"></span><h1>Dataset<a class="headerlink" href="#module-ims.dataset" title="Permalink to this headline">¶</a></h1>
+<span id="dataset"></span><h1>Dataset<a class="headerlink" href="#module-ims.dataset" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="ims.dataset.Dataset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ims.dataset.</span></span><span class="sig-name descname"><span class="pre">Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ims.dataset.</span></span><span class="sig-name descname"><span class="pre">Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Dataset class coordinates many GC-IMS spectra
 (instances of ims.Spectrum class) with labels, file
@@ -50,7 +48,7 @@ additional functionality and methods that require multiple spectra
 at a time such as alignments and calculating means. Most operations
 are done inplace for memory efficiency.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<em>list</em>) – Lists instances of <cite>ims.Spectrum</cite>.</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – Name of the dataset.</p></li>
@@ -63,10 +61,10 @@ case of repeat determination. Needed to calculate means.</p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.preprocessing">
-<span class="sig-name descname"><span class="pre">preprocessing</span></span><a class="headerlink" href="#ims.dataset.Dataset.preprocessing" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">preprocessing</span></span><a class="headerlink" href="#ims.dataset.Dataset.preprocessing" title="Link to this definition">¶</a></dt>
 <dd><p>Keeps track of applied preprocessing steps.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -74,11 +72,11 @@ case of repeat determination. Needed to calculate means.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.weights">
-<span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#ims.dataset.Dataset.weights" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#ims.dataset.Dataset.weights" title="Link to this definition">¶</a></dt>
 <dd><p>Stores the weights from scaling when the method is called.
 Needed to correct the loadings in PCA automatically.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_samples, n_features)</p>
 </dd>
 </dl>
@@ -86,11 +84,11 @@ Needed to correct the loadings in PCA automatically.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.train_index">
-<span class="sig-name descname"><span class="pre">train_index</span></span><a class="headerlink" href="#ims.dataset.Dataset.train_index" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">train_index</span></span><a class="headerlink" href="#ims.dataset.Dataset.train_index" title="Link to this definition">¶</a></dt>
 <dd><p>Keeps the indices from train_test_split method.
 Used for plot annotations in PLS_DA and PLSR classes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -98,18 +96,18 @@ Used for plot annotations in PLS_DA and PLSR classes.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.test_index">
-<span class="sig-name descname"><span class="pre">test_index</span></span><a class="headerlink" href="#ims.dataset.Dataset.test_index" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">test_index</span></span><a class="headerlink" href="#ims.dataset.Dataset.test_index" title="Link to this definition">¶</a></dt>
 <dd><p>Keeps the indices from train_test_split method.
 Used for plot annotations in PLS_DA and PLSR classes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
 
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
 <span class="go">Dataset: IMS_data, 58 Spectra</span>
@@ -117,12 +115,12 @@ Used for plot annotations in PLS_DA and PLSR classes.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.add_spectrum">
-<span class="sig-name descname"><span class="pre">add_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.add_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.add_spectrum" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.add_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.add_spectrum" title="Link to this definition">¶</a></dt>
 <dd><p>Adds a ims.Spectrum to the dataset.
 Sample name and label must be provided because they are
 not stored in the ims.Spectrum class.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spectrum</strong> (<em>ims.Spectrum</em>) – GC-IMS spectrum to add to the dataset.</p></li>
 <li><p><strong>sample</strong> (<em>str</em>) – The sample name is added to the sample attribute.
@@ -131,15 +129,15 @@ Necessary because sample names are not stored in ims.Spectrum class.</p></li>
 Necessary because labels are not stored in ims.Spectrum class.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>With Spectrum added.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Spectrum</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;sample.mea&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span><span class="o">.</span><span class="n">add_spectrum</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="s2">&quot;sample_name&quot;</span><span class="p">,</span> <span class="s2">&quot;class_label&quot;</span><span class="p">)</span>
@@ -149,10 +147,10 @@ Necessary because labels are not stored in ims.Spectrum class.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.align_ret_time">
-<span class="sig-name descname"><span class="pre">align_ret_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.align_ret_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.align_ret_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retention time alignment based on dymanic time warping.</p>
+<span class="sig-name descname"><span class="pre">align_ret_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.align_ret_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.align_ret_time" title="Link to this definition">¶</a></dt>
+<dd><p>Retention time alignment based on dymamic time warping.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>reference</strong> (<em>str, int or Spectrum, optional</em>) – Reference intensity values and retention time.
 If “mean” is used, calculates the mean from all samples in dataset.
 An integer is used to index the dataset and select a Spectrum.
@@ -164,10 +162,10 @@ by default “mean”.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.asymcorr">
-<span class="sig-name descname"><span class="pre">asymcorr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">niter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.asymcorr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.asymcorr" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">asymcorr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">niter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.asymcorr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.asymcorr" title="Link to this definition">¶</a></dt>
 <dd><p>Retention time baseline correction using asymmetric least squares.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lam</strong> (<em>float, optional</em>) – Controls smoothness. Larger numbers return smoother curves,
 by default 1e7</p></li>
@@ -176,7 +174,7 @@ by default 1e7</p></li>
 by default 20</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
@@ -184,7 +182,7 @@ by default 20</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.binning">
-<span class="sig-name descname"><span class="pre">binning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.binning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.binning" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">binning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.binning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.binning" title="Link to this definition">¶</a></dt>
 <dd><p>Downsamples each spectrum by binning the array with factor n.
 Similar to Spectrum.resampling but works on both dimensions
 simultaneously.
@@ -193,18 +191,18 @@ shortens it by the remainder at the long end.
 Very effective data reduction because a factor n=2 already
 reduces the number of features to a quarter.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>n</strong> (<em>int, optional</em>) – Binning factor, by default 2.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Downsampled data matrix.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_Data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="go">(4082, 3150)</span>
@@ -217,12 +215,12 @@ reduces the number of features to a quarter.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.bootstrap">
-<span class="sig-name descname"><span class="pre">bootstrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_bootstraps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.bootstrap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.bootstrap" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">bootstrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_bootstraps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.bootstrap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.bootstrap" title="Link to this definition">¶</a></dt>
 <dd><p>Iteratively resamples dataset with replacement. Samples can
 be included multiple times or not at all in the training data.
 Uses all samples that are not present in the training data as test data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_bootstraps</strong> (<em>int, optional</em>) – Number of iterations, by default 5.</p></li>
 <li><p><strong>n_samples</strong> (<em>int, optional</em>) – Number of samples to draw per iteration. Is set to
@@ -232,13 +230,13 @@ by default None.</p></li>
 by default None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Yields</dt>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>tuple</em> – (X_train, X_test, y_train, y_test) per iteration</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">PLS_DA</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy</span> <span class="o">=</span> <span class="p">[]</span>
@@ -252,20 +250,20 @@ by default None.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.copy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.copy" title="Link to this definition">¶</a></dt>
 <dd><p>Uses deepcopy from the copy module in the standard library.
 Most operations happen inplace. Use this method if you do not
 want to change the original variable.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>deepcopy of self.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_variable</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </pre></div>
@@ -274,7 +272,7 @@ want to change the original variable.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.cut_dt">
-<span class="sig-name descname"><span class="pre">cut_dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.cut_dt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.cut_dt" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">cut_dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.cut_dt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.cut_dt" title="Link to this definition">¶</a></dt>
 <dd><p>Cuts data along drift time coordinate.
 Range in between start and stop is kept.
 If stop is not given uses the end of the array instead.
@@ -282,7 +280,7 @@ Combination with RIP relative drift time
 values makes it easier to cut the RIP away and focus
 on the peak area.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>start</strong> (<em>int or float</em>) – Start value on drift time coordinate.</p></li>
 <li><p><strong>stop</strong> (<em>int or float, optional</em>) – Stop value on drift time coordinate.
@@ -290,15 +288,15 @@ If None uses the end of the array,
 by default None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>New drift time range.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="go">(4082, 3150)</span>
@@ -311,12 +309,12 @@ by default None.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.cut_rt">
-<span class="sig-name descname"><span class="pre">cut_rt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.cut_rt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.cut_rt" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">cut_rt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.cut_rt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.cut_rt" title="Link to this definition">¶</a></dt>
 <dd><p>Cuts data along retention time coordinate.
 Range in between start and stop is kept.
 If stop is not given uses the end of the array instead.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>start</strong> (<em>int or float</em>) – Start value on retention time coordinate.</p></li>
 <li><p><strong>stop</strong> (<em>int or float, optional</em>) – Stop value on retention time coordinate.
@@ -324,15 +322,15 @@ If None uses the end of the array,
 by default None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>New retention time range.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="go">(4082, 3150)</span>
@@ -345,40 +343,41 @@ by default None.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.drop">
-<span class="sig-name descname"><span class="pre">drop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.drop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.drop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes all spectra of specified label or sample from dataset.
+<span class="sig-name descname"><span class="pre">drop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.drop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.drop" title="Link to this definition">¶</a></dt>
+<dd><p>Removes all spectra of specified labels, samples, or files from the dataset.
 Must set at least one of the parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>label</strong> (<em>str, optional</em>) – Label name to keep, by default None</p></li>
-<li><p><strong>sample</strong> (<em>str, optional</em>) – Sample name to keep, by default None</p></li>
+<li><p><strong>labels</strong> (<em>str or list of str, optional</em>) – List of label names to remove, by default None</p></li>
+<li><p><strong>samples</strong> (<em>str or list of str, optional</em>) – List of sample names to remove, by default None</p></li>
+<li><p><strong>files</strong> (<em>str or list of str, optional</em>) – List of file names to remove, by default None</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Contains only matching spectra.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Contains only spectra that do not match the specified criteria.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;GroupA&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GroupA&quot;</span><span class="p">],</span> <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">FileA</span><span class="p">,</span> <span class="n">FileB</span><span class="p">])</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.export_plots">
-<span class="sig-name descname"><span class="pre">export_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jpg'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.export_plots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.export_plots" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">export_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jpg'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.export_plots"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.export_plots" title="Link to this definition">¶</a></dt>
 <dd><p>Saves a figure per spectrum as image file. See the docs for
 matplotlib savefig function for supported file formats and kwargs
 (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html">https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html</a>).</p>
 <p>Creates a new folder for the plots in the current working directory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>folder_name</strong> (<em>str, optional</em>) – New directory to save the images to.</p></li>
 <li><p><strong>file_format</strong> (<em>str, optional</em>) – See matplotlib savefig docs for information
@@ -388,7 +387,7 @@ by default ‘jpeg’</p></li>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span><span class="o">.</span><span class="n">export_plots</span><span class="p">(</span><span class="s2">&quot;IMS_data_plots&quot;</span><span class="p">)</span>
 </pre></div>
@@ -397,21 +396,21 @@ by default ‘jpeg’</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.get_xy">
-<span class="sig-name descname"><span class="pre">get_xy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.get_xy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.get_xy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_xy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.get_xy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.get_xy" title="Link to this definition">¶</a></dt>
 <dd><p>Returns features (X) and labels (y) as numpy arrays.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>flatten</strong> (<em>bool, optional</em>) – Flattens 3D datasets to 2D, by default True</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>(X, y)</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_xy</span><span class="p">()</span>
 </pre></div>
@@ -420,16 +419,16 @@ by default ‘jpeg’</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.groupby">
-<span class="sig-name descname"><span class="pre">groupby</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'label'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.groupby"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.groupby" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">groupby</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'label'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.groupby"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.groupby" title="Link to this definition">¶</a></dt>
 <dd><p>Groups dataset by label or sample.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>key</strong> (<em>str, optional</em>) – “label” or “sample” are valid keys, by default “label”</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>List of one ims.Dataset instance per group or sample.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -437,28 +436,32 @@ by default ‘jpeg’</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.interp_riprel">
-<span class="sig-name descname"><span class="pre">interp_riprel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.interp_riprel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.interp_riprel" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">interp_riprel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rip_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.interp_riprel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.interp_riprel" title="Link to this definition">¶</a></dt>
 <dd><p>Interpolates all spectra to common RIP relative drift time coordinate.
 Alignment along drift time coordinate.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>With RIP relative spectra.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rip_position</strong> (<em>int or float, optional</em>) – Position of the RIP in ms. If None the maximum value is used,
+by default None.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>With RIP relative spectra.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.kfold_split">
-<span class="sig-name descname"><span class="pre">kfold_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_splits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.kfold_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.kfold_split" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">kfold_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_splits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.kfold_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.kfold_split" title="Link to this definition">¶</a></dt>
 <dd><p>K-Folds cross-validator (sklearn.model_selection.KFold).
 Splits the dataset into k consecutive folds and provides
 train and test data.</p>
 <p>If stratify is True uses StratifiedKfold instead.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_splits</strong> (<em>int, optional</em>) – Number of folds. Must be at least 2,
 by default 5.</p></li>
@@ -472,13 +475,13 @@ Preserves the percentage of samples from each class in each split,
 by default False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Yields</dt>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>tuple</em> – (X_train, X_test, y_train, y_test) per iteration</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">PLS_DA</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy</span> <span class="o">=</span> <span class="p">[]</span>
@@ -492,18 +495,18 @@ by default False.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.leave_one_out">
-<span class="sig-name descname"><span class="pre">leave_one_out</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.leave_one_out"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.leave_one_out" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">leave_one_out</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.leave_one_out"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.leave_one_out" title="Link to this definition">¶</a></dt>
 <dd><p>Leave-One-Out cross-validator.
 Provides train test splits and uses each sample once as test set
 while the remaining data is used for training.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Yields</dt>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>tuple</em> – X_train, X_test, y_train, y_test</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">PLS_DA</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy</span> <span class="o">=</span> <span class="p">[]</span>
@@ -517,15 +520,38 @@ while the remaining data is used for training.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.mean">
-<span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.mean" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.mean" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates means for each sample, in case of repeat determinations.
 Automatically determines which file belongs to which sample.
 Sample names are used for mean spectra and file names are no longer needed.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>With mean spectra.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.dataset.Dataset.normalization">
+<span class="sig-name descname"><span class="pre">normalization</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.normalization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.normalization" title="Link to this definition">¶</a></dt>
+<dd><p>Normalizes each spectrum in the dataset by scaling its intensity values to the range [0, 1].</p>
+<p>This method ensures that the intensity values of each spectrum are individually normalized
+between 0 and 1 based on their unique minimum and maximum values. This standardizes the
+dataset, facilitating consistent comparison and analysis across different spectra.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span><span class="o">.</span><span class="n">normalization</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>self</strong> – The dataset with normalized spectra.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
@@ -533,13 +559,13 @@ Sample names are used for mean spectra and file names are no longer needed.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.plot" title="Link to this definition">¶</a></dt>
 <dd><p>Plots the spectrum of selected index and adds the label to the title.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>int, optional</em>) – Index of spectrum to plot, by default 0</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.axes._subplots.AxesSubplot</p>
 </dd>
 </dl>
@@ -547,7 +573,7 @@ Sample names are used for mean spectra and file names are no longer needed.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.read_csv">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subfolders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.read_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.read_csv" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subfolders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.csv'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.read_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.read_csv" title="Link to this definition">¶</a></dt>
 <dd><p>Reads generic csv files. The first row must be
 the drift time values and the first column must be
 the retention time values. Values inbetween are the
@@ -562,16 +588,16 @@ for each label and sample:</p>
 <dt>Group A</dt><dd><ul>
 <li><dl class="simple">
 <dt>Sample A</dt><dd><ul>
-<li><p>file a</p></li>
-<li><p>file b</p></li>
+<li><p>File A</p></li>
+<li><p>File B</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
 <dt>Sample B</dt><dd><ul>
-<li><p>file a</p></li>
-<li><p>file b</p></li>
+<li><p>File A</p></li>
+<li><p>File B</p></li>
 </ul>
 </dd>
 </dl>
@@ -586,18 +612,29 @@ for each label and sample:</p>
 </li>
 </ul>
 <p>Labels can then be auto-generated from directory names.
-Otherwise labels and sample names need to be added from other sources
-for all methods to work.</p>
+If subfolders=False, labels are generated by searching for keywords in file names.
+Default keywords are “blank”, “sample”, “qc”, and “control” for example:
+*   blank_air.csv –&gt; label “blank”
+*   control.csv –&gt; label “control”.
+*   All files that do not match any of the keywords are assigned the label “sample”.
+A list of custom labels can be passed with the label_keywords argument.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p></li>
+<li><p><strong>subfolders</strong> (<em>bool, optional</em>) – Uses subdirectory names as labels,
+by default False</p></li>
+<li><p><strong>extension</strong> (<em>str or list of str, optional</em>) – File extension(s) to include, by default “.csv”</p></li>
+<li><p><strong>label_keywords</strong> (<em>list of str, optional</em>) – List of keywords to search for in filenames to assign labels.
+If not provided, defaults to [“blank”, “sample”, “qc”, “control”].</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">,</span> <span class="n">subfolders</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
 <span class="go">Dataset: IMS_data, 58 Spectra</span>
@@ -607,22 +644,22 @@ for all methods to work.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.read_hdf5">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.read_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.read_hdf5" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.read_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.read_hdf5" title="Link to this definition">¶</a></dt>
 <dd><p>Reads hdf5 files exported by the Dataset.to_hdf5 method.
 Convenient way to store preprocessed spectra.
 Especially useful for larger datasets as preprocessing
 requires more time.
 Preferred to csv because of faster read and write speeds.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="s2">&quot;IMS_data_hdf5&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_hdf5</span><span class="p">(</span><span class="s2">&quot;IMS_data_hdf5&quot;</span><span class="p">)</span>
@@ -632,7 +669,7 @@ Preferred to csv because of faster read and write speeds.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.read_mea">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_mea</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subfolders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.read_mea"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.read_mea" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_mea</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subfolders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequential</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'wavecompr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.mea'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.read_mea"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.read_mea" title="Link to this definition">¶</a></dt>
 <dd><p>Reads all mea files from G.A.S Dortmund instruments in the
 given directory and combines them into a dataset.
 Much faster than reading csv files and therefore preferred.</p>
@@ -645,16 +682,16 @@ for each label and sample:</p>
 <dt>Group A</dt><dd><ul>
 <li><dl class="simple">
 <dt>Sample A</dt><dd><ul>
-<li><p>file a</p></li>
-<li><p>file b</p></li>
+<li><p>File A</p></li>
+<li><p>File B</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
 <dt>Sample B</dt><dd><ul>
-<li><p>file a</p></li>
-<li><p>file b</p></li>
+<li><p>File A</p></li>
+<li><p>File B</p></li>
 </ul>
 </dd>
 </dl>
@@ -669,22 +706,39 @@ for each label and sample:</p>
 </li>
 </ul>
 <p>Labels can then be auto-generated from directory names.
-Otherwise labels and sample names need to be added from other sources
-for all methods to work.</p>
+If subfolders=False, labels are generated by searching for keywords in file names.
+Default keywords are “blank”, “sample”, “qc”, and “control” for example:
+*   blank_air.csv –&gt; label “blank”
+*   control.csv –&gt; label “control”.
+*   All files that do not match any of the keywords are assigned the label “sample”.
+A list of custom labels can be passed with the label_keywords argument.</p>
+<p>If sequential=True files are compressed with the chosen compr method (“wavecompr” or “binning”).
+full dataset afterwards. Especially useful for big datasets or systems with lower RAM specifications.
+Valid kwargs for the compression methods can be found in the respective definitions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p></li>
 <li><p><strong>subfolders</strong> (<em>bool, optional</em>) – Uses subdirectory names as labels,
-by default False.</p></li>
+by default False</p></li>
+<li><p><strong>sequential</strong> (<em>bool, optional</em>) – Sequential compression of each file,
+by default False</p></li>
+<li><p><strong>compr</strong> (<em>str, optional</em>) – Compression method “binning” or “wavecompr” are valid,
+by default “wavecompr”</p></li>
+<li><p><strong>extension</strong> (<em>str or list of str, optional</em>) – File extension(s) to include, by default “.mea”</p></li>
+<li><p><strong>label_keywords</strong> (<em>list of str, optional</em>) – List of keywords to search for in filenames to assign labels.
+If not provided, defaults to [“blank”, “sample”, “qc”, “control”].</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If compression method is not supported</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">,</span> <span class="n">subfolders</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
 <span class="go">Dataset: IMS_data, 58 Spectra</span>
@@ -694,7 +748,7 @@ by default False.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.read_zip">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_zip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subfolders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.read_zip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.read_zip" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_zip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subfolders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['.csv',</span> <span class="pre">'.json']</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.read_zip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.read_zip" title="Link to this definition">¶</a></dt>
 <dd><p>Reads zipped csv and json files from G.A.S Dortmund mea2zip converting tool.
 Present for backwards compatibility. Reading mea files is much faster and saves
 the manual extra step of converting.</p>
@@ -707,16 +761,16 @@ for each label and sample:</p>
 <dt>Group A</dt><dd><ul>
 <li><dl class="simple">
 <dt>Sample A</dt><dd><ul>
-<li><p>file a</p></li>
-<li><p>file b</p></li>
+<li><p>File A</p></li>
+<li><p>File B</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
 <dt>Sample B</dt><dd><ul>
-<li><p>file a</p></li>
-<li><p>file b</p></li>
+<li><p>File A</p></li>
+<li><p>File B</p></li>
 </ul>
 </dd>
 </dl>
@@ -731,18 +785,29 @@ for each label and sample:</p>
 </li>
 </ul>
 <p>Labels can then be auto-generated from directory names.
-Otherwise labels and sample names need to be added from other sources
-for all methods to work.</p>
+If subfolders=False, labels are generated by searching for keywords in file names.
+Default keywords are “blank”, “sample”, “qc”, and “control” for example:
+*   blank_air.csv –&gt; label “blank”
+*   control.csv –&gt; label “control”.
+*   All files that do not match any of the keywords are assigned the label “sample”.
+A list of custom labels can be passed with the label_keywords argument.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Absolute or relative file path.</p></li>
+<li><p><strong>subfolders</strong> (<em>bool, optional</em>) – Uses subdirectory names as labels,
+by default False</p></li>
+<li><p><strong>extension</strong> (<em>str or list of str, optional</em>) – File extension(s) to include, by default [“.csv”, “.json”]</p></li>
+<li><p><strong>label_keywords</strong> (<em>list of str, optional</em>) – List of keywords to search for in filenames to assign labels.
+If not provided, defaults to [“blank”, “sample”, “qc”, “control”].</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_zip</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">,</span> <span class="n">subfolders</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
 <span class="go">Dataset: IMS_data, 58 Spectra</span>
@@ -752,24 +817,24 @@ for all methods to work.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.resample">
-<span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.resample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.resample" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.resample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.resample" title="Link to this definition">¶</a></dt>
 <dd><p>Resamples each spectrum by calculating means of every n rows.
 If the length of the retention time is not divisible by n
 it and the data matrix get cropped by the remainder at the long end.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>n</strong> (<em>int, optional</em>) – Number of rows to mean,
 by default 2.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Resampled values.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_Data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="go">(4082, 3150)</span>
@@ -782,15 +847,15 @@ by default 2.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.rip_scaling">
-<span class="sig-name descname"><span class="pre">rip_scaling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.rip_scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.rip_scaling" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">rip_scaling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.rip_scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.rip_scaling" title="Link to this definition">¶</a></dt>
 <dd><p>Scales values relative to global maximum.
 Can be useful to directly compare spectra from
 instruments with different sensitivity.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>With scaled values.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
@@ -798,15 +863,15 @@ instruments with different sensitivity.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.sample_indices">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sample_indices</span></span><a class="headerlink" href="#ims.dataset.Dataset.sample_indices" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sample_indices</span></span><a class="headerlink" href="#ims.dataset.Dataset.sample_indices" title="Link to this definition">¶</a></dt>
 <dd><p>This property returns information about all spectra indices
 for each sample in the dataset.
 Useful to select or remove specific samples or files.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Sample names as keys, lists with indices of spectra as values.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
 </dd>
 </dl>
@@ -814,11 +879,11 @@ Useful to select or remove specific samples or files.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.savgol">
-<span class="sig-name descname"><span class="pre">savgol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.savgol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.savgol" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">savgol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polyorder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.savgol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.savgol" title="Link to this definition">¶</a></dt>
 <dd><p>Applys a Savitzky-Golay filter to intensity values.
 Can be applied in the drift time, retention time or both directions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>window_length</strong> (<em>int, optional</em>) – The length of the filter window, by default 10</p></li>
 <li><p><strong>polyorder</strong> (<em>int, optional</em>) – The order of the polynomial used to fit the samples, by default 2</p></li>
@@ -827,7 +892,7 @@ Can be ‘drift time’, ‘retention time’ or ‘both’.
 By default ‘both’</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
@@ -835,21 +900,22 @@ By default ‘both’</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.scaling">
-<span class="sig-name descname"><span class="pre">scaling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pareto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_centering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.scaling" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">scaling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pareto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_centering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.scaling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.scaling" title="Link to this definition">¶</a></dt>
 <dd><p>Scales and mean centeres features according to selected method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>method</strong> (<em>str, optional</em>) – “pareto”, “auto” or “var” are valid,
-by default “pareto”.</p></li>
+<li><p><strong>method</strong> (<em>str, optional</em>) – “pareto”, “auto” , “var” or None are valid options,
+by default “pareto”.
+If method = None and mean_centering=True, it only implements mean_centering</p></li>
 <li><p><strong>mean_centering</strong> (<em>bool, optional</em>) – If true center the data before scaling,
 by default True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
-<dt class="field-odd">Raises</dt>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If scaling method is not supported.</p>
 </dd>
 </dl>
@@ -857,39 +923,40 @@ by default True.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.select">
-<span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.select" title="Permalink to this definition">¶</a></dt>
-<dd><p>Selects all spectra of specified label or sample.
+<span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.select" title="Link to this definition">¶</a></dt>
+<dd><p>Selects all spectra of specified labels, samples, or files.
 Must set at least one of the parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>label</strong> (<em>str, optional</em>) – Label name to keep, by default None</p></li>
-<li><p><strong>sample</strong> (<em>str, optional</em>) – Sample name to keep, by default None</p></li>
+<li><p><strong>labels</strong> (<em>list of str, optional</em>) – List of label names to keep, by default None</p></li>
+<li><p><strong>samples</strong> (<em>list of str, optional</em>) – List of sample names to keep, by default None</p></li>
+<li><p><strong>files</strong> (<em>list of str, optional</em>) – List of file names to keep, by default None</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Contains only matching spectra.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">group_a</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;GroupA&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">group_a</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GroupA&quot;</span><span class="p">,</span> <span class="s2">&quot;GroupB&quot;</span><span class="p">],</span> <span class="n">samples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SampleA&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.shuffle_split">
-<span class="sig-name descname"><span class="pre">shuffle_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_splits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.shuffle_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.shuffle_split" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">shuffle_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_splits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.shuffle_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.shuffle_split" title="Link to this definition">¶</a></dt>
 <dd><p>Shuffled splits for montecarlo cross-validation. Randomly selects
 a fraction of the dataset, without replacements, per split
 (sklearn.model_selection.ShuffleSplit).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_splits</strong> (<em>int, optional</em>) – Number of re-shuffling and splitting iterations,
 by default 5.</p></li>
@@ -899,13 +966,13 @@ by default 0.2.</p></li>
 by default None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Yields</dt>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>tuple</em> – (X_train, X_test, y_train, y_test) per iteration</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">accuracy_score</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">PLS_DA</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy</span> <span class="o">=</span> <span class="p">[]</span>
@@ -919,12 +986,12 @@ by default None.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.sub_first_rows">
-<span class="sig-name descname"><span class="pre">sub_first_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.sub_first_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.sub_first_rows" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sub_first_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.sub_first_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.sub_first_rows" title="Link to this definition">¶</a></dt>
 <dd><p>Subtracts first row from every row in spectrum.
 Effective and simple baseline correction
 if RIP tailing is a concern but can hide small peaks.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
@@ -932,13 +999,13 @@ if RIP tailing is a concern but can hide small peaks.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.timestamps">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timestamps</span></span><a class="headerlink" href="#ims.dataset.Dataset.timestamps" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timestamps</span></span><a class="headerlink" href="#ims.dataset.Dataset.timestamps" title="Link to this definition">¶</a></dt>
 <dd><p>Property of timestamps when each spectrum in dataset was recorded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List of Python datetime objects.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>list</p>
 </dd>
 </dl>
@@ -946,12 +1013,12 @@ if RIP tailing is a concern but can hide small peaks.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.to_hdf5">
-<span class="sig-name descname"><span class="pre">to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.to_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.to_hdf5" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.to_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.to_hdf5" title="Link to this definition">¶</a></dt>
 <dd><p>Exports the dataset as hdf5 file.
 It contains one group per spectrum and one with labels etc.
 Use ims.Dataset.read_hdf5 to read the file and construct a dataset.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str, optional</em>) – Name of the hdf5 file. File extension is not needed.
 If not set, uses the dataset name attribute,
@@ -962,7 +1029,7 @@ directory, by default None.</p></li>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_hdf5</span><span class="p">(</span><span class="s2">&quot;IMS_data.hdf5&quot;</span><span class="p">)</span>
@@ -972,15 +1039,15 @@ directory, by default None.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.tophat">
-<span class="sig-name descname"><span class="pre">tophat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.tophat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.tophat" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">tophat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.tophat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.tophat" title="Link to this definition">¶</a></dt>
 <dd><p>Applies white tophat filter on data matrix as a baseline correction.
 Size parameter is the diameter of the circular structuring element.
 (Slow with large size values.)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>size</strong> (<em>int, optional</em>) – Size of structuring element, by default 15.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
 </dl>
@@ -988,10 +1055,10 @@ Size parameter is the diameter of the circular structuring element.
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.train_test_split">
-<span class="sig-name descname"><span class="pre">train_test_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.train_test_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.train_test_split" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">train_test_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.train_test_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.train_test_split" title="Link to this definition">¶</a></dt>
 <dd><p>Splits the dataset in train and test sets.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>test_size</strong> (<em>float, optional</em>) – Proportion of the dataset to be used for validation.
 Should be between 0.0 and 1.0,
@@ -1003,15 +1070,15 @@ by default False.</p></li>
 by default 1</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>X_train, X_test, y_train, y_test</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tuple of numpy.ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_Data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">()</span>
 </pre></div>
@@ -1020,11 +1087,11 @@ by default 1</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.dataset.Dataset.wavecompr">
-<span class="sig-name descname"><span class="pre">wavecompr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ret_time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'db3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.wavecompr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.wavecompr" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">wavecompr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ret_time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'db3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/dataset.html#Dataset.wavecompr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.dataset.Dataset.wavecompr" title="Link to this definition">¶</a></dt>
 <dd><p>Data reduction by wavelet compression.
 Can be applied to drift time, retention time or both axis.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>direction</strong> (<em>str, optional</em>) – The direction in which to apply the filter.
 Can be ‘drift time’, ‘retention time’ or ‘both’.
@@ -1035,10 +1102,10 @@ by default “db3”.</p></li>
 by default 3.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#ims.dataset.Dataset" title="ims.dataset.Dataset">Dataset</a></p>
 </dd>
-<dt class="field-odd">Raises</dt>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – When direction is neither ‘ret_time’, ‘drift_time’ or ‘both’.</p>
 </dd>
 </dl>
@@ -1050,7 +1117,7 @@ by default 3.</p></li>
 
 
       </div>
-      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
       
         <p>
         «&#160;&#160;<a href="ims.gcims.html">Spectrum</a>
@@ -1063,8 +1130,8 @@ by default 3.</p></li>
       </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0.
     </div>
   </body>
 </html>

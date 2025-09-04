@@ -1,28 +1,26 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>PCA_Model &#8212; gc-ims-tools 0.1.7 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <title>PCA_Model &#8212; gc-ims-tools 0.1.8 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=47202671" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css?v=fce32b03" />
+    <script src="_static/documentation_options.js?v=22607128"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="PLSR" href="ims.plsr.html" />
     <link rel="prev" title="Dataset" href="ims.dataset.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>gc-ims-tools 0.1.7 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.8 documentation</span></a></h1>
         <h2 class="heading"><span>PCA_Model</span></h2>
       </div>
-      <div class="topnav" role="navigation" aria-label="top navigation">
+      <div class="topnav" role="navigation" aria-label="Top">
       
         <p>
         «&#160;&#160;<a href="ims.dataset.html">Dataset</a>
@@ -37,17 +35,17 @@
         
         
   <section id="module-ims.pca">
-<span id="pca-model"></span><h1>PCA_Model<a class="headerlink" href="#module-ims.pca" title="Permalink to this headline">¶</a></h1>
+<span id="pca-model"></span><h1>PCA_Model<a class="headerlink" href="#module-ims.pca" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ims.pca.</span></span><span class="sig-name descname"><span class="pre">PCA_Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svd_solver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ims.pca.</span></span><span class="sig-name descname"><span class="pre">PCA_Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svd_solver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>PCA_Model is a wrapper class around the scikit-learn PCA implementation
 and provides prebuilt plots for GC-IMS datasets.</p>
 <p>See the original scikit-learn documentation for a detailed description:
 <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html">https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataset</strong> (<em>ims.Dataset</em>) – The dataset is needed for the retention and drift time
 coordinates.</p></li>
@@ -62,10 +60,10 @@ See the original documentation for valid parameters.</p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model.scores">
-<span class="sig-name descname"><span class="pre">scores</span></span><a class="headerlink" href="#ims.pca.PCA_Model.scores" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">scores</span></span><a class="headerlink" href="#ims.pca.PCA_Model.scores" title="Link to this definition">¶</a></dt>
 <dd><p>X with dimension reduction applied.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_samples, n_features)</p>
 </dd>
 </dl>
@@ -73,11 +71,11 @@ See the original documentation for valid parameters.</p></li>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model.loadings">
-<span class="sig-name descname"><span class="pre">loadings</span></span><a class="headerlink" href="#ims.pca.PCA_Model.loadings" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">loadings</span></span><a class="headerlink" href="#ims.pca.PCA_Model.loadings" title="Link to this definition">¶</a></dt>
 <dd><p>PCA loadings already corrected when a scaling method was
 applied on the dataset.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_components, n_features)</p>
 </dd>
 </dl>
@@ -85,10 +83,10 @@ applied on the dataset.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model.explainded_variance">
-<span class="sig-name descname"><span class="pre">explainded_variance</span></span><a class="headerlink" href="#ims.pca.PCA_Model.explainded_variance" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">explainded_variance</span></span><a class="headerlink" href="#ims.pca.PCA_Model.explainded_variance" title="Link to this definition">¶</a></dt>
 <dd><p>The amount of variance explained by each component.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_components,)</p>
 </dd>
 </dl>
@@ -96,10 +94,10 @@ applied on the dataset.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model.explained_variance_ratio">
-<span class="sig-name descname"><span class="pre">explained_variance_ratio</span></span><a class="headerlink" href="#ims.pca.PCA_Model.explained_variance_ratio" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">explained_variance_ratio</span></span><a class="headerlink" href="#ims.pca.PCA_Model.explained_variance_ratio" title="Link to this definition">¶</a></dt>
 <dd><p>Percentage of variance explained by each component.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.nd_array of shape (n_components,)</p>
 </dd>
 </dl>
@@ -107,10 +105,10 @@ applied on the dataset.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model.singular_values">
-<span class="sig-name descname"><span class="pre">singular_values</span></span><a class="headerlink" href="#ims.pca.PCA_Model.singular_values" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">singular_values</span></span><a class="headerlink" href="#ims.pca.PCA_Model.singular_values" title="Link to this definition">¶</a></dt>
 <dd><p>The singular values corresponding to each component.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_components,)</p>
 </dd>
 </dl>
@@ -118,17 +116,17 @@ applied on the dataset.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model.mean">
-<span class="sig-name descname"><span class="pre">mean</span></span><a class="headerlink" href="#ims.pca.PCA_Model.mean" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mean</span></span><a class="headerlink" href="#ims.pca.PCA_Model.mean" title="Link to this definition">¶</a></dt>
 <dd><p>Per feature mean estimated from training data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_features,)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_xy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pca</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">PCA_Model</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
@@ -138,17 +136,17 @@ applied on the dataset.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model.Tsq_Q_plot">
-<span class="sig-name descname"><span class="pre">Tsq_Q_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model.Tsq_Q_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model.Tsq_Q_plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">Tsq_Q_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model.Tsq_Q_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model.Tsq_Q_plot" title="Link to this definition">¶</a></dt>
 <dd><p>Plots T square values and Q residuals with 95 % confidence limits
 for outlier detection.
 Q confidence limit is determined empirically,
 the T square limit is calculated using the f distribution.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>annotate</strong> (<em>bool, optional</em>) – Annotates markers with sample names when True,
 by default False.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
@@ -156,16 +154,16 @@ by default False.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model.fit" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model.fit" title="Link to this definition">¶</a></dt>
 <dd><p>Fit the PCA model with training data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>X_train</strong> (<em>numpy.ndarray of shape (n_samples, n_features)</em>) – The training data.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The fitted model.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>self</p>
 </dd>
 </dl>
@@ -173,10 +171,10 @@ by default False.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">PC_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PC_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model.plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">PC_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PC_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model.plot" title="Link to this definition">¶</a></dt>
 <dd><p>Scatter plot of selected principal components.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>PC_x</strong> (<em>int, optional</em>) – PC x axis, by default 1.</p></li>
 <li><p><strong>PC_y</strong> (<em>int, optional</em>) – PC y axis, by default 2.</p></li>
@@ -184,7 +182,29 @@ by default False.</p>
 by default False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>matplotlib.pyplot.axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ims.pca.PCA_Model.plot_3d">
+<span class="sig-name descname"><span class="pre">plot_3d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">PC_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PC_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PC_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model.plot_3d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model.plot_3d" title="Link to this definition">¶</a></dt>
+<dd><p>3-d Scatter plot of selected principal components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>PC_x</strong> (<em>int, optional</em>) – PC x axis, by default 1.</p></li>
+<li><p><strong>PC_y</strong> (<em>int, optional</em>) – PC y axis, by default 2.</p></li>
+<li><p><strong>PC_z</strong> (<em>int, optional</em>) – PC z axis, by default 3.</p></li>
+<li><p><strong>annotate</strong> (<em>bool, optional</em>) – label data points with sample name,
+by default False.</p></li>
+<li><p><strong>**kwargs</strong> (<em>optional</em>) – Additional keyword arguments are passed to the legend of the plotted samples.
+See the original documentation for valid parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
@@ -192,11 +212,11 @@ by default False.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model.plot_loadings">
-<span class="sig-name descname"><span class="pre">plot_loadings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">PC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model.plot_loadings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model.plot_loadings" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_loadings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">PC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model.plot_loadings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model.plot_loadings" title="Link to this definition">¶</a></dt>
 <dd><p>Plots loadings of a principle component with the original retention
 and drift time coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>PC</strong> (<em>int, optional</em>) – principal component, by default 1.</p></li>
 <li><p><strong>color_range</strong> (<em>int, optional</em>) – color_scale ranges from - color_range to + color_range
@@ -205,7 +225,7 @@ centered at 0.</p></li>
 <li><p><strong>height</strong> (<em>int or float, optional</em>) – plot height in inches, by default 10.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
@@ -213,11 +233,11 @@ centered at 0.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.pca.PCA_Model.scree_plot">
-<span class="sig-name descname"><span class="pre">scree_plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model.scree_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model.scree_plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">scree_plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/pca.html#PCA_Model.scree_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.pca.PCA_Model.scree_plot" title="Link to this definition">¶</a></dt>
 <dd><p>Plots the explained variance ratio per principal component
 and cumulatively.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
@@ -229,7 +249,7 @@ and cumulatively.</p>
 
 
       </div>
-      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
       
         <p>
         «&#160;&#160;<a href="ims.dataset.html">Dataset</a>
@@ -242,8 +262,8 @@ and cumulatively.</p>
       </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0.
     </div>
   </body>
 </html>

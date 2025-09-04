@@ -1,28 +1,26 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>PLSR &#8212; gc-ims-tools 0.1.7 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <title>PLSR &#8212; gc-ims-tools 0.1.8 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=47202671" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css?v=fce32b03" />
+    <script src="_static/documentation_options.js?v=22607128"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="PLS_DA" href="ims.plsda.html" />
     <link rel="prev" title="PCA_Model" href="ims.pca.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>gc-ims-tools 0.1.7 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.8 documentation</span></a></h1>
         <h2 class="heading"><span>PLSR</span></h2>
       </div>
-      <div class="topnav" role="navigation" aria-label="top navigation">
+      <div class="topnav" role="navigation" aria-label="Top">
       
         <p>
         «&#160;&#160;<a href="ims.pca.html">PCA_Model</a>
@@ -37,10 +35,10 @@
         
         
   <section id="module-ims.plsr">
-<span id="plsr"></span><h1>PLSR<a class="headerlink" href="#module-ims.plsr" title="Permalink to this headline">¶</a></h1>
+<span id="plsr"></span><h1>PLSR<a class="headerlink" href="#module-ims.plsr" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="ims.plsr.PLSR">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ims.plsr.</span></span><span class="sig-name descname"><span class="pre">PLSR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ims.plsr.</span></span><span class="sig-name descname"><span class="pre">PLSR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Applies a scikit-learn PLSRegression to GC-IMS data and provides prebuilt
 plots as well as a feature selection via variable importance in projection (VIP)
@@ -48,7 +46,7 @@ scores.</p>
 <p>See the scikit-learn documentation for more details:
 <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.PLSRegression.html">https://scikit-learn.org/stable/modules/generated/sklearn.cross_decomposition.PLSRegression.html</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataset</strong> (<em>ims.Dataset</em>) – Needed for the retention and drift time coordinates in the plots.</p></li>
 <li><p><strong>n_components</strong> (<em>int, optional</em>) – Number of components to keep, by default 2.</p></li>
@@ -58,10 +56,10 @@ scores.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.x_scores">
-<span class="sig-name descname"><span class="pre">x_scores</span></span><a class="headerlink" href="#ims.plsr.PLSR.x_scores" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">x_scores</span></span><a class="headerlink" href="#ims.plsr.PLSR.x_scores" title="Link to this definition">¶</a></dt>
 <dd><p>X scores.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_samples, n_components)</p>
 </dd>
 </dl>
@@ -69,10 +67,10 @@ scores.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.y_scores">
-<span class="sig-name descname"><span class="pre">y_scores</span></span><a class="headerlink" href="#ims.plsr.PLSR.y_scores" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">y_scores</span></span><a class="headerlink" href="#ims.plsr.PLSR.y_scores" title="Link to this definition">¶</a></dt>
 <dd><p>y scores.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_samples, n_components)</p>
 </dd>
 </dl>
@@ -80,10 +78,10 @@ scores.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.x_weights">
-<span class="sig-name descname"><span class="pre">x_weights</span></span><a class="headerlink" href="#ims.plsr.PLSR.x_weights" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">x_weights</span></span><a class="headerlink" href="#ims.plsr.PLSR.x_weights" title="Link to this definition">¶</a></dt>
 <dd><p>The left singular vectors of the cross-covariance matrices of each iteration.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_features, n_components)</p>
 </dd>
 </dl>
@@ -91,10 +89,10 @@ scores.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.y_weights">
-<span class="sig-name descname"><span class="pre">y_weights</span></span><a class="headerlink" href="#ims.plsr.PLSR.y_weights" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">y_weights</span></span><a class="headerlink" href="#ims.plsr.PLSR.y_weights" title="Link to this definition">¶</a></dt>
 <dd><p>The right singular vectors of the cross-covariance matrices of each iteration.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_targets, n_components)</p>
 </dd>
 </dl>
@@ -102,11 +100,11 @@ scores.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.x_loadings">
-<span class="sig-name descname"><span class="pre">x_loadings</span></span><a class="headerlink" href="#ims.plsr.PLSR.x_loadings" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">x_loadings</span></span><a class="headerlink" href="#ims.plsr.PLSR.x_loadings" title="Link to this definition">¶</a></dt>
 <dd><p>The loadings of X. When scaling was applied on the dataset,
 corrects the loadings using the weights.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_features, n_components)</p>
 </dd>
 </dl>
@@ -114,10 +112,10 @@ corrects the loadings using the weights.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.y_loadings">
-<span class="sig-name descname"><span class="pre">y_loadings</span></span><a class="headerlink" href="#ims.plsr.PLSR.y_loadings" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">y_loadings</span></span><a class="headerlink" href="#ims.plsr.PLSR.y_loadings" title="Link to this definition">¶</a></dt>
 <dd><p>The loadings of y.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_targes, n_components)</p>
 </dd>
 </dl>
@@ -125,10 +123,10 @@ corrects the loadings using the weights.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.coefficients">
-<span class="sig-name descname"><span class="pre">coefficients</span></span><a class="headerlink" href="#ims.plsr.PLSR.coefficients" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">coefficients</span></span><a class="headerlink" href="#ims.plsr.PLSR.coefficients" title="Link to this definition">¶</a></dt>
 <dd><p>The coefficients of the linear model.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_features, n_targets)</p>
 </dd>
 </dl>
@@ -136,18 +134,18 @@ corrects the loadings using the weights.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.y_pred_train">
-<span class="sig-name descname"><span class="pre">y_pred_train</span></span><a class="headerlink" href="#ims.plsr.PLSR.y_pred_train" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">y_pred_train</span></span><a class="headerlink" href="#ims.plsr.PLSR.y_pred_train" title="Link to this definition">¶</a></dt>
 <dd><p>Stores the predicted values from the training data for the plot method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
 
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">responses</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;responses.csv&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">responses</span>
@@ -160,19 +158,19 @@ corrects the loadings using the weights.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.fit" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.fit" title="Link to this definition">¶</a></dt>
 <dd><p>Fits the model with training data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X_train</strong> (<em>numpy.ndarray of targets (n_samples, n_features)</em>) – Training vectors with features.</p></li>
 <li><p><strong>y_train</strong> (<em>numpy.ndarray of shape (n_samples, n_targets)</em>) – Target vectors with response variables.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Fitted model.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>self</p>
 </dd>
 </dl>
@@ -180,7 +178,7 @@ corrects the loadings using the weights.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot" title="Link to this definition">¶</a></dt>
 <dd><p>Plots predicted vs actual values and shows regression line.
 Recommended to predict with test data first.</p>
 <dl class="simple">
@@ -189,7 +187,7 @@ by default False.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
@@ -197,10 +195,10 @@ by default False.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.plot_coefficients">
-<span class="sig-name descname"><span class="pre">plot_coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_coefficients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_coefficients" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_coefficients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_coefficients" title="Link to this definition">¶</a></dt>
 <dd><p>Plots PLS coefficients as image with retention and drift time axis.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>width</strong> (<em>int or float, optional</em>) – Width of the plot in inches,
 by default 8.</p></li>
@@ -208,7 +206,7 @@ by default 8.</p></li>
 by default 8.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
@@ -216,11 +214,11 @@ by default 8.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.plot_loadings">
-<span class="sig-name descname"><span class="pre">plot_loadings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_loadings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_loadings" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_loadings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_loadings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_loadings" title="Link to this definition">¶</a></dt>
 <dd><p>Plots PLS x loadings as image with retention and drift
 time coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>component</strong> (<em>int, optional</em>) – Component to plot, by default 1.</p></li>
 <li><p><strong>color_range</strong> (<em>float, optional</em>) – Minimum and maximum to adjust to different scaling methods,
@@ -231,7 +229,7 @@ by default 8.</p></li>
 by default 8.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
@@ -239,10 +237,10 @@ by default 8.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.plot_selectivity_ratio">
-<span class="sig-name descname"><span class="pre">plot_selectivity_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_selectivity_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_selectivity_ratio" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_selectivity_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_selectivity_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_selectivity_ratio" title="Link to this definition">¶</a></dt>
 <dd><p>Plots VIP scores as image with retention and drift time axis.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>threshold</strong> (<em>int</em>) – Only plots VIP scores above threshold if set.
 Values below are displayed as 0,
@@ -253,7 +251,7 @@ by default 8.</p></li>
 by default 8.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
@@ -261,10 +259,10 @@ by default 8.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.plot_vip_scores">
-<span class="sig-name descname"><span class="pre">plot_vip_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_vip_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_vip_scores" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_vip_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.plot_vip_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.plot_vip_scores" title="Link to this definition">¶</a></dt>
 <dd><p>Plots VIP scores as image with retention and drift time axis.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>threshold</strong> (<em>int</em>) – Only plots VIP scores above threshold if set.
 Values below are displayed as 0,
@@ -275,10 +273,10 @@ by default 8.</p></li>
 by default 8.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.pyplot.axes</p>
 </dd>
-<dt class="field-odd">Raises</dt>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If VIP scores have not been calculated prior.</p>
 </dd>
 </dl>
@@ -286,10 +284,10 @@ by default 8.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.predict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.predict" title="Link to this definition">¶</a></dt>
 <dd><p>Predicts responses for features of the test data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X_test</strong> (<em>numpy.ndarray of shape (n_samples, n_features)</em>) – Features of test data.</p></li>
 <li><p><strong>y_train</strong> (<em>numpy.ndarray of shape (n_samples, n_targets), optional</em>) – True labels for test data.
@@ -297,10 +295,10 @@ If set allows automatic plotting of validation data,
 by default None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Predicted responses for test data.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray of shape (n_samples, n_targets)</p>
 </dd>
 </dl>
@@ -308,20 +306,20 @@ by default None.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.score" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.score" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates R^2 score score for predicted data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X_test</strong> (<em>numpy.ndarray of shape (n_samples, n_features)</em>) – Feature vectors of the test data.</p></li>
 <li><p><strong>y_test</strong> (<em>numpy.ndarray of shape (n_samples, n_targets)</em>) – True regression responses.</p></li>
 <li><p><strong>sample_weight</strong> (<em>array-like of shape (n_samples,), optional</em>) – Sample weights, by default None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>score</strong> – R^2 score.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -329,16 +327,16 @@ by default None.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.plsr.PLSR.transform">
-<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.transform" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/plsr.html#PLSR.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.plsr.PLSR.transform" title="Link to this definition">¶</a></dt>
 <dd><p>Apply the dimensionality reduction.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X</strong> (<em>numpy.ndarray of shape (n_samples, n_features)</em>) – Feature matrix.</p></li>
 <li><p><strong>y</strong> (<em>numpy.ndarray of shape (n_samples, n_targtets), optional</em>) – Dependend variables, by default None</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>X_scores</p>
 </dd>
 </dl>
@@ -350,7 +348,7 @@ by default None.</p></li>
 
 
       </div>
-      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
       
         <p>
         «&#160;&#160;<a href="ims.pca.html">PCA_Model</a>
@@ -363,8 +361,8 @@ by default None.</p></li>
       </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0.
     </div>
   </body>
 </html>

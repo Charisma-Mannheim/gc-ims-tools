@@ -20,6 +20,7 @@ API-Reference
    ims.plsr
    ims.plsda
    ims.hca
+   ims.simca
 
 
 Indices and tables

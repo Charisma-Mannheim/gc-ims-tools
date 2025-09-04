@@ -1,32 +1,33 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>HCA &#8212; gc-ims-tools 0.1.7 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/haiku.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <title>HCA &#8212; gc-ims-tools 0.1.8 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=47202671" />
+    <link rel="stylesheet" type="text/css" href="_static/haiku.css?v=fce32b03" />
+    <script src="_static/documentation_options.js?v=22607128"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SIMCA" href="ims.simca.html" />
     <link rel="prev" title="PLS_DA" href="ims.plsda.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="index.html">
-          <span>gc-ims-tools 0.1.7 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.8 documentation</span></a></h1>
         <h2 class="heading"><span>HCA</span></h2>
       </div>
-      <div class="topnav" role="navigation" aria-label="top navigation">
+      <div class="topnav" role="navigation" aria-label="Top">
       
         <p>
         «&#160;&#160;<a href="ims.plsda.html">PLS_DA</a>
         &#160;&#160;::&#160;&#160;
         <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="ims.simca.html">SIMCA</a>&#160;&#160;»
         </p>
 
       </div>
@@ -34,15 +35,15 @@
         
         
   <section id="module-ims.hca">
-<span id="hca"></span><h1>HCA<a class="headerlink" href="#module-ims.hca" title="Permalink to this headline">¶</a></h1>
+<span id="hca"></span><h1>HCA<a class="headerlink" href="#module-ims.hca" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="ims.hca.HCA">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ims.hca.</span></span><span class="sig-name descname"><span class="pre">HCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">affinity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'euclidean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linkage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ward'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/hca.html#HCA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.hca.HCA" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ims.hca.</span></span><span class="sig-name descname"><span class="pre">HCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">affinity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'euclidean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linkage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ward'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/hca.html#HCA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.hca.HCA" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Hierarchical cluster analysis with scikit-learn AgglomerativeClustering
 and scipy dendrogram.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataset</strong> (<em>ims.Dataset, optional</em>) – Dataset with GC-IMS data is needed for sample and label names
 in dendrogram. If not set uses leaves as labels instead,
@@ -59,11 +60,11 @@ by default “ward”.</p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.hca.HCA.clustering">
-<span class="sig-name descname"><span class="pre">clustering</span></span><a class="headerlink" href="#ims.hca.HCA.clustering" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">clustering</span></span><a class="headerlink" href="#ims.hca.HCA.clustering" title="Link to this definition">¶</a></dt>
 <dd><p>Scikit-learn algorithm used for the clustering.
 See the original documentation for details about attributes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>sklearn.cluster.AgglomerativeClustering</p>
 </dd>
 </dl>
@@ -71,10 +72,10 @@ See the original documentation for details about attributes.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.hca.HCA.linkage_matrix">
-<span class="sig-name descname"><span class="pre">linkage_matrix</span></span><a class="headerlink" href="#ims.hca.HCA.linkage_matrix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">linkage_matrix</span></span><a class="headerlink" href="#ims.hca.HCA.linkage_matrix" title="Link to this definition">¶</a></dt>
 <dd><p>Clustering results encoded as linkage matrix.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
@@ -82,17 +83,17 @@ See the original documentation for details about attributes.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ims.hca.HCA.R">
-<span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#ims.hca.HCA.R" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#ims.hca.HCA.R" title="Link to this definition">¶</a></dt>
 <dd><p>scipy dendrogram output as dictionary.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
 
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ims</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ims</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ds</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">read_mea</span><span class="p">(</span><span class="s2">&quot;IMS_data&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">get_xy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hca</span> <span class="o">=</span> <span class="n">ims</span><span class="o">.</span><span class="n">HCA</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">linkage</span><span class="o">=</span><span class="s2">&quot;ward&quot;</span><span class="p">,</span> <span class="n">affinity</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">)</span>
@@ -102,10 +103,10 @@ See the original documentation for details about attributes.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.hca.HCA.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/hca.html#HCA.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.hca.HCA.fit" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/hca.html#HCA.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.hca.HCA.fit" title="Link to this definition">¶</a></dt>
 <dd><p>Fit the model from features.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>X</strong> (<em>array-like of shape (n_samples, n_features)</em>) – Training features to cluster.</p>
 </dd>
 </dl>
@@ -113,10 +114,10 @@ See the original documentation for details about attributes.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ims.hca.HCA.plot_dendrogram">
-<span class="sig-name descname"><span class="pre">plot_dendrogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'right'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/hca.html#HCA.plot_dendrogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.hca.HCA.plot_dendrogram" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot_dendrogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'right'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ims/hca.html#HCA.plot_dendrogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ims.hca.HCA.plot_dendrogram" title="Link to this definition">¶</a></dt>
 <dd><p>Plots clustering results as dendrogram.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>width</strong> (<em>int, optional</em>) – Width of the figure in inches, by default 8</p></li>
 <li><p><strong>height</strong> (<em>int, optional</em>) – Width of the figure in inches, by default 8</p></li>
@@ -125,7 +126,7 @@ See the original documentation for details about attributes.</p>
 for information about valid keyword arguments.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.pyplot.axes</p>
 </dd>
 </dl>
@@ -137,19 +138,21 @@ for information about valid keyword arguments.</p></li>
 
 
       </div>
-      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      <div class="bottomnav" role="navigation" aria-label="Bottom">
       
         <p>
         «&#160;&#160;<a href="ims.plsda.html">PLS_DA</a>
         &#160;&#160;::&#160;&#160;
         <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="ims.simca.html">SIMCA</a>&#160;&#160;»
         </p>
 
       </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0.
     </div>
   </body>
 </html>
