@@ -27,3 +27,4 @@ from ims.hca import HCA
 import ims.utils
 from ims.simca import OneClassSIMCA
 from ims.simca import MultiClassSIMCA
+from ims.CNN_model import CNNModel
