@@ -1,6 +1,49 @@
 [build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
-]
+requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "gc-ims-tools"
+version = "0.1.8"
+description = "Analyze GC-IMS data."
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.8"
+license = { file = "LICENSE.txt" }
+
+authors = [
+  { name = "Charisma-Mannheim", email = "charisma@hs-mannheim.de" }
+]
+
+# migration from setup.cfg -> install_requires
+dependencies = [
+  "numpy",
+  "pandas",
+  "scipy",
+  "matplotlib",
+  "seaborn",
+  "h5py",
+  "scikit-learn",
+  "scikit-image",
+  "findpeaks",
+  "dtwalign",
+  "PyWavelets",
+]
+
+classifiers = [
+  "License :: OSI Approved :: BSD License",
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Science/Research",
+]
+
+[project.urls]
+Homepage = "https://github.com/Charisma-Mannheim/gc-ims-tools"
+Repository = "https://github.com/Charisma-Mannheim/gc-ims-tools"
+"Bug Tracker" = "https://github.com/Charisma-Mannheim/gc-ims-tools/issues"
+Documentation = "https://charisma-mannheim.github.io/gc-ims-tools/build/html/index.html"
+
+
+[tool.setuptools.packages.find]
+
+include = ["gc_ims_tools*"]
+
