@@ -1,4 +1,4 @@
-#%%
+
 
 """Lightweight CNN model wrapper for GC-IMS datasets.
 
@@ -11,7 +11,8 @@ Functionality:
 - generate class-wise saliency maps and average maps
 - compute PCA on saliency maps and export PC1 loadings maps
 
-This module keeps external dependencies minimal (tensorflow, sklearn, matplotlib, numpy).
+This module keeps external dependencies minimal dependencies, 
+like tensorflow and tf-keras-vis need to be installed for the package to properly work
 """
 from typing import Optional, Sequence, Dict
 import os
@@ -34,8 +35,8 @@ class CNNModel:
     """Minimal CNN wrapper for GC-IMS `ims.Dataset`.
 
     Contract (inputs/outputs):
-    - Input: `ims.Dataset` where each element is an `ims.Spectrum` with `.values` matrix
-    - Labels: `dataset.labels` (list-like)
+    - Input: "ims.Dataset" where each element is an "ims.Spectrum"
+    - Labels: "dataset.labels" (list-like)
     - Output: trained Keras model saved to disk, saliency and PCA images
 
     Basic usage:
@@ -242,28 +243,3 @@ class CNNModel:
             plt.close()
 
         return pc1_maps
-
-#%%
-if __name__ == "__main__":  
-    import ims
-    path_cells=r"C:\Arbeit\Zellkulturmessung_confluency_wdh_RF\ZK_dataset_CNN"
-    ds = ims.Dataset.read_mea(path_cells, subfolders=True)
-    ds.interp_riprel().cut_dt(1.02,1.5).cut_rt(120,700).binning(4).normalization()
-    #%%
-    cnn = CNNModel(ds)
-    cnn.prep_data()
-    
-    
-    #%%
-    cnn.fit(epochs=50)
-    
-    #%%
-    
-    cnn.plot_history()
-    
-
-
-
-    #%%
-    cnn.generate_saliency_maps(output_dir=r"C:\Users\richa\OneDrive\Dokumente\Promotion\Python Scripts\Neural_network_cell_culture\sal")
-#%%
