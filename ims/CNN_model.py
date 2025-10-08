@@ -1,24 +1,25 @@
+"""Lightweight CNN model wrapper for GC-IMS data.
 
+Provides a CNN classification model for GC-IMS data. Labels need to be provided via subfolder read in,
+manual assignment, or automatic labelling--> see ims.Dataset.read_mea() class for details.
 
-"""Lightweight CNN model wrapper for GC-IMS datasets.
-
-Provides a CNNModel class that integrates with ims.Dataset objects.
 
 Functionality:
-- build simple Conv2D model compatible with ims.Spectrum data
+- builds a simple Conv2D model compatible with ims.Dataset
 - fit / evaluate / save / load model
 - plot training history (accuracy/loss)
 - generate class-wise saliency maps and average maps
 - compute PCA on saliency maps and export PC1 loadings maps
 
-This module keeps external dependencies minimal dependencies, 
-like tensorflow and tf-keras-vis need to be installed for the package to properly work
+This module uses external dependencies that need to be installed manually prior to use:
+- TensorFlow/Keras >=(TF 2.11)
+- tf-keras-vis tested on (v0.8.7)
 """
 from typing import Optional, Sequence, Dict
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-
+from matplotlib.ticker import AutoMinorLocator
 
 import tensorflow as tf
 from tensorflow.keras import layers, models
@@ -35,15 +36,42 @@ class CNNModel:
     """Minimal CNN wrapper for GC-IMS `ims.Dataset`.
 
     Contract (inputs/outputs):
-    - Input: "ims.Dataset" where each element is an "ims.Spectrum"
-    - Labels: "dataset.labels" (list-like)
+    - Input: `ims.Dataset` where each element is an `ims.Spectrum` with `.values` matrix
+    - Labels: `dataset.labels` (list-like)
     - Output: trained Keras model saved to disk, saliency and PCA images
 
-    Basic usage:
+    Parameters
+    ----------
+    dataset : ims.Dataset
+        Dataset containing GC-IMS spectra with labels
+    name : str, optional
+        Optional name identifier for the model
+
+    Attributes
+    ----------
+    dataset : ims.Dataset
+        Input dataset
+    name : str or None
+        Model name identifier
+    model : tensorflow.keras.Model or None
+        Compiled Keras model
+    history : tensorflow.keras.callbacks.History or None
+        Training history after fitting
+    prepared : bool
+        Flag indicating if data has been prepared for training
+    X : np.ndarray
+        Prepared feature arrays (after prep_data())
+    Y : np.ndarray
+        One-hot encoded labels (after prep_data())
+    y_raw : np.ndarray
+        Original string labels (after prep_data())
+
+    Examples
+    --------
     >>> import ims
     >>> from ims.CNN_model import CNNModel
-    >>> ds = ims.Dataset.read_mea("data", subfolders=True)
-    >>> model = CNNModel(dataset=ds)
+    >>> ds = ims.Dataset.read_mea("data")
+    >>> model = CNNModel(ds)
     >>> model.fit(epochs=10)
     >>> model.save("my_model.h5")
     """
@@ -56,7 +84,24 @@ class CNNModel:
         self.prepared = False
 
     def prep_data(self):
-        """Convert dataset to X, Y arrays suitable for Keras."""
+        """Convert dataset to X, y_cat arrays.
+
+        Transforms the preproccessed dataset into numpy arrays, and one-hot encoded labels.
+        Expands 2D spectrum arrays to 3D (adding channel dimension).
+        IMPORTANT: Make sure that you perfrom proper preprocessing on the dataset!
+        Call methods like ims.Dataset.interp_riprel().cut_dt().cut_rt().normalization() or .scaling()
+        for preprocessing.
+        Returns
+        -------
+        tuple[np.ndarray, np.ndarray]
+            X : Feature arrays with shape (n_samples, height, width, channels)
+            y_cat : One-hot encoded labels with shape (n_samples, n_classes)
+
+        Notes
+        -----
+        Sets instance attributes X, Y, y_raw and prepared flag.
+        Must be called before build() or fit().
+        """
         X = []
         for i in self.dataset.data:
             arr = np.array(i.values, dtype=np.float32)
@@ -76,10 +121,30 @@ class CNNModel:
         return X, y_cat
 
     def build(self, input_shape: Optional[Sequence[int]] = None, num_classes: Optional[int] = None):
-        """Builds a simple CNN.
+        """Build a simple CNN architecture.
 
-        If input_shape or num_classes are not given they are inferred from the dataset
-        after calling "prep_data()".
+        Creates a sequential CNN with 2 convolutional blocks followed by dense layers.
+        Architecture: Conv2D(8) -> BatchNorm -> ReLU -> MaxPool -> Conv2D(32) -> 
+        BatchNorm -> ReLU -> MaxPool -> Flatten -> Dense(48) -> Dense(32) -> Dense(n_classes)
+
+        Parameters
+        ----------
+        input_shape : tuple of int, optional
+            Shape of input tensors (height, width, channels).
+            If None, inferred from prepared data.
+        num_classes : int, optional
+            Number of output classes for classification.
+            If None, inferred from prepared data labels.
+
+        Returns
+        -------
+        tensorflow.keras.Model
+            Compiled Keras model ready for training
+
+        Raises
+        ------
+        RuntimeError
+            If TensorFlow is not available
         """
         if tf is None:
             raise RuntimeError("TensorFlow is required to build the model")
@@ -118,7 +183,28 @@ class CNNModel:
     def fit(self, epochs=20, batch_size=8, validation_split=0.2, **fit_kwargs):
         """Train the model on the dataset.
 
-        Stores training history in `self.history`.
+        Trains the CNN using prepared data with specified hyperparameters.
+        Automatically builds model if not already done.
+
+        Parameters
+        ----------
+        epochs : int, default=20
+            Number of training epochs
+        batch_size : int, default=8
+            Batch size for training
+        validation_split : float, default=0.2
+            Fraction of data to use for validation (0-1)
+        **fit_kwargs
+            Additional keyword arguments passed to model.fit()
+
+        Returns
+        -------
+        tensorflow.keras.callbacks.History
+            Training history object containing loss and metric values
+
+        Notes
+        -----
+        Stores training history in self.history attribute.
         """
         if self.model is None:
             self.build()
@@ -135,16 +221,54 @@ class CNNModel:
         return self.history
 
     def evaluate(self, X=None, Y=None):
+        """Evaluate model performance on given data.
+
+        Parameters
+        ----------
+        X : np.ndarray, optional
+            Feature arrays. If None, uses self.X from prepared data.
+        Y : np.ndarray, optional
+            Target labels. If None, uses self.Y from prepared data.
+
+        Returns
+        -------
+        list
+            Evaluation metrics [loss, accuracy, ...]
+        """
         X = X if X is not None else getattr(self, "X")
         Y = Y if Y is not None else getattr(self, "Y")
         return self.model.evaluate(X, Y)
 
     def save(self, path: str):
+        """Save the trained model to disk.
+
+        Parameters
+        ----------
+        path : str
+            File path where to save the model (e.g., "model.h5")
+
+        Notes
+        -----
+        Creates directory if it doesn't exist.
+        """
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
         self.model.save(path)
 
     def plot_history(self, save_path: Optional[str] = None):
-        """Plot training history from self.history."""
+        """Plot training history from self.history.
+
+        Creates a 2-subplot figure showing accuracy and loss curves
+        for both training and validation data over epochs.
+
+        Parameters
+        ----------
+        save_path : str, optional
+            Path to save the plot image. If None, only displays plot.
+
+        Notes
+        -----
+        Requires that fit() has been called to generate training history.
+        """
         if self.history is None:
             print("No training history found. Train the model first using fit().")
             return
@@ -167,19 +291,41 @@ class CNNModel:
             plt.savefig(save_path, bbox_inches="tight")
         plt.show()
 
-    def generate_saliency_maps(self, output_dir: str = "saliency_maps", smooth_samples: int = 25, smooth_noise: float = 0.05):
+    def salmap(self, output_dir: str = "saliency_maps", smooth_samples: int = 25, smooth_noise: float = 0.05, save_single_salmap: bool = False):
         """Generate and save saliency maps per sample and compute average per class.
 
-        Returns a dict mapping class label -> list of saliency maps (2D arrays).
-        """
-        os.makedirs(output_dir, exist_ok=True)
-        saliency = Saliency(self.model)
+        Creates gradient-based saliency maps showing which input regions
+        most influence model predictions. Optionally saves individual maps and 
+        always computes class-averaged maps.
 
+        Parameters
+        ----------
+        output_dir : str, default="saliency_maps"
+            Directory to save saliency map images
+        smooth_samples : int, default=25
+            Number of samples for SmoothGrad noise averaging
+        smooth_noise : float, default=0.05
+            Standard deviation of noise added for SmoothGrad
+        save_single_salmap : bool, default=False
+            Whether to save individual saliency maps for each spectrum
+
+        Returns
+        -------
+        tuple[Dict[str, list], Dict[str, np.ndarray]]
+            maps_by_class : Dictionary mapping class labels to lists of saliency maps
+            avg_maps : Dictionary mapping class labels to averaged saliency maps
+
+        Notes
+        -----
+        Uses tf-keras-vis library for gradient computation.
+        If save_single_salmap=True, saves individual maps as "salmap_{label}_{index}.png"
+        Use export_salmaps() method to save average maps with custom format/dpi.
+        """
+        saliency = Saliency(self.model)
         maps_by_class: Dict[str, list] = {c: [] for c in sorted(set(self.y_raw))}
 
         for i in range(len(self.X)):
             x_input = np.expand_dims(self.X[i], axis=0)
-            # infer class index by model prediction on sample or from labels
             class_index = int(np.argmax(self.Y[i]))
             score = CategoricalScore([class_index])
             sal_map = saliency(score, x_input, smooth_samples=smooth_samples, smooth_noise=smooth_noise)[0]
@@ -187,59 +333,333 @@ class CNNModel:
             label = self.y_raw[i]
             maps_by_class[label].append(sal_map)
 
-            # save individual map
-            fname = os.path.join(output_dir, f"saliency_{label}_{i}.png")
-            fig, ax = plt.subplots(figsize=(4, 4), dpi=200)
-            im = ax.imshow(sal_map, cmap="RdBu_r", origin="lower", aspect="auto")
-            ax.set_title(f"{label} #{i}")
-            plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-            plt.tight_layout()
-            plt.savefig(fname, bbox_inches="tight")
-            plt.close()
+            # optionally save individual map
+            if save_single_salmap:
+                os.makedirs(output_dir, exist_ok=True)
+                fname = os.path.join(output_dir, f"salmap_{label}_{i}.png")
+                fig, ax = self._plot_salmap(sal_map, f"{label} #{i}", i)
+                fig.savefig(fname, dpi=300, bbox_inches="tight", pad_inches=0.2)
+                plt.close(fig)
 
-        # save average maps per class
+        # compute average maps per class and display them
         avg_maps = {}
         for label, maps in maps_by_class.items():
             if len(maps) == 0:
                 continue
             avg = np.mean(np.stack(maps), axis=0)
             avg_maps[label] = avg
-            fig, ax = plt.subplots(figsize=(4, 4), dpi=200)
-            im = ax.imshow(avg, cmap="RdBu_r", origin="lower", aspect="auto")
-            ax.set_title(f"Average saliency: {label}")
-            plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-            plt.tight_layout()
-            plt.savefig(os.path.join(output_dir, f"average_saliency_{label}.png"), bbox_inches="tight")
-            plt.close()
+            # display average map
+            fig, ax = self._plot_salmap(avg, f"Average salmap: {label}")
 
         return maps_by_class, avg_maps
 
-    def saliency_pca_loadings(self, maps_by_class: Dict[str, list], output_dir: str = "saliency_maps"):
-        """Compute PCA per-class on flattened saliency maps and save PC1 loadings visualization."""
-        os.makedirs(output_dir, exist_ok=True)
+    def _plot_salmap(self, sal_map, title, spectrum_idx=0, width=6, height=6):
+        """Internal method to plot saliency maps with consistent styling.
+        
+        Parameters
+        ----------
+        sal_map : np.ndarray
+            2D saliency map to plot
+        title : str
+            Plot title
+        spectrum_idx : int, default=0
+            Index of spectrum to use for axis extents
+        width : int, default=6
+            Figure width in inches
+        height : int, default=6
+            Figure height in inches
+            
+        Returns
+        -------
+        tuple
+            (matplotlib.figure.Figure, matplotlib.pyplot.axes)
+        """
+        fig, ax = plt.subplots(figsize=(width, height))
+        
+        # use first spectrum for consistent axis mapping
+        spectrum = self.dataset.data[spectrum_idx]
+        
+        im = ax.imshow(
+            sal_map,
+            origin="lower",
+            aspect="auto",
+            cmap="RdBu_r",
+            extent=(
+                min(spectrum.drift_time),
+                max(spectrum.drift_time),
+                min(spectrum.ret_time),
+                max(spectrum.ret_time),
+            ),
+        )
+        
+        plt.colorbar(im, ax=ax).set_label("Saliency [arbitrary units]")
+        ax.set_title(title)
+        
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
+        
+        ax.set_xlabel(spectrum._drift_time_label)
+        ax.set_ylabel("Retention time [s]")
+        
+        plt.tight_layout()
+        return fig, ax
+
+    def PCA_salmaps(self, maps_by_class: Dict[str, list]):
+        """Compute PCA per-class on flattened saliency maps and display PC1 loadings visualization.
+
+        Performs Principal Component Analysis on saliency maps within each class
+        to identify common spatial patterns. Visualizes the first principal component
+        loadings which captures the highest variance saliency features.
+
+        Parameters
+        ----------
+        maps_by_class : Dict[str, list]
+            Dictionary mapping class labels to lists of 2D saliency maps,
+            typically from salmap()
+
+        Returns
+        -------
+        Dict[str, np.ndarray]
+            Dictionary mapping class labels to normalized PC1 loadings arrays
+
+        Notes
+        -----
+        For each class, flattens all saliency maps, fits PCA, and reshapes 
+        the first principal component back to 2D for visualization.
+        PC1 loadings are normalized to [-1, 1] range for consistent visualization.
+        Use export_salmaps() method to save PC1 loadings with custom format/dpi.
+        """
         pc1_maps = {}
         for label, maps in maps_by_class.items():
             if len(maps) == 0:
                 continue
-            flat = [m.flatten() for m in maps]
-            M = np.stack(flat)
-            pca = PCA()
-            pca.fit(M)
-            pc1 = pca.components_[0].reshape(maps[0].shape)
-            # normalize for display
-            mx = np.max(np.abs(pc1))
-            if mx > 0:
-                pc1n = pc1 / mx
-            else:
-                pc1n = pc1
+            # stack and reshape maps to 2D array (n_samples, height*width)
+            flat_maps = np.reshape(np.stack(maps), (len(maps), -1))
 
-            pc1_maps[label] = pc1n
-            fig, ax = plt.subplots(figsize=(4, 4), dpi=200)
-            im = ax.imshow(pc1n, cmap="RdBu_r", origin="lower", aspect="auto", vmin=-1, vmax=1)
-            ax.set_title(f"PC1 loadings: {label}")
-            plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-            plt.tight_layout()
-            plt.savefig(os.path.join(output_dir, f"pc1_loadings_{label}.png"), bbox_inches="tight")
-            plt.close()
+            # perform PCA, keep only the first component
+            pca = PCA(n_components=1)
+            pc1 = pca.fit_transform(flat_maps)
+
+            # reshape PC1 back to 2D image
+            pc1_map = pc1.reshape(maps[0].shape[0], maps[0].shape[1])
+
+            # normalize to [0, 1] range for visualization
+            pc1_map = (pc1_map - np.min(pc1_map)) / (np.max(pc1_map) - np.min(pc1_map))
+
+            pc1_maps[label] = pc1_map
+
+            # display PC1 loadings map
+            fig, ax = self._plot_PCA_salmap(pc1_map, f"PC1 loadings: {label}")
 
         return pc1_maps
+
+    def _plot_PCA_salmap(self, pc1_map, title, width=6, height=6):
+        """Internal method to plot PCA saliency maps (PC1 loadings) with consistent styling.
+        
+        Parameters
+        ----------
+        pc1_map : np.ndarray
+            2D PC1 loadings map to plot
+        title : str
+            Plot title
+        width : int, default=6
+            Figure width in inches
+        height : int, default=6
+            Figure height in inches
+            
+        Returns
+        -------
+        tuple
+            (matplotlib.figure.Figure, matplotlib.pyplot.axes)
+        """
+        fig, ax = plt.subplots(figsize=(width, height))
+        
+        im = ax.imshow(
+            pc1_map,
+            origin="lower",
+            aspect="auto",
+            cmap="viridis",
+        )
+        
+        plt.colorbar(im, ax=ax).set_label("PC1 Loadings [arbitrary units]")
+        ax.set_title(title)
+        
+        ax.xaxis.set_minor_locator(AutoMinorLocator())
+        ax.yaxis.set_minor_locator(AutoMinorLocator())
+        
+        ax.set_xlabel("Drift time [ms]")
+        ax.set_ylabel("Retention time [s]")
+        
+        plt.tight_layout()
+        return fig, ax
+
+    def export_salmaps(self, avg_maps: Dict[str, np.ndarray] = None, pc1_maps: Dict[str, np.ndarray] = None, path: str = None, dpi: int = 300, file_format: str = "png", **kwargs):
+        """Export saliency maps and/or PC1 loadings as image files.
+
+        Parameters
+        ----------
+        avg_maps : Dict[str, np.ndarray], optional
+            Dictionary of average saliency maps from salmap() method
+        pc1_maps : Dict[str, np.ndarray], optional
+            Dictionary of PC1 loadings from PCA_salmaps() method
+        path : str, optional
+            Directory to save images, by default current working directory
+        dpi : int, default=300
+            Resolution for saved images
+        file_format : str, default="png"
+            Image format (png, jpg, svg, etc.)
+        **kwargs
+            Additional arguments passed to matplotlib savefig
+
+        Notes
+        -----
+        At least one of avg_maps or pc1_maps must be provided.
+        Saves average saliency maps as "average_salmap_{label}.{format}"
+        and PC1 loadings as "pc1_loadings_{label}.{format}".
+
+        Examples
+        --------
+        >>> maps_by_class, avg_maps = model.salmap()
+        >>> pc1_maps = model.PCA_salmaps(maps_by_class)
+        >>> # Export both types
+        >>> model.export_salmaps(avg_maps, pc1_maps, dpi=600, file_format="svg")
+        >>> # Export only average maps
+        >>> model.export_salmaps(avg_maps=avg_maps)
+        >>> # Export only PC1 loadings
+        >>> model.export_salmaps(pc1_maps=pc1_maps)
+        """
+        if avg_maps is None and pc1_maps is None:
+            raise ValueError("At least one of avg_maps or pc1_maps must be provided")
+        
+        if path is None:
+            path = os.getcwd()
+        
+        os.makedirs(path, exist_ok=True)
+        
+        # Export average saliency maps
+        if avg_maps is not None:
+            for label, avg_map in avg_maps.items():
+                fig, ax = self._plot_salmap(avg_map, f"Average salmap: {label}")
+                fig.savefig(
+                    f"{path}/avg_salmap_{label}.{file_format}",
+                    dpi=dpi,
+                    bbox_inches="tight",
+                    pad_inches=0.2,
+                    **kwargs
+                )
+                plt.close(fig)
+        
+        # Export PC1 loadings
+        if pc1_maps is not None:
+            for label, pc1_map in pc1_maps.items():
+                fig, ax = self._plot_PCA_salmap(pc1_map, f"PC1 loadings: {label}")
+                fig.savefig(
+                    f"{path}/pc1_loadings_{label}.{file_format}",
+                    dpi=dpi,
+                    bbox_inches="tight",
+                    pad_inches=0.2,
+                    **kwargs
+                )
+                plt.close(fig)
+
+    @classmethod
+    def load(cls, path: str, dataset=None):
+        """Load a saved model from disk.
+
+        Parameters
+        ----------
+        path : str
+            File path to the saved model (e.g., "model.h5")
+        dataset : ims.Dataset, optional
+            Dataset to associate with the loaded model for predictions.
+            If None, only the model is loaded without dataset context.
+
+        Returns
+        -------
+        CNNModel
+            New CNNModel instance with loaded model
+
+        Raises
+        ------
+        FileNotFoundError
+            If the model file doesn't exist
+        """
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"Model file not found: {path}")
+        
+        # Create new instance
+        instance = cls(dataset=dataset)
+        
+        # Load the trained model
+        instance.model = tf.keras.models.load_model(path)
+        
+        # If dataset is provided, prepare it for consistency
+        if dataset is not None:
+            instance.prep_data()
+        
+        print(f"Model loaded successfully from {path}")
+        return instance
+
+    def predict(self, dataset, return_probabilities=False):
+        """Predict class labels for a dataset.
+
+        Parameters
+        ----------
+        dataset : ims.Dataset
+            Dataset to predict (required - must be different from training data)
+        return_probabilities : bool, default=False
+            If True, returns class probabilities instead of predicted labels
+
+        Returns
+        -------
+        np.ndarray or tuple
+            If return_probabilities=False: array of predicted class labels
+            If return_probabilities=True: tuple of (predicted_labels, probabilities)
+
+        Raises
+        ------
+        ValueError
+            If model is not trained or dataset dimensions don't match training data
+        """
+        if self.model is None:
+            raise ValueError("Model must be trained or loaded before making predictions")
+        
+        if dataset is None:
+            raise ValueError("A dataset must be provided for prediction")
+        
+        # Prepare prediction data
+        X_pred = []
+        for spectrum in dataset.data:
+            arr = np.array(spectrum.values, dtype=np.float32)
+            if arr.ndim == 2:
+                arr = np.expand_dims(arr, axis=-1)
+            X_pred.append(arr)
+        
+        X_pred = np.stack(X_pred)
+        
+        # Check dimensions match training data
+        if hasattr(self, 'X') and X_pred.shape[1:] != self.X.shape[1:]:
+            raise ValueError(
+                f"Prediction dataset shape {X_pred.shape[1:]} doesn't match "
+                f"training data shape {self.X.shape[1:]}. "
+                f"Ensure same preprocessing (cut_dt, cut_rt, binning) is applied."
+            )
+        
+        # Make predictions
+        probabilities = self.model.predict(X_pred)
+        predicted_indices = np.argmax(probabilities, axis=1)
+        
+        # Convert indices back to class labels if we have the original labels
+        if hasattr(self, 'y_raw'):
+            # Get unique labels in the same order as during training
+            unique_labels = sorted(set(self.y_raw))
+            predicted_labels = np.array([unique_labels[idx] for idx in predicted_indices])
+        else:
+            # Return indices if no label mapping available
+            predicted_labels = predicted_indices
+            print("Warning: No label mapping available, returning class indices")
+        
+        if return_probabilities:
+            return predicted_labels, probabilities
+        else:
+            return predicted_labels
