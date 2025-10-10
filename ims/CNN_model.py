@@ -20,12 +20,15 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
+from tqdm import tqdm
 
 import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.keras.regularizers import l2  
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical
+from sklearn.metrics import classification_report
+import pandas as pd
 
 from tf_keras_vis.saliency import Saliency
 from tf_keras_vis.utils.scores import CategoricalScore
@@ -65,6 +68,12 @@ class CNNModel:
         One-hot encoded labels (after prep_data())
     y_raw : np.ndarray
         Original string labels (after prep_data())
+    validation_split : float or None
+        Validation split ratio used during training
+    train_indices : list or None
+        Indices of samples used for training
+    val_indices : list or None
+        Indices of samples used for validation
 
     Examples
     --------
@@ -72,8 +81,11 @@ class CNNModel:
     >>> from ims.CNN_model import CNNModel
     >>> ds = ims.Dataset.read_mea("data")
     >>> model = CNNModel(ds)
-    >>> model.fit(epochs=10)
+    >>> model.fit(epochs=10, validation_split=0.2)
     >>> model.save("my_model.h5")
+    >>> # Generate validation report
+    >>> report, sample_info = model.val_report(val_info=True)
+    >>> print(sample_info.head())  # Show sample split information
     """
 
     def __init__(self, dataset, name: Optional[str] = None):
@@ -82,6 +94,9 @@ class CNNModel:
         self.model = None
         self.history = None
         self.prepared = False
+        self.validation_split = None
+        self.train_indices = None
+        self.val_indices = None
 
     def prep_data(self):
         """Convert dataset to X, y_cat arrays.
@@ -210,6 +225,15 @@ class CNNModel:
             self.build()
             print("build() method not called, model is built automatically")
 
+        # Store validation split and calculate indices
+        self.validation_split = validation_split
+        n_samples = len(self.X)
+        n_val = int(n_samples * validation_split)
+        
+        # Keras uses the last validation_split fraction of data for validation
+        self.train_indices = list(range(n_samples - n_val))
+        self.val_indices = list(range(n_samples - n_val, n_samples))
+
         self.history = self.model.fit(
             self.X,
             self.Y,
@@ -238,6 +262,123 @@ class CNNModel:
         X = X if X is not None else getattr(self, "X")
         Y = Y if Y is not None else getattr(self, "Y")
         return self.model.evaluate(X, Y)
+
+    def val_report(self, val_info=True):
+        """Generate validation report with classification metrics and sample split information.
+
+        Creates a detailed validation report including:
+        - Classification report (precision, recall, f1-score) for validation set
+        - Optional sample split information showing which samples went to train/validation
+
+        Parameters
+        ----------
+        val_info : bool, default=True
+            If True, returns DataFrame with sample split information.
+            If False, only returns classification report.
+
+        Returns
+        -------
+        dict or tuple
+            If val_info=False: Classification report dictionary
+            If val_info=True: Tuple of (classification_report_dict, samples_dataframe)
+
+        Raises
+        ------
+        ValueError
+            If model hasn't been trained yet or validation split wasn't used
+
+        Notes
+        -----
+        Requires that fit() has been called with validation_split > 0.
+        The classification report is computed on the validation set only.
+
+        Examples
+        --------
+        >>> model.fit(epochs=10, validation_split=0.2)
+        >>> # Get only classification report
+        >>> report = model.val_report(val_info=False)
+        >>> # Get both report and sample info
+        >>> report, sample_df = model.val_report(val_info=True)
+        """
+        if self.model is None:
+            raise ValueError("Model must be trained before generating validation report. Call fit() first.")
+        
+        if self.val_indices is None or len(self.val_indices) == 0:
+            raise ValueError("No validation data found. Make sure fit() was called with validation_split > 0.")
+
+        # Get validation data
+        X_val = self.X[self.val_indices]
+        Y_val = self.Y[self.val_indices]
+        y_val_raw = self.y_raw[self.val_indices]
+
+        # Get predictions on validation set
+        val_predictions = self.model.predict(X_val, verbose=0)
+        val_pred_indices = np.argmax(val_predictions, axis=1)
+        
+        # Convert indices back to labels
+        unique_labels = sorted(set(self.y_raw))
+        val_pred_labels = [unique_labels[idx] for idx in val_pred_indices]
+
+        # Generate classification report
+        class_report = classification_report(
+            y_val_raw, 
+            val_pred_labels, 
+            output_dict=True,
+            zero_division=0
+        )
+
+        # Print formatted classification report
+        print("Validation Classification Report:")
+        print("=" * 50)
+        print(classification_report(y_val_raw, val_pred_labels, zero_division=0))
+        print(f"\nValidation samples: {len(self.val_indices)}")
+        print(f"Training samples: {len(self.train_indices)}")
+        print(f"Validation split: {self.validation_split:.1%}")
+
+        if not val_info:
+            return class_report
+
+        # Create sample information DataFrame
+        sample_data = []
+        
+        # Add training samples
+        for idx in self.train_indices:
+            sample_data.append({
+                'sample_index': idx,
+                'sample_name': self.dataset.data[idx].name if hasattr(self.dataset.data[idx], 'name') else f"sample_{idx}",
+                'true_label': self.y_raw[idx],
+                'split': 'train',
+                'predicted_label': None,  # No predictions for training in this context
+                'prediction_probability': None
+            })
+        
+        # Add validation samples with predictions
+        for i, idx in enumerate(self.val_indices):
+            pred_probs = val_predictions[i]
+            max_prob = np.max(pred_probs)
+            
+            sample_data.append({
+                'sample_index': idx,
+                'sample_name': self.dataset.data[idx].name if hasattr(self.dataset.data[idx], 'name') else f"sample_{idx}",
+                'true_label': y_val_raw[i],
+                'split': 'validation',
+                'predicted_label': val_pred_labels[i],
+                'prediction_probability': max_prob
+            })
+
+        samples_df = pd.DataFrame(sample_data)
+        
+        # Print sample split summary
+        print(f"\nSample Split Summary:")
+        print(f"Total samples: {len(self.dataset.data)}")
+        print(f"Training samples: {len(self.train_indices)}")
+        print(f"Validation samples: {len(self.val_indices)}")
+        print(f"\nValidation samples by class:")
+        val_class_counts = samples_df[samples_df['split'] == 'validation']['true_label'].value_counts().sort_index()
+        for label, count in val_class_counts.items():
+            print(f"  {label}: {count}")
+
+        return class_report, samples_df
 
     def save(self, path: str):
         """Save the trained model to disk.
@@ -291,7 +432,7 @@ class CNNModel:
             plt.savefig(save_path, bbox_inches="tight")
         plt.show()
 
-    def salmap(self, output_dir: str = "saliency_maps", smooth_samples: int = 25, smooth_noise: float = 0.05, save_single_salmap: bool = False):
+    def salmap(self, smooth_samples: int = 25, smooth_noise: float = 0.05, save_single_salmap: bool = False, **kwargs):
         """Generate and save saliency maps per sample and compute average per class.
 
         Creates gradient-based saliency maps showing which input regions
@@ -300,14 +441,16 @@ class CNNModel:
 
         Parameters
         ----------
-        output_dir : str, default="saliency_maps"
-            Directory to save saliency map images
         smooth_samples : int, default=25
             Number of samples for SmoothGrad noise averaging
         smooth_noise : float, default=0.05
             Standard deviation of noise added for SmoothGrad
         save_single_salmap : bool, default=False
             Whether to save individual saliency maps for each spectrum
+        **kwargs
+            Additional keyword arguments:
+            - output_dir : str, default="saliency_maps"
+              Directory to save individual saliency maps (only used if save_single_salmap=True)
 
         Returns
         -------
@@ -324,7 +467,11 @@ class CNNModel:
         saliency = Saliency(self.model)
         maps_by_class: Dict[str, list] = {c: [] for c in sorted(set(self.y_raw))}
 
-        for i in range(len(self.X)):
+        # Create progress bar for saliency map generation
+        total_samples = len(self.X)
+        pbar = tqdm(total=total_samples, desc="Generating saliency maps", unit="maps")
+        
+        for i in range(total_samples):
             x_input = np.expand_dims(self.X[i], axis=0)
             class_index = int(np.argmax(self.Y[i]))
             score = CategoricalScore([class_index])
@@ -335,11 +482,18 @@ class CNNModel:
 
             # optionally save individual map
             if save_single_salmap:
+                output_dir = kwargs.get('output_dir', 'saliency_maps')
                 os.makedirs(output_dir, exist_ok=True)
                 fname = os.path.join(output_dir, f"salmap_{label}_{i}.png")
                 fig, ax = self._plot_salmap(sal_map, f"{label} #{i}", i)
                 fig.savefig(fname, dpi=300, bbox_inches="tight", pad_inches=0.2)
                 plt.close(fig)
+            
+            # Update progress bar
+            pbar.update(1)
+            pbar.set_postfix({"Current": f"{label} (#{i})"})
+        
+        pbar.close()
 
         # compute average maps per class and display them
         avg_maps = {}
@@ -350,10 +504,11 @@ class CNNModel:
             avg_maps[label] = avg
             # display average map
             fig, ax = self._plot_salmap(avg, f"Average salmap: {label}")
+            plt.show()
 
         return maps_by_class, avg_maps
 
-    def _plot_salmap(self, sal_map, title, spectrum_idx=0, width=6, height=6):
+    def _plot_salmap(self, sal_map, title, spectrum_idx=0, vmin=None, vmax=None, width=6, height=6):
         """Internal method to plot saliency maps with consistent styling.
         
         Parameters
@@ -364,6 +519,10 @@ class CNNModel:
             Plot title
         spectrum_idx : int, default=0
             Index of spectrum to use for axis extents
+        vmin : float, optional
+            Minimum value for colormap scaling. If None, uses automatic scaling.
+        vmax : float, optional
+            Maximum value for colormap scaling. If None, uses automatic scaling.
         width : int, default=6
             Figure width in inches
         height : int, default=6
@@ -384,6 +543,9 @@ class CNNModel:
             origin="lower",
             aspect="auto",
             cmap="RdBu_r",
+            vmin=vmin,
+            vmax=vmax,
+        
             extent=(
                 min(spectrum.drift_time),
                 max(spectrum.drift_time),
@@ -426,8 +588,7 @@ class CNNModel:
         -----
         For each class, flattens all saliency maps, fits PCA, and reshapes 
         the first principal component back to 2D for visualization.
-        PC1 loadings are normalized to [-1, 1] range for consistent visualization.
-        Use export_salmaps() method to save PC1 loadings with custom format/dpi.
+        Use export_salmaps() method to save PC1 loadings.
         """
         pc1_maps = {}
         for label, maps in maps_by_class.items():
@@ -436,7 +597,7 @@ class CNNModel:
             # stack and reshape maps to 2D array (n_samples, height*width)
             flat_maps = np.reshape(np.stack(maps), (len(maps), -1))
 
-            # perform PCA, keep only the first component
+            
             pca = PCA(n_components=1)
             pc1 = pca.fit_transform(flat_maps)
 
@@ -448,12 +609,12 @@ class CNNModel:
 
             pc1_maps[label] = pc1_map
 
-            # display PC1 loadings map
+            
             fig, ax = self._plot_PCA_salmap(pc1_map, f"PC1 loadings: {label}")
 
         return pc1_maps
 
-    def _plot_PCA_salmap(self, pc1_map, title, width=6, height=6):
+    def _plot_PCA_salmap(self, pc1_map, title, vmin=None, vmax=None, width=6, height=6):
         """Internal method to plot PCA saliency maps (PC1 loadings) with consistent styling.
         
         Parameters
@@ -462,6 +623,10 @@ class CNNModel:
             2D PC1 loadings map to plot
         title : str
             Plot title
+        vmin : float, optional
+            Minimum value for colormap scaling. If None, uses automatic scaling.
+        vmax : float, optional
+            Maximum value for colormap scaling. If None, uses automatic scaling.
         width : int, default=6
             Figure width in inches
         height : int, default=6
@@ -479,6 +644,8 @@ class CNNModel:
             origin="lower",
             aspect="auto",
             cmap="viridis",
+            vmin=vmin,
+            vmax=vmax,
         )
         
         plt.colorbar(im, ax=ax).set_label("PC1 Loadings [arbitrary units]")
@@ -509,24 +676,32 @@ class CNNModel:
         file_format : str, default="png"
             Image format (png, jpg, svg, etc.)
         **kwargs
-            Additional arguments passed to matplotlib savefig
+            Additional arguments:
+            - vmin : float, optional
+              Minimum value for colormap scaling. If not provided, uses automatic scaling.
+            - vmax : float, optional
+              Maximum value for colormap scaling. If not provided, uses automatic scaling.
+            - Other arguments passed to matplotlib savefig
 
         Notes
         -----
         At least one of avg_maps or pc1_maps must be provided.
         Saves average saliency maps as "average_salmap_{label}.{format}"
         and PC1 loadings as "pc1_loadings_{label}.{format}".
+        By default, uses automatic colormap scaling for optimal contrast.
 
         Examples
         --------
         >>> maps_by_class, avg_maps = model.salmap()
         >>> pc1_maps = model.PCA_salmaps(maps_by_class)
-        >>> # Export both types
-        >>> model.export_salmaps(avg_maps, pc1_maps, dpi=600, file_format="svg")
+        >>> # Export with automatic scaling (default)
+        >>> model.export_salmaps(avg_maps, pc1_maps)
+        >>> # Export with custom colormap range
+        >>> model.export_salmaps(avg_maps, pc1_maps, dpi=600, file_format="svg", vmin=0.2, vmax=0.8)
         >>> # Export only average maps
         >>> model.export_salmaps(avg_maps=avg_maps)
-        >>> # Export only PC1 loadings
-        >>> model.export_salmaps(pc1_maps=pc1_maps)
+        >>> # Export only PC1 loadings with manual scaling
+        >>> model.export_salmaps(pc1_maps=pc1_maps, vmin=0, vmax=1)
         """
         if avg_maps is None and pc1_maps is None:
             raise ValueError("At least one of avg_maps or pc1_maps must be provided")
@@ -536,10 +711,14 @@ class CNNModel:
         
         os.makedirs(path, exist_ok=True)
         
+        # Extract plot parameters from kwargs (None means automatic scaling)
+        vmin = kwargs.pop('vmin', None)
+        vmax = kwargs.pop('vmax', None)
+        
         # Export average saliency maps
         if avg_maps is not None:
             for label, avg_map in avg_maps.items():
-                fig, ax = self._plot_salmap(avg_map, f"Average salmap: {label}")
+                fig, ax = self._plot_salmap(avg_map, f"Average salmap: {label}", vmin=vmin, vmax=vmax)
                 fig.savefig(
                     f"{path}/avg_salmap_{label}.{file_format}",
                     dpi=dpi,
@@ -552,7 +731,7 @@ class CNNModel:
         # Export PC1 loadings
         if pc1_maps is not None:
             for label, pc1_map in pc1_maps.items():
-                fig, ax = self._plot_PCA_salmap(pc1_map, f"PC1 loadings: {label}")
+                fig, ax = self._plot_PCA_salmap(pc1_map, f"PC1 loadings: {label}", vmin=vmin, vmax=vmax)
                 fig.savefig(
                     f"{path}/pc1_loadings_{label}.{file_format}",
                     dpi=dpi,
@@ -637,7 +816,7 @@ class CNNModel:
         
         X_pred = np.stack(X_pred)
         
-        # Check dimensions match training data
+        # Check if dimensions and size of predict sample matches training data
         if hasattr(self, 'X') and X_pred.shape[1:] != self.X.shape[1:]:
             raise ValueError(
                 f"Prediction dataset shape {X_pred.shape[1:]} doesn't match "
@@ -657,7 +836,7 @@ class CNNModel:
         else:
             # Return indices if no label mapping available
             predicted_labels = predicted_indices
-            print("Warning: No label mapping available, returning class indices")
+            print("Warning: No labels available, class indices are returned instead.")
         
         if return_probabilities:
             return predicted_labels, probabilities
