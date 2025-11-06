@@ -276,7 +276,7 @@ class Spectrum:
         timestamp = os.path.getctime(path)
         timestamp = ctime(timestamp)
         timestamp = datetime.strptime(timestamp, "%a %b  %d %H:%M:%S %Y")
-        return cls(name, values, ret_time, drift_time, timestamp)
+        return cls(name, values, ret_time, drift_time, timestamp, meta_attr={})
 
     @classmethod
     def read_hdf5(cls, path):
