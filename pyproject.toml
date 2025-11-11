@@ -4,17 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gc-ims-tools"
-version = "0.1.8"
+version = "0.1.8" 
 description = "Analyze GC-IMS data."
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.8"
-license = { file = "LICENSE.txt" }
+license = { file = "LICENSE" }
 
 authors = [
   { name = "Charisma-Mannheim", email = "charisma@hs-mannheim.de" }
 ]
 
-# migration from setup.cfg -> install_requires
 dependencies = [
   "numpy",
   "pandas",
@@ -42,8 +41,6 @@ Repository = "https://github.com/Charisma-Mannheim/gc-ims-tools"
 "Bug Tracker" = "https://github.com/Charisma-Mannheim/gc-ims-tools/issues"
 Documentation = "https://charisma-mannheim.github.io/gc-ims-tools/build/html/index.html"
 
-
 [tool.setuptools.packages.find]
-
-include = ["gc_ims_tools*"]
+include = ["ims*"]
 
