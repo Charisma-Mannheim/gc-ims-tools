@@ -12,6 +12,8 @@ from matplotlib.ticker import AutoMinorLocator
 from datetime import datetime
 from time import ctime
 from skimage.morphology import white_tophat, disk
+from skimage.measure import label, regionprops
+from skimage import measure
 from zipfile import ZipFile
 from ims.utils import asymcorr
 from findpeaks import findpeaks
@@ -461,6 +463,180 @@ class Spectrum:
 
         self.peak_table = df
         return self
+
+    def detect_peaks(self, threshold_rel=0.5, peak_size=10):
+        """
+        Fast peak detection using simple thresholding and connected components.
+        Returns a labeled mask and a list of peak outlines. Make sure to cut out the RIP
+        before using this method to avoid incorrect thresholding.
+
+        Parameters
+        ----------
+        threshold_rel : float, default=0.5
+            Relative threshold for peak detection. Decrease to be more sensitive, increase to to detect more intense peaks only.
+        
+        peak_size : int, default=10
+            Minimum pixel peak size (number of connected pixels) required for a region to be considered a peak.
+            Peaks with fewer pixels than this threshold will be filtered out as noise.
+
+        Returns
+        -------
+        self : Spectrum
+            The spectrum with updated peaklist attribute containing peak information
+
+        Example
+        -------
+        >>> import ims
+        >>> sample = ims.Spectrum.read_mea("sample.mea")
+        >>> sample.riprel().cut_dt().cut_rt()
+        >>> sample.detect_peaks()
+        >>> sample.plot_thresholding()
+        """
+        # Thresholding of 2d array
+        threshold = threshold_rel * np.max(self.values)
+        binary_mask = self.values > threshold
+
+        # Label connected regions (peaks)
+        labeled_mask = label(binary_mask)
+
+        # Get outlines and peak information
+        outlines = []
+        peaks_data = []
+        peak_counter = 1  # Counter for consistent peak labeling after filtering
+        
+        for region_label in range(1, labeled_mask.max() + 1):
+            mask = labeled_mask == region_label
+            
+            # Get coordinates of the peak (indices where mask is True)
+            coords = np.argwhere(mask)
+            
+            # Filter out small peaks based on peak_size
+            if len(coords) < peak_size:
+                continue
+            
+            contours = measure.find_contours(mask, 0.5)
+            outlines.append(contours)
+            
+            # Find peak maximum within this region
+            region_values = self.values * mask
+            max_idx = np.unravel_index(np.argmax(region_values), region_values.shape)
+            max_intensity = self.values[max_idx]
+            
+            # Calculate peak volume (background-subtracted)
+            peak_volume = np.sum(self.values[mask] - threshold)
+            
+            # Get drift and retention time coordinates
+            max_dt_idx = max_idx[1]  # x (drift time)
+            max_rt_idx = max_idx[0]  # y (retention time)
+            
+            peak_entry = {
+                'peak_label': peak_counter,
+                'intensity': max_intensity,
+                'volume': peak_volume,
+                'ret_time': self.ret_time[max_rt_idx],
+                'x': max_dt_idx,
+                'y': max_rt_idx,
+                'n_pixels': len(coords)
+            }
+            
+           
+            if hasattr(self, "rip_ms"):
+                peak_entry['riprel_dt'] = self.drift_time[max_dt_idx]
+                peak_entry['abs_dt'] = self.drift_time[max_dt_idx] * self.rip_ms
+            else:
+                peak_entry['abs_dt'] = self.drift_time[max_dt_idx]
+                print("Warning! Make sure that you are using a region without the RIP, for peak detection to function properly.")
+            peaks_data.append(peak_entry)
+            peak_counter += 1  
+
+        # create peak_list
+        df = pd.DataFrame(peaks_data)
+        
+        if len(df) > 0:
+            # Reorder columns to match find_peaks style
+            if hasattr(self, "rip_ms"):
+                column_order = ['peak_label', 'intensity', 'volume', 'riprel_dt', 'abs_dt', 'ret_time', 'x', 'y', 'n_pixels']
+            else:
+                column_order = ['peak_label', 'intensity', 'volume', 'abs_dt', 'ret_time', 'x', 'y', 'n_pixels']
+            
+            df = df[column_order]
+            df.index = df.index + 1
+            df.index.name = "peak number"
+        
+        # Store results in instanced dataframes
+        self.peaklist = df
+        print(f"Found {len(self.peaklist)} peaks")
+        self.peaklist_mask = labeled_mask
+        self.peaklist_outlines = outlines
+        
+        return self
+    
+    def plot_thresholding(self, outline_color="yellow", linewidth=2, annotate=False, **kwargs):
+        """
+        Plots GC-IMS spectrum with peak outlines from detect_peaks method.
+        Must be called after detect_peaks method.
+
+        Parameters
+        ----------
+        outline_color : str, default="yellow"
+            Color for the peak outlines
+        linewidth : float, default=2
+            Width of the outline lines
+        annotate : bool, default=False
+            If True, display peak labels on the plot
+        **kwargs
+            Additional keyword arguments passed to the plot() method:
+            - vmin : int, default=30
+              Minimum intensity for the colormap
+            - vmax : int, default=400
+              Maximum intensity for the colormap
+            - width : int, default=6
+              Figure width in inches
+            - height : int, default=6
+              Figure height in inches
+
+        Returns
+        -------
+        matplotlib.pyplot.axes
+            The axes object with the plotted spectrum and peak outlines
+
+        Example
+        -------
+        >>> sample.detect_peaks()
+        >>> sample.plot_thresholding(annotate=True)
+        >>> plt.show()
+        """
+        if not hasattr(self, 'peaklist') or self.peaklist is None:
+            raise ValueError("Call 'detect_peaks' method first.")
+        
+        # Plot spectrum
+        fig, ax = self.plot(**kwargs)
+        
+        # Overlay peak outlines using stored results
+        for peak_contours in self.peaklist_outlines:
+            for contour in peak_contours:
+                y, x = contour.T
+                ax.plot(
+                    self.drift_time[x.astype(int)], 
+                    self.ret_time[y.astype(int)], 
+                    color=outline_color, 
+                    linewidth=linewidth
+                )
+        
+        # Add peak labels if requested
+        if annotate:
+            for i, row in self.peaklist.iterrows():
+                if "riprel_dt" in self.peaklist.columns:
+                    x = row["riprel_dt"]
+                else:
+                    x = row["abs_dt"]
+                y = row["ret_time"]
+                label = str(int(row["peak_label"]))
+                ax.text(x, y, label, c="yellow", fontsize=12, ha='left', va='center')
+        
+        ax.set_title(f"{self.name} - {len(self.peaklist)} peaks detected")
+        
+        return ax
 
     def plot_peaks(self):
         """
