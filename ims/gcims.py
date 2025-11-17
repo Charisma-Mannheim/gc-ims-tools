@@ -171,7 +171,7 @@ class Spectrum:
         name = os.path.split(path)[1]
         time = datetime.strptime(meta_attr["Timestamp"], "%Y-%m-%dT%H:%M:%S")
 
-        return cls(name, values, ret_time, drift_time, time)
+        return cls(name, values, ret_time, drift_time, time, meta_attr)
 
     @classmethod
     def read_mea(cls, path):
@@ -210,9 +210,9 @@ class Spectrum:
 
         meta_attr = meta_attr.split("\n")
 
-        key_re = re.compile("^.*?(?==)")
-        value_re = re.compile("(?<==)(.*?)(?=\[|$)")
-        # unit_re = re.compile("\[(.*?)\]")
+        key_re = re.compile(r"^.*?(?==)")
+        value_re = re.compile(r"(?<==)(.*?)(?=\[|$)")
+        # unit_re = re.compile(r"\[(.*?)\]")
 
         for i in meta_attr:
             key = key_re.search(i).group(0).strip()
@@ -312,8 +312,12 @@ class Spectrum:
             name = str(f.attrs["name"])
             time = datetime.strptime(f.attrs["time"], "%Y-%m-%dT%H:%M:%S")
             drift_time_label = str(f.attrs["drift_time_label"])
+            if "meta_attr" in f.attrs:
+                meta_attr = json.loads(f.attrs["meta_attr"])
+            else:
+                meta_attr = {}
 
-        spectrum = cls(name, values, ret_time, drift_time, time)
+        spectrum = cls(name, values, ret_time, drift_time, time, meta_attr)
         spectrum._drift_time_label = drift_time_label
         return spectrum
 
@@ -346,6 +350,7 @@ class Spectrum:
             f.attrs["name"] = self.name
             f.attrs["time"] = datetime.strftime(self.time, "%Y-%m-%dT%H:%M:%S")
             f.attrs["drift_time_label"] = self._drift_time_label
+            f.attrs["meta_attr"] = json.dumps(self.meta_attr)
     
     def normalization(self):
         """
