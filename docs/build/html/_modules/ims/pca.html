@@ -4,17 +4,17 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ims.pca &#8212; gc-ims-tools 0.1.8 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=47202671" />
+    <title>ims.pca &#8212; gc-ims-tools 0.1.10 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=f63d8bfa" />
     <link rel="stylesheet" type="text/css" href="../../_static/haiku.css?v=fce32b03" />
-    <script src="../../_static/documentation_options.js?v=22607128"></script>
+    <script src="../../_static/documentation_options.js?v=bafade30"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
-          <span>gc-ims-tools 0.1.8 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.10 documentation</span></a></h1>
         <h2 class="heading"><span>ims.pca</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="Top">
@@ -28,19 +28,19 @@
         
         
   <h1>Source code for ims.pca</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxNLocator</span><span class="p">,</span> <span class="n">AutoMinorLocator</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.decomposition</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCA</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">f</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">mpl_toolkits.mplot3d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes3D</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ListedColormap</span>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">MaxNLocator</span><span class="p">,</span> <span class="n">AutoMinorLocator</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">f</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">ListedColormap</span>
 
 <div class="viewcode-block" id="PCA_Model">
 <a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">PCA_Model</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">PCA_Model</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    PCA_Model is a wrapper class around the scikit-learn PCA implementation</span>
 <span class="sd">    and provides prebuilt plots for GC-IMS datasets.</span>
@@ -97,7 +97,7 @@
 <span class="sd">    &gt;&gt;&gt; pca.plot()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">svd_solver</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">svd_solver</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
         <span class="k">if</span> <span class="n">n_components</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
@@ -108,7 +108,7 @@
 
 <div class="viewcode-block" id="PCA_Model.fit">
 <a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.fit">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_train</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit the PCA model with training data.</span>
 
@@ -144,7 +144,7 @@
 
 <div class="viewcode-block" id="PCA_Model.plot">
 <a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.plot">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">PC_x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">PC_y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">PC_x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">PC_y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Scatter plot of selected principal components.</span>
 
@@ -201,7 +201,7 @@
 
 <div class="viewcode-block" id="PCA_Model.plot_loadings">
 <a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.plot_loadings">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot_loadings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">PC</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color_range</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">plot_loadings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">PC</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color_range</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plots loadings of a principle component with the original retention</span>
 <span class="sd">        and drift time coordinates.</span>
@@ -260,7 +260,7 @@
 
 <div class="viewcode-block" id="PCA_Model.scree_plot">
 <a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.scree_plot">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">scree_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">scree_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plots the explained variance ratio per principal component</span>
 <span class="sd">        and cumulatively.</span>
@@ -290,7 +290,7 @@
 
 <div class="viewcode-block" id="PCA_Model.Tsq_Q_plot">
 <a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.Tsq_Q_plot">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">Tsq_Q_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">Tsq_Q_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plots T square values and Q residuals with 95 % confidence limits</span>
 <span class="sd">        for outlier detection.</span>
@@ -325,7 +325,7 @@
 
 <div class="viewcode-block" id="PCA_Model.plot_3d">
 <a class="viewcode-back" href="../../ims.pca.html#ims.pca.PCA_Model.plot_3d">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot_3d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">PC_x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">PC_y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">PC_z</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">plot_3d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">PC_x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">PC_y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">PC_z</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        3-d Scatter plot of selected principal components.</span>
 
@@ -417,7 +417,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>
 </html>

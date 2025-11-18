@@ -590,7 +590,8 @@ class Spectrum:
         annotate : bool, default=False
             If True, display peak labels on the plot
         **kwargs
-            Additional keyword arguments passed to the plot() method:
+            Additional keyword arguments passed to the plot() method.
+            
             - vmin : int, default=30
               Minimum intensity for the colormap
             - vmax : int, default=400
