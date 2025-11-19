@@ -4,17 +4,17 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ims.dataset &#8212; gc-ims-tools 0.1.8 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=47202671" />
+    <title>ims.dataset &#8212; gc-ims-tools 0.1.10 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=f63d8bfa" />
     <link rel="stylesheet" type="text/css" href="../../_static/haiku.css?v=fce32b03" />
-    <script src="../../_static/documentation_options.js?v=22607128"></script>
+    <script src="../../_static/documentation_options.js?v=bafade30"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
       <div class="header" role="banner"><h1 class="heading"><a href="../../index.html">
-          <span>gc-ims-tools 0.1.8 documentation</span></a></h1>
+          <span>gc-ims-tools 0.1.10 documentation</span></a></h1>
         <h2 class="heading"><span>ims.dataset</span></h2>
       </div>
       <div class="topnav" role="navigation" aria-label="Top">
@@ -28,19 +28,19 @@
         
         
   <h1>Source code for ims.dataset</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ims</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spectrum</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">interp1d</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dtwalign</span><span class="w"> </span><span class="kn">import</span> <span class="n">dtw</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">resample</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span></span><span class="kn">from</span> <span class="nn">ims</span> <span class="kn">import</span> <span class="n">Spectrum</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span> <span class="nn">dtwalign</span> <span class="kn">import</span> <span class="n">dtw</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="kn">import</span> <span class="n">resample</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ShuffleSplit</span><span class="p">,</span>
     <span class="n">KFold</span><span class="p">,</span>
     <span class="n">StratifiedKFold</span><span class="p">,</span>
@@ -51,7 +51,7 @@
 
 <div class="viewcode-block" id="Dataset">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Dataset</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">Dataset</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dataset class coordinates many GC-IMS spectra</span>
 <span class="sd">    (instances of ims.Spectrum class) with labels, file</span>
@@ -107,7 +107,7 @@
 <span class="sd">    Dataset: IMS_data, 58 Spectra</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="n">files</span>
@@ -115,10 +115,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Dataset: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> Spectra&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
@@ -140,19 +140,19 @@
                 <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">key</span><span class="p">],</span>
             <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Concatenates two ims.Datasets instances&quot;&quot;&quot;</span>
         <span class="n">ds</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
@@ -166,7 +166,7 @@
 
 <div class="viewcode-block" id="Dataset.copy">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.copy">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Uses deepcopy from the copy module in the standard library.</span>
 <span class="sd">        Most operations happen inplace. Use this method if you do not</span>
@@ -187,7 +187,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">timestamps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">timestamps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Property of timestamps when each spectrum in dataset was recorded.</span>
 
@@ -199,7 +199,7 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">spectrum</span><span class="o">.</span><span class="n">time</span> <span class="k">for</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">sample_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">sample_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This property returns information about all spectra indices</span>
 <span class="sd">        for each sample in the dataset.</span>
@@ -221,7 +221,7 @@
         <span class="k">return</span> <span class="n">indices</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_measurements</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">subfolders</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_keywords</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_measurements</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">subfolders</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_keywords</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Lists paths to every file in folder. If an extension is specified only list </span>
 <span class="sd">        these specific file types. methods like read_mea, read_csv, etc. use this method to filter for the </span>
@@ -285,7 +285,7 @@
 <div class="viewcode-block" id="Dataset.read_mea">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.read_mea">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">read_mea</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">subfolders</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sequential</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">compr</span><span class="o">=</span><span class="s2">&quot;wavecompr&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.mea&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">read_mea</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">subfolders</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sequential</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">compr</span><span class="o">=</span><span class="s2">&quot;wavecompr&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.mea&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads all mea files from G.A.S Dortmund instruments in the</span>
 <span class="sd">        given directory and combines them into a dataset.</span>
@@ -378,7 +378,7 @@
 <div class="viewcode-block" id="Dataset.read_zip">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.read_zip">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">read_zip</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">subfolders</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span><span class="s2">&quot;.json&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">read_zip</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">subfolders</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span><span class="s2">&quot;.json&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads zipped csv and json files from G.A.S Dortmund mea2zip converting tool.</span>
 <span class="sd">        Present for backwards compatibility. Reading mea files is much faster and saves</span>
@@ -440,7 +440,7 @@
 <div class="viewcode-block" id="Dataset.read_csv">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.read_csv">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">read_csv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">subfolders</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">read_csv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">subfolders</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads generic csv files. The first row must be</span>
 <span class="sd">        the drift time values and the first column must be</span>
@@ -504,7 +504,7 @@
 <div class="viewcode-block" id="Dataset.read_hdf5">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.read_hdf5">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">read_hdf5</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">read_hdf5</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads hdf5 files exported by the Dataset.to_hdf5 method.</span>
 <span class="sd">        Convenient way to store preprocessed spectra.</span>
@@ -565,7 +565,7 @@
 
 <div class="viewcode-block" id="Dataset.to_hdf5">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.to_hdf5">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">to_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">to_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exports the dataset as hdf5 file.</span>
 <span class="sd">        It contains one group per spectrum and one with labels etc.</span>
@@ -620,7 +620,7 @@
 
 <div class="viewcode-block" id="Dataset.select">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.select">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Selects all spectra of specified labels, samples, or files.</span>
 <span class="sd">        Must set at least one of the parameters.</span>
@@ -692,7 +692,7 @@
 
 <div class="viewcode-block" id="Dataset.drop">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.drop">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">drop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">drop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes all spectra of specified labels, samples, or files from the dataset.</span>
 <span class="sd">        Must set at least one of the parameters.</span>
@@ -764,7 +764,7 @@
 
 <div class="viewcode-block" id="Dataset.normalization">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.normalization">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">normalization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">normalization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Normalizes each spectrum in the dataset by scaling its intensity values to the range [0, 1].</span>
 
@@ -792,7 +792,7 @@
 
 <div class="viewcode-block" id="Dataset.add_spectrum">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.add_spectrum">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">add_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds a ims.Spectrum to the dataset.</span>
 <span class="sd">        Sample name and label must be provided because they are</span>
@@ -832,7 +832,7 @@
 
 <div class="viewcode-block" id="Dataset.groupby">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.groupby">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">groupby</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">groupby</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Groups dataset by label or sample.</span>
 
@@ -863,7 +863,7 @@
 
 <div class="viewcode-block" id="Dataset.plot">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.plot">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plots the spectrum of selected index and adds the label to the title.</span>
 
@@ -883,7 +883,7 @@
 
 <div class="viewcode-block" id="Dataset.train_test_split">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.train_test_split">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">train_test_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">stratify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">train_test_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">stratify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Splits the dataset in train and test sets.</span>
 
@@ -935,7 +935,7 @@
 
 <div class="viewcode-block" id="Dataset.kfold_split">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.kfold_split">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">kfold_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stratify</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">kfold_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stratify</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        K-Folds cross-validator (sklearn.model_selection.KFold).</span>
 <span class="sd">        Splits the dataset into k consecutive folds and provides</span>
@@ -997,7 +997,7 @@
 
 <div class="viewcode-block" id="Dataset.shuffle_split">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.shuffle_split">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">shuffle_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shuffle_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Shuffled splits for montecarlo cross-validation. Randomly selects</span>
 <span class="sd">        a fraction of the dataset, without replacements, per split</span>
@@ -1047,7 +1047,7 @@
 
 <div class="viewcode-block" id="Dataset.bootstrap">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.bootstrap">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">bootstrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">bootstrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_bootstraps</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Iteratively resamples dataset with replacement. Samples can</span>
 <span class="sd">        be included multiple times or not at all in the training data.</span>
@@ -1102,7 +1102,7 @@
 
 <div class="viewcode-block" id="Dataset.leave_one_out">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.leave_one_out">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">leave_one_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">leave_one_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Leave-One-Out cross-validator.</span>
 <span class="sd">        Provides train test splits and uses each sample once as test set</span>
@@ -1136,7 +1136,7 @@
 
 <div class="viewcode-block" id="Dataset.mean">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.mean">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates means for each sample, in case of repeat determinations.</span>
 <span class="sd">        Automatically determines which file belongs to which sample.</span>
@@ -1178,7 +1178,7 @@
 
 <div class="viewcode-block" id="Dataset.asymcorr">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.asymcorr">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">asymcorr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="mf">1e7</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">asymcorr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="mf">1e7</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retention time baseline correction using asymmetric least squares.</span>
 
@@ -1206,7 +1206,7 @@
 
 <div class="viewcode-block" id="Dataset.savgol">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.savgol">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">savgol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">polyorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">savgol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">polyorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applys a Savitzky-Golay filter to intensity values.</span>
 <span class="sd">        Can be applied in the drift time, retention time or both directions.</span>
@@ -1237,7 +1237,7 @@
 
 <div class="viewcode-block" id="Dataset.tophat">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.tophat">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">tophat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">tophat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies white tophat filter on data matrix as a baseline correction.</span>
 <span class="sd">        Size parameter is the diameter of the circular structuring element.</span>
@@ -1259,7 +1259,7 @@
 
 <div class="viewcode-block" id="Dataset.sub_first_rows">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.sub_first_rows">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">sub_first_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">sub_first_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Subtracts first row from every row in spectrum.</span>
 <span class="sd">        Effective and simple baseline correction</span>
@@ -1276,7 +1276,7 @@
 
 <div class="viewcode-block" id="Dataset.interp_riprel">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.interp_riprel">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">interp_riprel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rip_position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">interp_riprel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rip_position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Interpolates all spectra to common RIP relative drift time coordinate.</span>
 <span class="sd">        Alignment along drift time coordinate.</span>
@@ -1323,7 +1323,7 @@
     
 <div class="viewcode-block" id="Dataset.align_ret_time">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.align_ret_time">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">align_ret_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">align_ret_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retention time alignment based on dymamic time warping.</span>
 
@@ -1363,7 +1363,7 @@
 
 <div class="viewcode-block" id="Dataset.rip_scaling">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.rip_scaling">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">rip_scaling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">rip_scaling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Scales values relative to global maximum.</span>
 <span class="sd">        Can be useful to directly compare spectra from</span>
@@ -1381,7 +1381,7 @@
 
 <div class="viewcode-block" id="Dataset.resample">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.resample">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">resample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">resample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Resamples each spectrum by calculating means of every n rows.</span>
 <span class="sd">        If the length of the retention time is not divisible by n</span>
@@ -1415,7 +1415,7 @@
 
 <div class="viewcode-block" id="Dataset.binning">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.binning">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">binning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">binning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Downsamples each spectrum by binning the array with factor n.</span>
 <span class="sd">        Similar to Spectrum.resampling but works on both dimensions</span>
@@ -1452,7 +1452,7 @@
     
 <div class="viewcode-block" id="Dataset.wavecompr">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.wavecompr">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">wavecompr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;ret_time&quot;</span><span class="p">,</span> <span class="n">wavelet</span><span class="o">=</span><span class="s2">&quot;db3&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wavecompr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;ret_time&quot;</span><span class="p">,</span> <span class="n">wavelet</span><span class="o">=</span><span class="s2">&quot;db3&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Data reduction by wavelet compression.</span>
 <span class="sd">        Can be applied to drift time, retention time or both axis.</span>
@@ -1488,7 +1488,7 @@
 
 <div class="viewcode-block" id="Dataset.cut_dt">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.cut_dt">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">cut_dt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">cut_dt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Cuts data along drift time coordinate.</span>
 <span class="sd">        Range in between start and stop is kept.</span>
@@ -1529,7 +1529,7 @@
 
 <div class="viewcode-block" id="Dataset.cut_rt">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.cut_rt">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">cut_rt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">cut_rt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Cuts data along retention time coordinate.</span>
 <span class="sd">        Range in between start and stop is kept.</span>
@@ -1567,7 +1567,7 @@
 
 <div class="viewcode-block" id="Dataset.export_plots">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.export_plots">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">export_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">export_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Saves a figure per spectrum as image file. See the docs for</span>
 <span class="sd">        matplotlib savefig function for supported file formats and kwargs</span>
@@ -1602,7 +1602,7 @@
 
 <div class="viewcode-block" id="Dataset.get_xy">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.get_xy">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns features (X) and labels (y) as numpy arrays.</span>
 
@@ -1635,7 +1635,7 @@
 
 <div class="viewcode-block" id="Dataset.scaling">
 <a class="viewcode-back" href="../../ims.dataset.html#ims.dataset.Dataset.scaling">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">scaling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;pareto&quot;</span><span class="p">,</span> <span class="n">mean_centering</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">scaling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;pareto&quot;</span><span class="p">,</span> <span class="n">mean_centering</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Scales and mean centeres features according to selected method.</span>
 
@@ -1703,7 +1703,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Competency Center for Chemometrics Mannheim.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>
 </html>
