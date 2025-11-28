@@ -6,6 +6,7 @@ manual assignment, or automatic labelling--> see ims.Dataset.read_mea() class fo
 
 Functionality:
 - builds a simple Conv2D model compatible with ims.Dataset
+- Option to augument data crating synthetic spectra by peak shifting along rt axis
 - fit / evaluate / save / load model
 - plot training history (accuracy/loss)
 - generate class-wise saliency maps and average maps
@@ -15,6 +16,8 @@ This module uses external dependencies that need to be installed manually prior 
 - TensorFlow/Keras >=(TF 2.11)
 - tf-keras-vis tested on (v0.8.7)
 """
+from ims import Spectrum
+from copy import deepcopy
 from typing import Optional, Sequence, Dict, List, Tuple
 import os
 import numpy as np
@@ -22,7 +25,6 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 from tqdm import tqdm
 from scipy.ndimage import shift as ndimage_shift
-
 import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.keras.regularizers import l2  
@@ -102,32 +104,159 @@ class CNNModel:
         self.train_indices = None
         self.val_indices = None
         self.augmentation_metadata = None
+        self.origin_ds_size = len(dataset.data)  # Track original size for augmentation
 
-    def prep_data(self, augment: bool = False, rt_shift_range: int = 2, 
-                  intensity_threshold: float = 0.3, augment_factor: int = 1):
-        """Convert dataset to X, y_cat arrays with optional data augmentation.
-
-        Transforms the preprocessed dataset into numpy arrays, and one-hot encoded labels.
-        Expands 2D spectrum arrays to 3D (adding channel dimension).
-        Optionally applies data augmentation by shifting peaks along retention time axis.
+    def augment_dataset(self, rt_shift_range: int = 2, intensity_threshold: float = 0.5, 
+                       peak_size: int = 10, augment_factor: int = 1, inplace: bool = True):
+        """Apply data augmentation and add augmented spectra to the dataset.
         
-        IMPORTANT: Make sure that you perform proper preprocessing on the dataset!
-        Call methods like ims.Dataset.interp_riprel().cut_dt().cut_rt().normalization() or .scaling()
-        for preprocessing.
+        Creates augmented copies of spectra by shifting peaks along retention time axis.
+        Augmented spectra are added to the dataset with full tracking to prevent data leakage.
+        Each augmented spectrum gets marked internally so it can be excluded from validation.
+        
         
         Parameters
         ----------
-        augment : bool, default=False
-            Whether to apply data augmentation
         rt_shift_range : int, default=2
             Maximum number of pixels to shift peaks along retention time axis (±range)
-        intensity_threshold : float, default=0.3
-            Relative intensity threshold for peak detection (0-1)
-            Only regions above this threshold are considered peaks and shifted
+        intensity_threshold : float, default=0.5
+            Relative intensity threshold for peak detection (0-1).
+            Only regions above this threshold are shifted.
+        peak_size : int, default=10
+            Minimum peak size in pixels (connected components).
+            Smaller regions ignored as noise.
         augment_factor : int, default=1
-            Number of augmented copies to create per original sample
-            Total samples = original + (original * augment_factor)
+            Number of augmented copies to create per original spectrum.
+            Final dataset size = original + (original * augment_factor)
+        inplace : bool, default=True
+            If True, adds augmented spectra to self.dataset.
+            If False, returns a new dataset with augmented spectra.
             
+        Returns
+        -------
+        ims.Dataset or None
+            If inplace=False, returns new dataset with augmented spectra.
+            If inplace=True, returns None (modifies self.dataset directly).
+            
+        Notes
+        -----
+        - Augmented spectra are stored with attribute `_is_augmented=True` and `_original_idx`
+        - Labels, samples, and files are duplicated for augmented spectra
+        - When fit() is called with exclude_augmented_from_validation=True, augmented 
+          spectra are automatically kept in training set only
+        
+        Examples
+        --------
+        >>> # Basic usage - augment in place
+        >>> model = CNNModel(ds)
+        >>> model.augment_dataset(rt_shift_range=3, augment_factor=1)
+        >>> model.prep_data()  # Augmented spectra are now part of dataset
+        >>> model.fit(epochs=10, exclude_augmented_from_validation=True)
+        
+        """
+        original_spectra = self.dataset.data[:self.origin_ds_size]
+        augmented_spectra = []
+        augmented_labels = []
+        augmented_samples = []
+        augmented_files = []
+        
+        print(f"Augmenting dataset: creating {augment_factor} copies per spectrum...")
+        print(f"Original dataset size: {len(original_spectra)} spectra")
+        
+        for aug_copy in range(augment_factor):
+            for idx, spectrum in enumerate(original_spectra):
+                # Generate random shift
+                shift_value = np.random.randint(-rt_shift_range, rt_shift_range + 1)
+                
+                # Apply augmentation
+                aug_values = self._augment_rt_shift(
+                    spectrum,
+                    shift_value,
+                    intensity_threshold,
+                    peak_size
+                )
+                
+                # Create new spectrum object with augmented values
+                aug_spectrum = Spectrum(
+                    name=f"{spectrum.name}_aug{aug_copy+1}_shift{shift_value:+d}",
+                    values=aug_values,
+                    ret_time=spectrum.ret_time.copy(),
+                    drift_time=spectrum.drift_time.copy(),
+                    time=spectrum.time,
+                    meta_attr=spectrum.meta_attr.copy() if hasattr(spectrum, 'meta_attr') else {}
+                )
+                
+                # Copy drift time label
+                if hasattr(spectrum, '_drift_time_label'):
+                    aug_spectrum._drift_time_label = spectrum._drift_time_label
+                
+                # Mark as augmented with metadata
+                aug_spectrum._is_augmented = True
+                aug_spectrum._original_idx = idx
+                aug_spectrum._aug_type = 'rt_shift'
+                aug_spectrum._aug_params = {
+                    'shift_value': shift_value,
+                    'intensity_threshold': intensity_threshold,
+                    'peak_size': peak_size,
+                    'aug_copy': aug_copy + 1,
+                    'used_precomputed_mask': hasattr(spectrum, 'peaklist_mask') and spectrum.peaklist_mask is not None
+                }
+                
+                augmented_spectra.append(aug_spectrum)
+                augmented_labels.append(self.dataset.labels[idx])
+                augmented_samples.append(self.dataset.samples[idx])
+                augmented_files.append(f"{self.dataset.files[idx]}_aug{aug_copy+1}")
+        
+        print(f"Created {len(augmented_spectra)} augmented spectra")
+        
+        if inplace:
+            # Add to existing dataset
+            self.dataset.data.extend(augmented_spectra)
+            self.dataset.labels.extend(augmented_labels)
+            self.dataset.samples.extend(augmented_samples)
+            self.dataset.files.extend(augmented_files)
+            
+            print(f"Augmented dataset size: {len(self.dataset.data)} spectra")
+            print(f"  Original: {self.origin_ds_size}")
+            print(f"  Augmented: {len(augmented_spectra)}")
+            return None
+        else:
+            # Create new dataset
+            from ims import Dataset
+            new_data = list(original_spectra) + augmented_spectra
+            new_labels = list(self.dataset.labels[:self.origin_ds_size]) + augmented_labels
+            new_samples = list(self.dataset.samples[:self.origin_ds_size]) + augmented_samples
+            new_files = list(self.dataset.files[:self.origin_ds_size]) + augmented_files
+            
+            new_dataset = Dataset(
+                data=new_data,
+                name=f"{self.dataset.name}_augmented",
+                files=new_files,
+                samples=new_samples,
+                labels=new_labels
+            )
+            
+            print(f"New augmented dataset created with {len(new_dataset.data)} spectra")
+            return new_dataset
+
+    def prep_data(self):
+        """Convert dataset to X, y_cat arrays for model training.
+
+        Transforms the preprocessed dataset into numpy arrays and one-hot encoded labels.
+        Expands 2D spectrum arrays to 3D (adding channel dimension for CNN input).
+        
+        **IMPORTANT**: Perform proper preprocessing on the dataset first!
+        Call methods like:
+        - ims.Dataset.interp_riprel() - Align drift times
+        - ims.Dataset.cut_dt() / cut_rt() - Crop regions of interest
+        - ims.Dataset.normalization() or scaling() - Normalize intensities
+        
+        **For data augmentation**: Use augment_dataset() method BEFORE prep_data():
+        
+        >>> model.dataset.detect_peaks()  # Optional: pre-compute peaks for speed
+        >>> model.augment_dataset(augment_factor=1)  # Augment first
+        >>> model.prep_data()  # Then prepare data
+        
         Returns
         -------
         tuple[np.ndarray, np.ndarray]
@@ -137,20 +266,23 @@ class CNNModel:
         Notes
         -----
         Sets instance attributes X, Y, y_raw, augmentation_metadata, and prepared flag.
-        Augmentation metadata tracks which samples are synthetic and their parameters.
+        If augment_dataset() was called before prep_data(), augmentation tracking is automatic.
         Must be called before build() or fit().
         
         Examples
         --------
-        >>> model.prep_data()  # No augmentation
-        >>> model.prep_data(augment=True, rt_shift_range=3, augment_factor=1)  # Double dataset with RT shifts
-        >>> model.prep_data(augment=True, augment_factor=2)  # Triple dataset size
+        >>> # Without augmentation
+        >>> model.prep_data()
+        
+        >>> # With augmentation (recommended workflow)
+        >>> model.augment_dataset(augment_factor=1)
+        >>> model.prep_data()
         """
         X = []
         Y_labels = []
         augmentation_metadata = []
         
-        # Process original samples
+        # Process all spectra (original + augmented if augment_dataset was called)
         for idx, spectrum in enumerate(self.dataset.data):
             arr = np.array(spectrum.values, dtype=np.float32)
             if arr.ndim == 2:
@@ -158,57 +290,22 @@ class CNNModel:
             X.append(arr)
             Y_labels.append(self.dataset.labels[idx])
             
-            # Track as original (non-augmented) sample
-            augmentation_metadata.append({
-                'is_augmented': False,
-                'original_idx': idx,
-                'aug_type': None,
-                'aug_params': {}
-            })
-        
-        # Apply augmentation if requested
-        if augment:
-            print(f"Applying data augmentation: {augment_factor} augmented copies per sample...")
-            original_count = len(X)
-            
-            for aug_copy in range(augment_factor):
-                for idx, spectrum in enumerate(self.dataset.data):
-                    arr = np.array(spectrum.values, dtype=np.float32)
-                    if arr.ndim == 2:
-                        arr_2d = arr
-                    else:
-                        arr_2d = arr[:, :, 0]  # Remove channel for augmentation
-                    
-                    # Apply RT shift augmentation
-                    shift_value = np.random.randint(-rt_shift_range, rt_shift_range + 1)
-                    aug_arr = self._augment_rt_shift(
-                        arr_2d, 
-                        shift_value, 
-                        intensity_threshold
-                    )
-                    
-                    # Re-add channel dimension
-                    if arr.ndim == 2:
-                        aug_arr = np.expand_dims(aug_arr, axis=-1)
-                    else:
-                        aug_arr = np.expand_dims(aug_arr, axis=-1)
-                    
-                    X.append(aug_arr)
-                    Y_labels.append(self.dataset.labels[idx])
-                    
-                    # Track augmentation metadata
-                    augmentation_metadata.append({
-                        'is_augmented': True,
-                        'original_idx': idx,
-                        'aug_type': 'rt_shift',
-                        'aug_params': {
-                            'shift_value': shift_value,
-                            'intensity_threshold': intensity_threshold,
-                            'aug_copy': aug_copy + 1
-                        }
-                    })
-            
-            print(f"Augmentation complete: {original_count} original + {len(X) - original_count} augmented = {len(X)} total samples")
+            # Check if this spectrum was augmented via augment_dataset()
+            if hasattr(spectrum, '_is_augmented') and spectrum._is_augmented:
+                augmentation_metadata.append({
+                    'is_augmented': True,
+                    'original_idx': spectrum._original_idx,
+                    'aug_type': spectrum._aug_type,
+                    'aug_params': spectrum._aug_params
+                })
+            else:
+                # Track as original (non-augmented) sample
+                augmentation_metadata.append({
+                    'is_augmented': False,
+                    'original_idx': idx if idx < self.origin_ds_size else None,
+                    'aug_type': None,
+                    'aug_params': {}
+                })
         
         X = np.stack(X)
         Y = np.array(Y_labels)
@@ -220,23 +317,32 @@ class CNNModel:
         self.y_raw = Y
         self.augmentation_metadata = augmentation_metadata
         self.prepared = True
+        
+        # Report if augmentation was used
+        n_aug = sum(1 for meta in augmentation_metadata if meta['is_augmented'])
+        if n_aug > 0:
+            print(f"Data prepared: {len(X)} total samples ({len(X) - n_aug} original, {n_aug} augmented)")
+        else:
+            print(f"Data prepared: {len(X)} samples")
+        
         return X, y_cat
     
-    def _augment_rt_shift(self, arr_2d: np.ndarray, shift_value: int, 
-                          intensity_threshold: float = 0.3) -> np.ndarray:
-        """Apply retention time shift augmentation to a 2D spectrum array.
+    def _augment_rt_shift(self, spectrum, shift_value: int, 
+                          intensity_threshold: float = 0.5, peak_size: int = 10) -> np.ndarray:
+        """Apply retention time shift augmentation to a spectrum.
         
-        Shifts high-intensity regions (peaks) along the retention time axis (rows)
-        to simulate realistic RT variations in GC-IMS measurements.
-        
+               
         Parameters
         ----------
-        arr_2d : np.ndarray
-            2D array representing the spectrum (retention_time x drift_time)
+        spectrum : ims.Spectrum or np.ndarray
+            Either an ims.Spectrum object (preferred) or 2D numpy array
         shift_value : int
             Number of pixels to shift along retention time axis (can be negative)
-        intensity_threshold : float, default=0.3
-            Relative intensity threshold (0-1). Only regions above threshold are shifted.
+        intensity_threshold : float, default=0.5
+            Relative intensity threshold (0-1). Only used if peak mask not pre-computed.
+            Matches detect_peaks() default for consistency.
+        peak_size : int, default=10
+            Minimum peak size in pixels. Only used if peak mask not pre-computed.
             
         Returns
         -------
@@ -245,36 +351,52 @@ class CNNModel:
             
         Notes
         -----
-        This method preserves the physical meaning of the data by only shifting
-        peak regions, similar to natural RT drift in real measurements.
-        Uses intensity-based detection rather than color-based detection.
+        If the spectrum has already had detect_peaks() called on it, this method
+        reuses the existing peaklist_mask for efficiency and consistency.
+        Otherwise, it performs peak detection on-the-fly using the same logic.
         """
         if shift_value == 0:
-            return arr_2d.copy()
+            if isinstance(spectrum, np.ndarray):
+                return spectrum.copy()
+            else:
+                return spectrum.values.copy()
         
-        # Normalize to 0-1 range for threshold application
-        arr_min = arr_2d.min()
-        arr_max = arr_2d.max()
-        if arr_max - arr_min > 0:
-            arr_norm = (arr_2d - arr_min) / (arr_max - arr_min)
+        # Extract values array
+        if isinstance(spectrum, np.ndarray):
+            arr_2d = spectrum
+            has_mask = False
         else:
+            arr_2d = spectrum.values
+            # Check if spectrum already has a peak mask from detect_peaks()
+            has_mask = hasattr(spectrum, 'peaklist_mask') and spectrum.peaklist_mask is not None
+        
+        # Use pre-computed mask 
+        if has_mask:
+            peak_mask = spectrum.peaklist_mask > 0  # Convert labeled mask to binary
+        else:
+            # Fall back to on-the-fly detection
+            temp_spectrum = Spectrum(
+                name='temp',
+                values=arr_2d.copy(),
+                ret_time=np.arange(arr_2d.shape[0]),
+                drift_time=np.arange(arr_2d.shape[1]),
+                time=None,
+                meta_attr={}
+            )
+            temp_spectrum.detect_peaks(threshold_rel=intensity_threshold, peak_size=peak_size)
+            peak_mask = temp_spectrum.peaklist_mask > 0  # Convert labeled mask to binary
+        
+        # If no peaks detected, return original
+        if not np.any(peak_mask):
             return arr_2d.copy()
         
-        # Create mask for high-intensity regions (peaks)
-        peak_mask = arr_norm > intensity_threshold
+        # Shift the entire array
+        shifted = ndimage_shift(arr_2d, shift=(shift_value, 0), 
+                               mode='nearest', order=1)
         
-        # Create output array
-        output = arr_2d.copy()
-        
-        # Apply shift to peak regions
-        if np.any(peak_mask):
-            # Shift the entire array
-            shifted = ndimage_shift(arr_2d, shift=(shift_value, 0), 
-                                   mode='nearest', order=1)
-            
-            # Only keep shifted values where peaks were detected
-            # This creates a smoother, more realistic augmentation
-            output = np.where(peak_mask, shifted, arr_2d)
+        # Apply shifted values only where peaks were detected
+        # Background regions remain unchanged for more realistic augmentation
+        output = np.where(peak_mask, shifted, arr_2d)
         
         return output
 
@@ -339,7 +461,7 @@ class CNNModel:
         return model
 
     def fit(self, epochs=20, batch_size=8, validation_split=0.2, 
-            exclude_augmented_from_validation=True, **fit_kwargs):
+            exclude_augmented_from_validation=True, stratify=True, random_state=42, **fit_kwargs):
         """Train the model on the dataset.
 
         Trains the CNN using prepared data with specified hyperparameters.
@@ -357,6 +479,11 @@ class CNNModel:
             If True, only original (non-augmented) samples are used for validation.
             Augmented samples are only used for training.
             This prevents data leakage and gives more realistic validation metrics.
+        stratify : bool, default=True
+            If True, uses stratified splitting to maintain class proportions in train/val sets.
+            Recommended for imbalanced datasets. If False, uses sequential split (last X% for validation).
+        random_state : int, default=42
+            Random seed for reproducible stratified splits. Only used if stratify=True.
         **fit_kwargs
             Additional keyword arguments passed to model.fit()
 
@@ -370,6 +497,7 @@ class CNNModel:
         Stores training history in self.history attribute.
         When exclude_augmented_from_validation=True and augmentation was used,
         validation set is drawn only from original samples to avoid data leakage.
+        Stratified splitting (stratify=True) maintains class balance and is recommended.
         """
         if self.model is None:
             self.build()
@@ -392,16 +520,28 @@ class CNNModel:
             n_original = len(original_indices)
             n_val_from_original = int(n_original * validation_split)
             
-            # Last validation_split fraction of original samples go to validation
-            val_from_original = original_indices[-n_val_from_original:] if n_val_from_original > 0 else []
-            train_from_original = original_indices[:-n_val_from_original] if n_val_from_original > 0 else original_indices
+            if stratify:
+                # Stratified split on original samples only
+                from sklearn.model_selection import train_test_split
+                original_labels = [self.y_raw[i] for i in original_indices]
+                train_orig_idx, val_orig_idx = train_test_split(
+                    original_indices,
+                    test_size=validation_split,
+                    stratify=original_labels,
+                    random_state=random_state
+                )
+                # All augmented samples go to training
+                self.train_indices = train_orig_idx + augmented_indices
+                self.val_indices = val_orig_idx
+            else:
+                # Sequential split (original behavior)
+                val_from_original = original_indices[-n_val_from_original:] if n_val_from_original > 0 else []
+                train_from_original = original_indices[:-n_val_from_original] if n_val_from_original > 0 else original_indices
+                self.train_indices = train_from_original + augmented_indices
+                self.val_indices = val_from_original
             
-            # All augmented samples go to training
-            self.train_indices = train_from_original + augmented_indices
-            self.val_indices = val_from_original
-            
-            print(f"Training strategy: exclude_augmented_from_validation=True")
-            print(f"  Original samples: {n_original} (train: {len(train_from_original)}, val: {len(val_from_original)})")
+            print(f"Training strategy: exclude_augmented_from_validation=True, stratify={stratify}")
+            print(f"  Original samples: {n_original} (train: {len([i for i in self.train_indices if i in original_indices])}, val: {len(self.val_indices)})")
             print(f"  Augmented samples: {len(augmented_indices)} (all in training)")
             print(f"  Total training samples: {len(self.train_indices)}")
             print(f"  Total validation samples: {len(self.val_indices)}")
@@ -429,23 +569,55 @@ class CNNModel:
                     **fit_kwargs,
                 )
         else:
-            # Standard validation split (original behavior)
-            n_val = int(n_samples * validation_split)
-            self.train_indices = list(range(n_samples - n_val))
-            self.val_indices = list(range(n_samples - n_val, n_samples))
-            
-            if has_augmentation:
-                print(f"Training strategy: exclude_augmented_from_validation=False")
-                print(f"  Using standard validation split with augmented samples in both train and validation")
-            
-            self.history = self.model.fit(
-                self.X,
-                self.Y,
-                epochs=epochs,
-                batch_size=batch_size,
-                validation_split=validation_split,
-                **fit_kwargs,
-            )
+            # Standard validation split for non-augmented or when including augmented in validation
+            if stratify:
+                # Stratified split on all samples
+                from sklearn.model_selection import train_test_split
+                all_indices = list(range(n_samples))
+                train_idx, val_idx = train_test_split(
+                    all_indices,
+                    test_size=validation_split,
+                    stratify=self.y_raw,
+                    random_state=random_state
+                )
+                self.train_indices = train_idx
+                self.val_indices = val_idx
+                
+                if has_augmentation:
+                    print(f"Training strategy: exclude_augmented_from_validation=False, stratify=True")
+                    print(f"  Using stratified split with augmented samples in both train and validation")
+                
+                # Manually split data
+                X_train = self.X[self.train_indices]
+                Y_train = self.Y[self.train_indices]
+                X_val = self.X[self.val_indices]
+                Y_val = self.Y[self.val_indices]
+                
+                self.history = self.model.fit(
+                    X_train, Y_train,
+                    epochs=epochs,
+                    batch_size=batch_size,
+                    validation_data=(X_val, Y_val),
+                    **fit_kwargs,
+                )
+            else:
+                # Non stratified splitting
+                n_val = int(n_samples * validation_split)
+                self.train_indices = list(range(n_samples - n_val))
+                self.val_indices = list(range(n_samples - n_val, n_samples))
+                
+                if has_augmentation:
+                    print(f"Training strategy: exclude_augmented_from_validation=False, stratify=False")
+                    print(f"  Using sequential split with augmented samples in both train and validation")
+                
+                self.history = self.model.fit(
+                    self.X,
+                    self.Y,
+                    epochs=epochs,
+                    batch_size=batch_size,
+                    validation_split=validation_split,
+                    **fit_kwargs,
+                )
         
         return self.history
 

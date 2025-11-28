@@ -1,5 +1,6 @@
 from ims import Spectrum
 import numpy as np
+import pandas as pd
 import re
 import os
 from glob import glob
@@ -728,6 +729,83 @@ class Dataset:
 
         self.data = [Spectrum.normalization(i) for i in self.data]
         self.preprocessing.append("normalization")
+        
+        return self
+
+    def detect_peaks(self, threshold_rel=0.5, peak_size=10):
+        """
+        Detect peaks across all spectra in the dataset using threshold-based detection.
+        
+        Aggregates results into a single peak table for the entire dataset. Each spectrum also
+        retains its individual peaklist, mask, and outlines.
+        
+        Make sure to cut out the RIP before using this method to avoid incorrect thresholding
+        (e.g., use ds.interp_riprel().cut_dt().cut_rt() before calling this method).
+
+        Parameters
+        ----------
+        threshold_rel : float, default=0.5
+            Relative threshold for peak detection (0-1). 
+            Decrease to be more sensitive, increase to detect more intense peaks only.
+            
+        peak_size : int, default=10
+            Minimum pixel peak size (number of connected pixels) required for a region 
+            to be considered a peak. Peaks with fewer pixels are filtered out as noise.
+
+        Returns
+        -------
+        self : Dataset
+            The dataset with updated peak_table attribute and individual spectrum peaklists
+
+        Example
+        -------
+        >>> import ims
+        >>> ds = ims.Dataset.read_mea("IMS_dataset")
+        >>> ds.interp_riprel().cut_dt().cut_rt()
+        >>> ds.detect_peaks()
+        >>> print(ds.peak_table.head())
+        
+        Notes
+        -----
+        - Each spectrum in the dataset gets its own peaklist, peaklist_mask, and peaklist_outlines
+        - The dataset-level peak_table concatenates all individual peaklists with spectrum identifiers
+        - Individual spectrum attributes can be accessed via ds.data[i].peaklist
+        """
+        
+        
+        peak_dfs = []
+        total_peaks = 0
+        
+        for idx, spectrum in enumerate(self.data):
+            # Run detection on each spectrum (stores peaklist in spectrum class attribute)
+            spectrum.detect_peaks(threshold_rel=threshold_rel, peak_size=peak_size)
+            
+            # Add spectrum identifiers to the peaklist
+            if hasattr(spectrum, 'peaklist') and spectrum.peaklist is not None and len(spectrum.peaklist) > 0:
+                df = spectrum.peaklist.copy()
+                
+                # Insert spectrum identification columns at the beginning
+                df.insert(0, 'spectrum_idx', idx)
+                df.insert(1, 'spectrum_name', spectrum.name)
+                
+                # Add sample and label information if available
+                if self.samples is not None:
+                    df.insert(2, 'sample_name', self.samples[idx])
+                if self.labels is not None:
+                    df.insert(3, 'label', self.labels[idx])
+                
+                peak_dfs.append(df)
+                total_peaks += len(df)
+        
+        
+        if peak_dfs:
+            self.peak_table = pd.concat(peak_dfs, ignore_index=True)
+            print(f"Peak detection complete:")
+            print(f"  Total peaks detected: {total_peaks}")
+            print(f"  Across {len(self.data)} spectra")
+        else:
+            self.peak_table = pd.DataFrame()
+            print("No peaks detected across any spectra")
         
         return self
 

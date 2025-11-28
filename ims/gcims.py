@@ -544,13 +544,17 @@ class Spectrum:
                 'n_pixels': len(coords)
             }
             
-           
-            if hasattr(self, "rip_ms"):
+            # Check if drift times are RIP-relative based on label
+            if self._drift_time_label == "Drift time RIP relative":
                 peak_entry['riprel_dt'] = self.drift_time[max_dt_idx]
-                peak_entry['abs_dt'] = self.drift_time[max_dt_idx] * self.rip_ms
+                # If rip_ms is available, calculate abs_dt
+                if hasattr(self, "rip_ms"):
+                    peak_entry['abs_dt'] = self.drift_time[max_dt_idx] * self.rip_ms
+                
             else:
+                # Drift times are absolute
                 peak_entry['abs_dt'] = self.drift_time[max_dt_idx]
-                print("Warning! Make sure that you are using a region without the RIP, for peak detection to function properly.")
+                
             peaks_data.append(peak_entry)
             peak_counter += 1  
 
@@ -558,9 +562,11 @@ class Spectrum:
         df = pd.DataFrame(peaks_data)
         
         if len(df) > 0:
-            # Reorder columns to match find_peaks style
-            if hasattr(self, "rip_ms"):
+            # Reorder columns based on what's available
+            if 'riprel_dt' in df.columns and 'abs_dt' in df.columns:
                 column_order = ['peak_label', 'intensity', 'volume', 'riprel_dt', 'abs_dt', 'ret_time', 'x', 'y', 'n_pixels']
+            elif 'riprel_dt' in df.columns:
+                column_order = ['peak_label', 'intensity', 'volume', 'riprel_dt', 'ret_time', 'x', 'y', 'n_pixels']
             else:
                 column_order = ['peak_label', 'intensity', 'volume', 'abs_dt', 'ret_time', 'x', 'y', 'n_pixels']
             
@@ -591,15 +597,6 @@ class Spectrum:
             If True, display peak labels on the plot
         **kwargs
             Additional keyword arguments passed to the plot() method.
-            
-            - vmin : int, default=30
-              Minimum intensity for the colormap
-            - vmax : int, default=400
-              Maximum intensity for the colormap
-            - width : int, default=6
-              Figure width in inches
-            - height : int, default=6
-              Figure height in inches
 
         Returns
         -------
