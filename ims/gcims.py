@@ -469,7 +469,7 @@ class Spectrum:
         self.peak_table = df
         return self
 
-    def detect_peaks(self, threshold_rel=0.5, peak_size=10):
+    def detect_peaks(self, threshold_rel=0.5, min_pixels=10):
         """
         Fast peak detection using simple thresholding and connected components.
         Returns a labeled mask and a list of peak outlines. Make sure to cut out the RIP
@@ -480,22 +480,21 @@ class Spectrum:
         threshold_rel : float, default=0.5
             Relative threshold for peak detection. Decrease to be more sensitive, increase to to detect more intense peaks only.
         
-        peak_size : int, default=10
+        min_pixels : int, default=10
             Minimum pixel peak size (number of connected pixels) required for a region to be considered a peak.
             Peaks with fewer pixels than this threshold will be filtered out as noise.
 
         Returns
         -------
         self : Spectrum
-            The spectrum with updated peaklist attribute containing peak information
+            The spectrum(self) with updated peaklist(dataframe), peaklist_mask(tuple) and peaklist_outlines(list).
 
         Example
         -------
         >>> import ims
-        >>> sample = ims.Spectrum.read_mea("sample.mea")
-        >>> sample.riprel().cut_dt().cut_rt()
         >>> sample.detect_peaks()
         >>> sample.plot_thresholding()
+        >>> sample.peaklist # access the peak list dataframe
         """
         # Thresholding of 2d array
         threshold = threshold_rel * np.max(self.values)
@@ -515,8 +514,8 @@ class Spectrum:
             # Get coordinates of the peak (indices where mask is True)
             coords = np.argwhere(mask)
             
-            # Filter out small peaks based on peak_size
-            if len(coords) < peak_size:
+            # Filter out small peaks based on min_pixels
+            if len(coords) < min_pixels:
                 continue
             
             contours = measure.find_contours(mask, 0.5)
@@ -574,7 +573,6 @@ class Spectrum:
             df.index = df.index + 1
             df.index.name = "peak number"
         
-        # Store results in instanced dataframes
         self.peaklist = df
         print(f"Found {len(self.peaklist)} peaks")
         self.peaklist_mask = labeled_mask

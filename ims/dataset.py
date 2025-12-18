@@ -732,7 +732,7 @@ class Dataset:
         
         return self
 
-    def detect_peaks(self, threshold_rel=0.5, peak_size=10):
+    def detect_peaks(self, threshold_rel=0.5, min_pixels=10):
         """
         Detect peaks across all spectra in the dataset using threshold-based detection.
         
@@ -748,7 +748,7 @@ class Dataset:
             Relative threshold for peak detection (0-1). 
             Decrease to be more sensitive, increase to detect more intense peaks only.
             
-        peak_size : int, default=10
+        min_pixels : int, default=10
             Minimum pixel peak size (number of connected pixels) required for a region 
             to be considered a peak. Peaks with fewer pixels are filtered out as noise.
 
@@ -778,7 +778,7 @@ class Dataset:
         
         for idx, spectrum in enumerate(self.data):
             # Run detection on each spectrum (stores peaklist in spectrum class attribute)
-            spectrum.detect_peaks(threshold_rel=threshold_rel, peak_size=peak_size)
+            spectrum.detect_peaks(threshold_rel=threshold_rel, min_pixels=min_pixels)
             
             # Add spectrum identifiers to the peaklist
             if hasattr(spectrum, 'peaklist') and spectrum.peaklist is not None and len(spectrum.peaklist) > 0:
