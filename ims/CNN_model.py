@@ -106,8 +106,9 @@ class CNNModel:
         self.augmentation_metadata = None
         self.origin_ds_size = len(dataset.data)  # Track original size for augmentation
 
-    def augment_dataset(self, rt_shift_range: int = 2, intensity_threshold: float = 0.5, 
-                       peak_size: int = 10, augment_factor: int = 1, inplace: bool = True):
+    def augment_RTdata(self, rt_shift_range: int = 2, intensity_threshold: float = 0.5, 
+                       min_pixels: int = 10, augment_factor: int = 1, peak_amount: float = 0.5,
+                       inplace: bool = True):
         """Apply data augmentation and add augmented spectra to the dataset.
         
         Creates augmented copies of spectra by shifting peaks along retention time axis.
@@ -122,12 +123,16 @@ class CNNModel:
         intensity_threshold : float, default=0.5
             Relative intensity threshold for peak detection (0-1).
             Only regions above this threshold are shifted.
-        peak_size : int, default=10
+        min_pixels : int, default=10
             Minimum peak size in pixels (connected components).
             Smaller regions ignored as noise.
         augment_factor : int, default=1
             Number of augmented copies to create per original spectrum.
             Final dataset size = original + (original * augment_factor)
+        peak_amount : float, default=0.5
+            Fraction (0-1) of detected peaks that will be shifted.
+            E.g., 0.5 means only 50% of peaks are randomly selected for shifting.
+            Use values < 1.0 for more subtle augmentation.
         inplace : bool, default=True
             If True, adds augmented spectra to self.dataset.
             If False, returns a new dataset with augmented spectra.
@@ -149,7 +154,7 @@ class CNNModel:
         --------
         >>> # Basic usage - augment in place
         >>> model = CNNModel(ds)
-        >>> model.augment_dataset(rt_shift_range=3, augment_factor=1)
+        >>> model.augment_RTdata(rt_shift_range=3, augment_factor=1)
         >>> model.prep_data()  # Augmented spectra are now part of dataset
         >>> model.fit(epochs=10, exclude_augmented_from_validation=True)
         
@@ -173,7 +178,8 @@ class CNNModel:
                     spectrum,
                     shift_value,
                     intensity_threshold,
-                    peak_size
+                    min_pixels,
+                    peak_amount
                 )
                 
                 # Create new spectrum object with augmented values
@@ -197,7 +203,8 @@ class CNNModel:
                 aug_spectrum._aug_params = {
                     'shift_value': shift_value,
                     'intensity_threshold': intensity_threshold,
-                    'peak_size': peak_size,
+                    'min_pixels': min_pixels,
+                    'peak_amount': peak_amount,
                     'aug_copy': aug_copy + 1,
                     'used_precomputed_mask': hasattr(spectrum, 'peaklist_mask') and spectrum.peaklist_mask is not None
                 }
@@ -251,10 +258,10 @@ class CNNModel:
         - ims.Dataset.cut_dt() / cut_rt() - Crop regions of interest
         - ims.Dataset.normalization() or scaling() - Normalize intensities
         
-        **For data augmentation**: Use augment_dataset() method BEFORE prep_data():
+        **For data augmentation**: Use augment_RTdata() method BEFORE prep_data():
         
         >>> model.dataset.detect_peaks()  # Optional: pre-compute peaks for speed
-        >>> model.augment_dataset(augment_factor=1)  # Augment first
+        >>> model.augment_RTdata(augment_factor=1)  # Augment first
         >>> model.prep_data()  # Then prepare data
         
         Returns
@@ -266,7 +273,7 @@ class CNNModel:
         Notes
         -----
         Sets instance attributes X, Y, y_raw, augmentation_metadata, and prepared flag.
-        If augment_dataset() was called before prep_data(), augmentation tracking is automatic.
+        If augment_RTdata() was called before prep_data(), augmentation tracking is automatic.
         Must be called before build() or fit().
         
         Examples
@@ -274,15 +281,15 @@ class CNNModel:
         >>> # Without augmentation
         >>> model.prep_data()
         
-        >>> # With augmentation (recommended workflow)
-        >>> model.augment_dataset(augment_factor=1)
+        >>> # With augmentation
+        >>> model.augment_RTdata(augment_factor=1)
         >>> model.prep_data()
         """
         X = []
         Y_labels = []
         augmentation_metadata = []
         
-        # Process all spectra (original + augmented if augment_dataset was called)
+        # Process all spectra (original + augmented if augment_RTdata was called)
         for idx, spectrum in enumerate(self.dataset.data):
             arr = np.array(spectrum.values, dtype=np.float32)
             if arr.ndim == 2:
@@ -290,7 +297,7 @@ class CNNModel:
             X.append(arr)
             Y_labels.append(self.dataset.labels[idx])
             
-            # Check if this spectrum was augmented via augment_dataset()
+            # Check if this spectrum was augmented via augment_RTdata()
             if hasattr(spectrum, '_is_augmented') and spectrum._is_augmented:
                 augmentation_metadata.append({
                     'is_augmented': True,
@@ -328,7 +335,8 @@ class CNNModel:
         return X, y_cat
     
     def _augment_rt_shift(self, spectrum, shift_value: int, 
-                          intensity_threshold: float = 0.5, peak_size: int = 10) -> np.ndarray:
+                          intensity_threshold: float = 0.5, min_pixels: int = 10,
+                          peak_amount: float = 0.5) -> np.ndarray:
         """Apply retention time shift augmentation to a spectrum.
         
                
@@ -341,8 +349,11 @@ class CNNModel:
         intensity_threshold : float, default=0.5
             Relative intensity threshold (0-1). Only used if peak mask not pre-computed.
             Matches detect_peaks() default for consistency.
-        peak_size : int, default=10
+        min_pixels : int, default=10
             Minimum peak size in pixels. Only used if peak mask not pre-computed.
+        peak_amount : float, default=0.5
+            Fraction (0-1) of detected peaks that will be shifted.
+            When < 1.0, only a random subset of peaks are shifted.
             
         Returns
         -------
@@ -354,6 +365,8 @@ class CNNModel:
         If the spectrum has already had detect_peaks() called on it, this method
         reuses the existing peaklist_mask for efficiency and consistency.
         Otherwise, it performs peak detection on-the-fly using the same logic.
+        When peak_amount < 1.0, individual peaks are randomly selected
+        for shifting based on their labeled regions in the peak mask.
         """
         if shift_value == 0:
             if isinstance(spectrum, np.ndarray):
@@ -370,9 +383,9 @@ class CNNModel:
             # Check if spectrum already has a peak mask from detect_peaks()
             has_mask = hasattr(spectrum, 'peaklist_mask') and spectrum.peaklist_mask is not None
         
-        # Use pre-computed mask 
+        # Use pre-computed mask (labeled mask with unique ID per peak)
         if has_mask:
-            peak_mask = spectrum.peaklist_mask > 0  # Convert labeled mask to binary
+            labeled_mask = spectrum.peaklist_mask  # Keep labeled version
         else:
             # Fall back to on-the-fly detection
             temp_spectrum = Spectrum(
@@ -383,19 +396,37 @@ class CNNModel:
                 time=None,
                 meta_attr={}
             )
-            temp_spectrum.detect_peaks(threshold_rel=intensity_threshold, peak_size=peak_size)
-            peak_mask = temp_spectrum.peaklist_mask > 0  # Convert labeled mask to binary
+            temp_spectrum.detect_peaks(threshold_rel=intensity_threshold, min_pixels=min_pixels)
+            labeled_mask = temp_spectrum.peaklist_mask  # Labeled mask
         
         # If no peaks detected, return original
-        if not np.any(peak_mask):
+        if not np.any(labeled_mask > 0):
             return arr_2d.copy()
+        
+        # Get unique peak IDs (excluding background = 0)
+        unique_peaks = np.unique(labeled_mask)
+        unique_peaks = unique_peaks[unique_peaks > 0]  
+        
+        # Randomly select which peaks to shift based on peak_amount
+        if peak_amount < 1.0:
+            n_peaks_to_shift = int(np.ceil(len(unique_peaks) * peak_amount))
+            if n_peaks_to_shift < len(unique_peaks):
+                peaks_to_shift = np.random.choice(unique_peaks, size=n_peaks_to_shift, replace=False)
+                # Create mask with only selected peaks
+                peak_mask = np.isin(labeled_mask, peaks_to_shift)
+            else:
+                # Shift all peaks
+                peak_mask = labeled_mask > 0
+        else:
+            
+            peak_mask = labeled_mask > 0
         
         # Shift the entire array
         shifted = ndimage_shift(arr_2d, shift=(shift_value, 0), 
                                mode='nearest', order=1)
         
-        # Apply shifted values only where peaks were detected
-        # Background regions remain unchanged for more realistic augmentation
+        # Apply shifted values only where selected peaks were detected
+        # Background and non-selected peaks remain unchanged
         output = np.where(peak_mask, shifted, arr_2d)
         
         return output
@@ -655,9 +686,9 @@ class CNNModel:
 
         Returns
         -------
-        dict or tuple
-            If val_info=False: Classification report dictionary
-            If val_info=True: Tuple of (classification_report_dict, samples_dataframe)
+        pd.DataFrame or tuple
+            If val_info=False: Classification report as DataFrame
+            If val_info=True: Tuple of (classification_report_dataframe, samples_dataframe)
 
         Raises
         ------
@@ -672,10 +703,10 @@ class CNNModel:
         Examples
         --------
         >>> model.fit(epochs=10, validation_split=0.2)
-        >>> # Get only classification report
-        >>> report = model.val_report(val_info=False)
-        >>> # Get both report and sample info
-        >>> report, sample_df = model.val_report(val_info=True)
+        >>> report_df, val_info = model.val_report(val_info=True)
+        >>> print(report_df.head())  # View first rows
+        >>> # Export to CSV if needed
+        >>> report_df.to_csv('validation_report.csv')
         """
         if self.model is None:
             raise ValueError("Model must be trained before generating validation report. Call fit() first.")
@@ -696,21 +727,16 @@ class CNNModel:
         unique_labels = sorted(set(self.y_raw))
         val_pred_labels = [unique_labels[idx] for idx in val_pred_indices]
 
-        # Generate classification report
-        class_report = classification_report(
+        # Generate classification report as DataFrame
+        class_report_dict = classification_report(
             y_val_raw, 
             val_pred_labels, 
             output_dict=True,
             zero_division=0
         )
-
-        # Print formatted classification report
-        print("Validation Classification Report:")
-        print("=" * 50)
-        print(classification_report(y_val_raw, val_pred_labels, zero_division=0))
-        print(f"\nValidation samples: {len(self.val_indices)}")
-        print(f"Training samples: {len(self.train_indices)}")
-        print(f"Validation split: {self.validation_split:.1%}")
+        
+        # Convert to DataFrame (transpose so classes are rows)
+        class_report = pd.DataFrame(class_report_dict).transpose()
         
         # Report augmentation statistics if applicable
         if self.augmentation_metadata is not None:
@@ -820,12 +846,16 @@ class CNNModel:
         plt.plot(self.history.history.get("accuracy", []), label="train_acc")
         plt.plot(self.history.history.get("val_accuracy", []), label="val_acc", linestyle="--")
         plt.title("Accuracy")
+        plt.xlabel("Epoch")
+        plt.ylabel("Accuracy")
         plt.legend()
 
         plt.subplot(1, 2, 2)
         plt.plot(self.history.history.get("loss", []), label="train_loss")
         plt.plot(self.history.history.get("val_loss", []), label="val_loss", linestyle="--")
         plt.title("Loss")
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
         plt.legend()
 
         plt.tight_layout()
@@ -864,6 +894,19 @@ class CNNModel:
         Uses tf-keras-vis library for gradient computation.
         If save_single_salmap=True, saves individual maps as "salmap_{label}_{index}.png"
         Use export_salmaps() method to save average maps with custom format/dpi.
+        
+        Examples
+        --------
+        Generate average saliency maps for each class:
+        
+        >>> model = CNNModel(dataset)
+        >>> model.prep_data()
+        >>> model.fit(epochs=50)
+        >>> maps_by_class, avg_maps = model.salmap()
+         
+        Export average maps as high-resolution SVG:  
+        >>> maps_by_class, avg_maps = model.salmap()
+        >>> model.export_salmaps(avg_maps, output_dir='figures', format='svg', dpi=600)
         """
         saliency = Saliency(self.model)
         maps_by_class: Dict[str, list] = {c: [] for c in sorted(set(self.y_raw))}
@@ -909,7 +952,7 @@ class CNNModel:
 
         return maps_by_class, avg_maps
 
-    def _plot_salmap(self, sal_map, title, spectrum_idx=0, vmin=None, vmax=None, width=6, height=6):
+    def _plot_salmap(self, sal_map, title, spec_idx=0, vmin=None, vmax=None, width=6, height=6):
         """Internal method to plot saliency maps with consistent styling.
         
         Parameters
@@ -937,7 +980,7 @@ class CNNModel:
         fig, ax = plt.subplots(figsize=(width, height))
         
         # use first spectrum for consistent axis mapping
-        spectrum = self.dataset.data[spectrum_idx]
+        spectrum = self.dataset.data[spec_idx]
         
         im = ax.imshow(
             sal_map,
@@ -1000,10 +1043,10 @@ class CNNModel:
 
             
             pca = PCA(n_components=1)
-            pc1 = pca.fit_transform(flat_maps)
+            pca.fit(flat_maps)
 
-            # reshape PC1 back to 2D image
-            pc1_map = pc1.reshape(maps[0].shape[0], maps[0].shape[1])
+            # reshape PC1 loadings back to 2D image
+            pc1_map = pca.components_[0].reshape(maps[0].shape[0], maps[0].shape[1])
 
             # normalize to [0, 1] range for visualization
             pc1_map = (pc1_map - np.min(pc1_map)) / (np.max(pc1_map) - np.min(pc1_map))
@@ -1015,7 +1058,7 @@ class CNNModel:
 
         return pc1_maps
 
-    def _plot_PCA_salmap(self, pc1_map, title, vmin=None, vmax=None, width=6, height=6):
+    def _plot_PCA_salmap(self, pc1_map, title,spec_idx=0, vmin=None, vmax=None, width=6, height=6):
         """Internal method to plot PCA saliency maps (PC1 loadings) with consistent styling.
         
         Parameters
@@ -1039,14 +1082,20 @@ class CNNModel:
             (matplotlib.figure.Figure, matplotlib.pyplot.axes)
         """
         fig, ax = plt.subplots(figsize=(width, height))
-        
+        spectrum = self.dataset.data[spec_idx]
         im = ax.imshow(
             pc1_map,
             origin="lower",
             aspect="auto",
-            cmap="viridis",
+            cmap="RdBu_r",
             vmin=vmin,
             vmax=vmax,
+            extent=(
+                min(spectrum.drift_time),
+                max(spectrum.drift_time),
+                min(spectrum.ret_time),
+                max(spectrum.ret_time),
+            ),
         )
         
         plt.colorbar(im, ax=ax).set_label("PC1 Loadings [arbitrary units]")
@@ -1091,18 +1140,6 @@ class CNNModel:
         and PC1 loadings as "pc1_loadings_{label}.{format}".
         By default, uses automatic colormap scaling for optimal contrast.
 
-        Examples
-        --------
-        >>> maps_by_class, avg_maps = model.salmap()
-        >>> pc1_maps = model.PCA_salmaps(maps_by_class)
-        >>> # Export with automatic scaling (default)
-        >>> model.export_salmaps(avg_maps, pc1_maps)
-        >>> # Export with custom colormap range
-        >>> model.export_salmaps(avg_maps, pc1_maps, dpi=600, file_format="svg", vmin=0.2, vmax=0.8)
-        >>> # Export only average maps
-        >>> model.export_salmaps(avg_maps=avg_maps)
-        >>> # Export only PC1 loadings with manual scaling
-        >>> model.export_salmaps(pc1_maps=pc1_maps, vmin=0, vmax=1)
         """
         if avg_maps is None and pc1_maps is None:
             raise ValueError("At least one of avg_maps or pc1_maps must be provided")
@@ -1169,8 +1206,6 @@ class CNNModel:
         
         # Create new instance
         instance = cls(dataset=dataset)
-        
-        # Load the trained model
         instance.model = tf.keras.models.load_model(path)
         
         # If dataset is provided, prepare it for consistency
@@ -1207,7 +1242,6 @@ class CNNModel:
         if dataset is None:
             raise ValueError("A dataset must be provided for prediction")
         
-        # Prepare prediction data
         X_pred = []
         for spectrum in dataset.data:
             arr = np.array(spectrum.values, dtype=np.float32)
