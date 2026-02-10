@@ -1623,7 +1623,7 @@ class Dataset:
         else:
             raise ValueError(f"{method} is not a supported method!")
 
-        weights = np.nan_to_num(weights, posinf=0, neginf=0)
+        weights = np.nan_to_num(weights, posinf=1, neginf=1)
 
         if mean_centering:
             X = (X - np.mean(X, 0)) * weights
