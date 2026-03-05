@@ -233,10 +233,13 @@ class Dataset:
             labels = []
             for fname in files:
                 fname_lower = fname.lower()
+                # Underscore as a seperator by replacing "_" with " "
+                fname_norm = fname_lower.replace("_", " ")
+                
                 found = False
                 for kw in keywords:
-                    # Use word boundary matching to avoid false positives
-                    if re.search(r"\b{}\b".format(re.escape(kw.lower())), fname_lower):
+                    # Word boundary matching matches full words between seperator characters
+                    if re.search(r"\b{}\b".format(re.escape(kw.lower())), fname_norm):
                         labels.append(kw.lower())
                         found = True
                         break
