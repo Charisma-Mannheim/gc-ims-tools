@@ -106,7 +106,7 @@ class PLSR:
         self.vip_scores = ims.utils.vip_scores(
             self.x_weights, self.x_scores, self.y_loadings
         )
-        self.selectivity_ratio = ims.utils.selectivity_ratio(X_train, self.coefficients)
+        self.selectivity_ratio = ims.utils.selectivity_ratio(X_train, self.coefficients.T)
         self._fitted = True
         return self
 
