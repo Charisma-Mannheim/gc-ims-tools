@@ -1093,6 +1093,41 @@ class Dataset:
         self.preprocessing.append("mean()")
         return self
 
+    def tophat(self, hf=10, return_baseline=False):
+        """
+        2D baseline correction using the Tophat algorithm from pybaselines.
+
+        Parameters
+        ----------
+        hf : int, optional
+            The half-window for the Tophat algorithm, by default 10
+            
+        return_baseline : bool, optional
+            If True, returns a new Dataset containing the baseline array.
+            by default False
+
+        Returns
+        -------
+        Dataset or tuple[Dataset, Dataset]
+            Returns the original Dataset with in-place baseline correction.
+            If return_baseline=True, returns `(corrected_dataset, baseline_dataset)`.
+        """
+        if return_baseline:
+            results = [Spectrum.tophat(i, hf, return_baseline=True) for i in self.data]
+            self.data = [res[0] for res in results]
+            
+            from copy import deepcopy
+            baseline_dataset = deepcopy(self)
+            baseline_dataset.data = [res[1] for res in results]
+            baseline_dataset.preprocessing.append("tophat_baseline")
+            
+            self.preprocessing.append("tophat")
+            return self, baseline_dataset
+        else:
+            self.data = [Spectrum.tophat(i, hf) for i in self.data]
+            self.preprocessing.append("tophat")
+            return self
+
     def asymcorr(self, lam=1e7, p=1e-3, niter=20):
         """
         Retention time baseline correction using asymmetric least squares.
@@ -1146,24 +1181,7 @@ class Dataset:
         self.preprocessing.append("savgol")
         return self
 
-    def tophat(self, size=15):
-        """
-        Applies white tophat filter on data matrix as a baseline correction.
-        Size parameter is the diameter of the circular structuring element.
-        (Slow with large size values.)
 
-        Parameters
-        ----------
-        size : int, optional
-            Size of structuring element, by default 15.
-
-        Returns
-        -------
-        Dataset
-        """
-        self.data = [Spectrum.tophat(i, size) for i in self.data]
-        self.preprocessing.append("tophat")
-        return self
 
     def sub_first_rows(self, n=1):
         """

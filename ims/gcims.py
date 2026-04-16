@@ -17,6 +17,7 @@ from skimage import measure
 from zipfile import ZipFile
 from ims.utils import asymcorr
 from findpeaks import findpeaks
+from pybaselines import Baseline2D
 from scipy.signal import savgol_filter
 from scipy import ndimage as ndi
 from skimage.segmentation import watershed
@@ -774,6 +775,39 @@ class Spectrum:
         self.peak_table["mobility"] = K0
         return self
 
+    def tophat(self, hf=10, return_baseline=False):
+        """
+        2D baseline correction using the Tophat algorithm from pybaselines.
+
+        Parameters
+        ----------
+        hf : int, optional
+            The half-window size for the Tophat algorithm, by default 10
+            
+        return_baseline : bool, optional
+            If True, returns a new Spectrum containing the baseline array.
+            by default False
+
+        Returns
+        -------
+        Spectrum or tuple[Spectrum, Spectrum]
+            Returns the original Spectrum with in-place baseline correction.
+            If return_baseline=True, returns `(corrected_spectrum, baseline_spectrum)`.
+        """
+        baseline_fitter = Baseline2D()
+        baseline, _ = baseline_fitter.tophat(self.values, half_window=hf)
+        
+        if return_baseline:
+            baseline_spectrum = deepcopy(self)
+            baseline_spectrum.values = baseline
+            if hasattr(baseline_spectrum, "name") and isinstance(baseline_spectrum.name, str):
+                baseline_spectrum.name = baseline_spectrum.name + "_bs"
+            self.values = self.values - baseline
+            return self, baseline_spectrum
+            
+        self.values = self.values - baseline
+        return self
+
     def asymcorr(self, lam=1e7, p=1e-3, niter=20):
         """
         Retention time baseline correction using asymmetric least squares.
@@ -836,24 +870,6 @@ class Spectrum:
             )
 
         self.values = savgol_filter(self.values, window_length, polyorder, axis=axis)
-        return self
-
-    def tophat(self, size=15):
-        """
-        Applies white tophat filter on data matrix as a baseline correction.
-        Size parameter is the diameter of the circular structuring element.
-        (Slow with large size values.)
-
-        Parameters
-        ----------
-        size : int, optional
-            Size of structuring element, by default 15
-
-        Returns
-        -------
-        Spectrum
-        """
-        self.values = white_tophat(self.values, disk(size))
         return self
 
     def sub_first_rows(self, n=1):
