@@ -645,7 +645,7 @@ class Spectrum:
         
         return ax
 
-    def plot_peaks(self):
+    def plot_peaks(self,**kwargs):
         """
         Plots GC-IMS spectrum with peak labels from findpeaks method.
 
@@ -657,7 +657,7 @@ class Spectrum:
             raise ValueError("Call 'find_peaks' method first.")
 
         # call ims.Spectrum.plot method
-        _, ax = self.plot()
+        _, ax = self.plot(**kwargs)
 
         # iterate over peak table and add labels
         for i, row in self.peak_table.iterrows():
