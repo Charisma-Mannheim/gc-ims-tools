@@ -133,7 +133,7 @@ class PLSR:
         self.y_pred = y_pred
         self.y_test = y_test
         if y_test is not None:
-            self.rmse = round(mean_squared_error(y_test, self.y_pred, squared=False), 2)
+            self.rmse = round(np.sqrt(mean_squared_error(y_test, self.y_pred)), 2)
         self._validated = True
         return y_pred
 
